@@ -110,5 +110,52 @@
     <changeSet id="homework-2-add-location-column" author="Valera Cidik">
         <sqlFile encoding="utf8" path="./sql/25.add-location-colums.sql" relativeToChangelogFile="true"/>
     </changeSet>
+ 
+    <changeSet id="homework-2-roles" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/26.create-roles-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+	
+    <changeSet id="homework-2-add-roles-column" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/27.add-roles-colums.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 
+    <changeSet id="homework-2-refactor-account-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/28.refactor-account-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-accounts-index" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/29.create-accounts-index.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-saved_album-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/30.refactor-saved_album-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-music-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/31.refactor-music-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-album-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/32.refactor-album-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-music_in_album-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/33.refactor-music_in_album-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+ 
+    <changeSet id="homework-2-refactor-author-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/34.refactor-author-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-genre-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/35.refactor-genre-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-email_password-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/36.refactor-email_password-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-2-refactor-location-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/37.refactor-location-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog> 

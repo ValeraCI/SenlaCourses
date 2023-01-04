@@ -1,0 +1,1 @@
+create index accounts_role_id_idx on accounts(role_id);
