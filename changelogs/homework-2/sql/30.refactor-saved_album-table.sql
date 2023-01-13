@@ -1,0 +1,1 @@
+ALTER TABLE saved_album RENAME TO saved_albums;

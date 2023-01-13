@@ -1,0 +1,1 @@
+ALTER TABLE music RENAME TO songs;
