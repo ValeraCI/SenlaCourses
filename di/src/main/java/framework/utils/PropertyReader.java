@@ -13,7 +13,9 @@ public class PropertyReader {
             String line;
             while ((line = bufferedReader.readLine()) != null){
                 String str[] = line.split("=");
-                if(str[0].trim().equals(propertyName.trim())) return str[1].trim();
+                if(str[0].trim().equals(propertyName.trim())){
+                    return str[1].trim();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

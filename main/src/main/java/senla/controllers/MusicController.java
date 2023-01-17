@@ -1,6 +1,6 @@
 package senla.controllers;
 
-import framework.annotations.Autowire;
+import framework.annotations.Autowired;
 import framework.annotations.Component;
 import senla.services.Service;
 
@@ -8,7 +8,7 @@ import senla.services.Service;
 public class MusicController {
     private final Service musicService;
 
-    @Autowire //TODO написать внедрение через интерфейс
+    @Autowired
     public MusicController(Service musicService) {
         this.musicService = musicService;
     }

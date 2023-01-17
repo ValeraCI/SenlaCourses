@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target(value = {ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface Autowire {
+public @interface Autowired {
 }

@@ -2,8 +2,7 @@ package framework.source;
 
 import framework.Exceptions.ComponentForImplementationNotFoundException;
 import framework.Exceptions.ManyConstructorsWithAnnotationAutowireException;
-import framework.Exceptions.SeveralSuitableInterfacesHaveBeenFoundException;
-import framework.annotations.Autowire;
+import framework.annotations.Autowired;
 import framework.annotations.Component;
 import framework.utils.AnnotatedElements;
 import framework.utils.SearchingClasses;
@@ -34,12 +33,14 @@ public class BeanFactory {
     }
 
     private void addObject(Class<?> parameter, List<Object> objects){
-        if (beans.containsKey(parameter))
+        if (beans.containsKey(parameter)) {
             objects.add(beans.get(parameter));
-        else if (components.contains(parameter)) {
+        } else if (components.contains(parameter)) {
             createBean(parameter);
             objects.add(beans.get(parameter));
-        } else throw new ComponentForImplementationNotFoundException();
+        } else {
+            throw new ComponentForImplementationNotFoundException();
+        }
     }
 
     private void addInterface(Class<?> interfaceParameter, List<Object> objects) {
@@ -57,7 +58,7 @@ public class BeanFactory {
 
 
     private <T> void createBeanWithConstructor(Class<T> clazz) {
-        List<Constructor> constructors = AnnotatedElements.getConstructors(clazz, Autowire.class);
+        List<Constructor> constructors = AnnotatedElements.getConstructors(clazz, Autowired.class);
         Constructor constructor = constructors.get(0);
 
         Class<?>[] parameters = constructor.getParameterTypes();
@@ -80,7 +81,7 @@ public class BeanFactory {
 
 
     private <T> void createBean(Class<T> clazz) {
-        long autowireConstructorsNum = AnnotatedElements.getConstructors(clazz, Autowire.class).size();
+        long autowireConstructorsNum = AnnotatedElements.getConstructors(clazz, Autowired.class).size();
 
         if (autowireConstructorsNum > 1) throw new ManyConstructorsWithAnnotationAutowireException();
 

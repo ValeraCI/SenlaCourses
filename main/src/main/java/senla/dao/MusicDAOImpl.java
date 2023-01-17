@@ -1,12 +1,12 @@
-package senla.DAO;
+package senla.dao;
 
-import framework.annotations.Autowire;
+import framework.annotations.Autowired;
 import framework.annotations.Component;
 import senla.util.ParametersHolder;
 
 @Component
-public class MusicDAO implements DAO{
-    @Autowire
+public class MusicDAOImpl implements MusicDAO {
+    @Autowired
     private ParametersHolder parametersHolder;
 
     @Override

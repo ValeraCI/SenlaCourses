@@ -4,18 +4,14 @@ import framework.Exceptions.ComponentForImplementationNotFoundException;
 import framework.Exceptions.SeveralSuitableInterfacesHaveBeenFoundException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SearchingClasses {
     public static List<Object> findObjectsByInterface(Class<?> interf, Map<Class<?>, Object> beans){
-        List<Object> answer = new ArrayList<>();
-
-        for (Map.Entry<Class<?>, Object> entry : beans.entrySet()) {
-            if(Arrays.asList(entry.getKey().getInterfaces()).contains(interf)){
-                answer.add(entry.getValue());
-            }
-        }
-
-        return answer;
+        return beans.entrySet().stream()
+                .filter(entry -> Arrays.asList(entry.getKey().getInterfaces()).contains(interf))
+                .map(o -> o.getValue())
+                .collect(Collectors.toList());
     }
 
     public static Object findOneObjectByInterface(Class<?> interf, Map<Class<?>, Object> beans){
@@ -31,13 +27,9 @@ public class SearchingClasses {
     }
 
     public static List<Class<?>> findClassesByInterface(Class<?> interf, Set<Class<?>> classes){
-        List<Class<?>> answer = new ArrayList<>();
-
-        classes.stream()
+        return classes.stream()
                 .filter(c -> Arrays.asList(c.getInterfaces()).contains(interf))
-                .forEach(c -> answer.add(c));
-
-        return answer;
+                .collect(Collectors.toList());
     }
 
     public static Class<?> findOneClassByInterface(Class<?> interf, Set<Class<?>> classes){

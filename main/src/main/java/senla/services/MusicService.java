@@ -1,15 +1,15 @@
 package senla.services;
 
-import framework.annotations.Autowire;
+import framework.annotations.Autowired;
 import framework.annotations.Component;
-import senla.DAO.DAO;
+import senla.dao.MusicDAO;
 
 @Component
 public class MusicService implements Service{
-    private DAO musicDAO;
+    private MusicDAO musicDAO;
 
-    @Autowire
-    public void setMusicDAO(DAO musicDAO) {
+    @Autowired
+    public void setMusicDAO(MusicDAO musicDAO) {
         this.musicDAO = musicDAO;
     }
 

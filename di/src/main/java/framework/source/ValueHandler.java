@@ -28,7 +28,7 @@ public class ValueHandler implements Handler{
                 Class fieldType = field.getType();
                 field.set(beans.get(clazz), Converter.toObject(fieldType, v));
             } catch (IllegalAccessException e) {
-                throw new IncorrectPropertyClassException();
+                throw new IncorrectPropertyClassException(e);
             }
         }
     }
