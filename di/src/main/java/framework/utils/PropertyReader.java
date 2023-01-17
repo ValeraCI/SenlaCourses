@@ -10,6 +10,7 @@ public class PropertyReader {
     public static String readProperty(String propertyName, String path){
         try(BufferedReader bufferedReader = new BufferedReader(
                 new FileReader(System.getProperty("user.dir") + "/" + path))){
+
             String line;
             while ((line = bufferedReader.readLine()) != null){
                 String str[] = line.split("=");
@@ -18,8 +19,7 @@ public class PropertyReader {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        throw new PropertyNotFoundException();
+            throw new PropertyNotFoundException("File not found", e);
+        } throw new PropertyNotFoundException(String.format("Key %s not found", propertyName));
     }
 }
