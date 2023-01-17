@@ -1,4 +1,4 @@
-package framework.Exceptions;
+package framework.exceptions;
 
 public class ContextAlreadyExistsException extends RuntimeException{
     public ContextAlreadyExistsException() {

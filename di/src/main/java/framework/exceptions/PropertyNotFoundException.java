@@ -1,4 +1,4 @@
-package framework.Exceptions;
+package framework.exceptions;
 
 public class PropertyNotFoundException extends RuntimeException{
     public PropertyNotFoundException() {

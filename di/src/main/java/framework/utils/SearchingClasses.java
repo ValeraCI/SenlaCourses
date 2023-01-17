@@ -1,7 +1,7 @@
 package framework.utils;
 
-import framework.Exceptions.ComponentForImplementationNotFoundException;
-import framework.Exceptions.SeveralSuitableInterfacesHaveBeenFoundException;
+import framework.exceptions.ComponentForImplementationNotFoundException;
+import framework.exceptions.SeveralSuitableInterfacesHaveBeenFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;

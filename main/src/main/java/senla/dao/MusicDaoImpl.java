@@ -5,7 +5,7 @@ import framework.annotations.Component;
 import senla.util.ParametersHolder;
 
 @Component
-public class MusicDAOImpl implements MusicDAO {
+public class MusicDaoImpl implements MusicDao {
     @Autowired
     private ParametersHolder parametersHolder;
 

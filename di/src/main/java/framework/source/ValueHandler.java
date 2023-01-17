@@ -1,6 +1,6 @@
 package framework.source;
 
-import framework.Exceptions.IncorrectPropertyClassException;
+import framework.exceptions.IncorrectPropertyClassException;
 import framework.annotations.Value;
 import framework.utils.AnnotatedElements;
 import framework.utils.Converter;

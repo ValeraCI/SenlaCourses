@@ -1,7 +1,7 @@
 package framework.source;
 
-import framework.Exceptions.ContextAlreadyExistsException;
-import framework.Exceptions.ContextNotCreatedException;
+import framework.exceptions.ContextAlreadyExistsException;
+import framework.exceptions.ContextNotCreatedException;
 
 import java.util.Map;
 

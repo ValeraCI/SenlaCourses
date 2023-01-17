@@ -1,7 +1,7 @@
 package framework.source;
 
-import framework.Exceptions.ComponentForImplementationNotFoundException;
-import framework.Exceptions.ManyConstructorsWithAnnotationAutowireException;
+import framework.exceptions.ComponentForImplementationNotFoundException;
+import framework.exceptions.ManyConstructorsWithAnnotationAutowireException;
 import framework.annotations.Autowired;
 import framework.annotations.Component;
 import framework.utils.AnnotatedElements;

@@ -1,5 +1,5 @@
 package senla.dao;
 
-public interface MusicDAO {
+public interface MusicDao {
     String execute();
 }

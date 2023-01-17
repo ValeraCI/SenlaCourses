@@ -1,7 +1,7 @@
 package framework.source;
 
-import framework.Exceptions.FrameworkException;
-import framework.Exceptions.PrivateMethodException;
+import framework.exceptions.FrameworkException;
+import framework.exceptions.PrivateMethodException;
 import framework.annotations.Autowired;
 import framework.utils.AnnotatedElements;
 import framework.utils.SearchingClasses;
@@ -20,15 +20,19 @@ public class AutowireHandler implements Handler{
         this.beans = beans;
     }
 
+    private void validateMethodModifier(Method method, Class clazz) {
+        int modifers = method.getModifiers();
+        if (Modifier.isPrivate(modifers)) {
+            throw new PrivateMethodException(String.format("The %s method in the %s class is private",
+                    method.getName(), clazz.getName()));
+        }
+    }
+
     private void autowireSet(Class<?> clazz){
         List<Method> methods = AnnotatedElements.getMethods(clazz, Autowired.class);
 
         for (Method method: methods) {
-            int modifers = method.getModifiers();
-            if (Modifier.isPrivate(modifers)) {
-                throw new PrivateMethodException(String.format("The %s method in the %s class is private",
-                        method.getName(), clazz.getName()));
-            }
+           validateMethodModifier(method, clazz);
             Class<?>[] parametersType = method.getParameterTypes();
 
             List<Object> parameters = new ArrayList<>();

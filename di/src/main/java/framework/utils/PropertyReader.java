@@ -1,6 +1,6 @@
 package framework.utils;
 
-import framework.Exceptions.PropertyNotFoundException;
+import framework.exceptions.PropertyNotFoundException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
