@@ -3,7 +3,7 @@ package senla.dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import senla.Exceptions.ObjectNotFoundException;
+import senla.exceptions.ObjectNotFoundException;
 import senla.models.LoginDetails;
 import java.util.ArrayList;
 import java.util.List;

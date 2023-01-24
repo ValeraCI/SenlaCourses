@@ -1,4 +1,4 @@
-package senla.Exceptions;
+package senla.exceptions;
 
 public class JsonSerialazeException extends RuntimeException{
     public JsonSerialazeException() {

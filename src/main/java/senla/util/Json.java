@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import senla.Application;
-import senla.Exceptions.JsonDeserializeException;
-import senla.Exceptions.JsonSerialazeException;
+import senla.exceptions.JsonDeserializeException;
+import senla.exceptions.JsonSerialazeException;
 
 public class Json {
     private static final ObjectMapper objectMapper = new AnnotationConfigApplicationContext(Application.class)

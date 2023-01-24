@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import senla.Exceptions.ObjectsNotLinkedException;
+import senla.exceptions.ObjectsNotLinkedException;
 import senla.dao.AccountDao;
 import senla.dao.LoginDetailsDao;
 import senla.dto.AccountDto;

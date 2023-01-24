@@ -1,4 +1,4 @@
-package senla.Exceptions;
+package senla.exceptions;
 
 public class ObjectsNotLinkedException extends RuntimeException{
     public ObjectsNotLinkedException() {
