@@ -1,49 +1,27 @@
 package senla.models;
 
-import senla.util.Genre;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import senla.util.Genre;
 import java.util.List;
 
+@Getter
+@RequiredArgsConstructor
 public class Song {
+    @NonNull
     private final long id;
+    @NonNull
     private final String title;
+    @NonNull
     private final Genre genre;
+    @NonNull
+    private final List<Account> authors;
+    @Setter
+    private Location location;
+    @NonNull
+    private final List<Album> containedIn;
 
-    private final List<Long> authorsId;
-    private final List<Long> containedInId;
-
-    private final String path;
-
-    public Song(long id, String title, Genre genre, List<Long> authorsId, List<Long> containedInId, String path) {
-        this.id = id;
-        this.title = title;
-        this.genre = genre;
-        this.authorsId = authorsId;
-        this.containedInId = containedInId;
-        this.path = path;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public List<Long> getAuthorsId() {
-        return authorsId;
-    }
-
-    public List<Long> getContainedInId() {
-        return containedInId;
-    }
-
-    public String getPath() {
-        return path;
-    }
 }

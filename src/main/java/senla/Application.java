@@ -14,11 +14,6 @@ import java.time.LocalDateTime;
 @ComponentScan
 @PropertySource("application.properties")
 public class Application {
-    @Bean
-    public ObjectMapper objectMapper(){
-        return new ObjectMapper();
-    }
-
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
@@ -31,10 +26,10 @@ public class Application {
 
 
         accountController.add("{\"id\":1,\"nickname\":\"MORGENSHTERN\",\"role\":\"USER\"}",
-                "{\"accountId\":1,\"email\":\"AlisherMorgen@gmail.com\",\"password\":\"OLALA\"}");
+                "{\"email\":\"AlisherMorgen@gmail.com\",\"password\":\"OLALA\"}");
 
         accountController.add("{\"id\":2,\"nickname\":\"Lida\",\"role\":\"USER\"}",
-                "{\"accountId\":2,\"email\":\"Lida@gmail.com\",\"password\":\"qwertyLD\"}");
+                "{\"email\":\"Lida@gmail.com\",\"password\":\"qwertyLD\"}");
 
 
         albumController.add("{\"id\":1,\"title\":\"LAST ONE\",\"songsNum\":1,\"creatorId\":1}");
@@ -52,8 +47,8 @@ public class Application {
         System.out.println(accountController.getById(1));
         System.out.println(accountController.getById(2));
 
-        System.out.println(accountController.getLoginDetailsById(1));
-        System.out.println(accountController.getLoginDetailsById(2));
+        System.out.println(accountController.getLoginDetailsDtoById(1));
+        System.out.println(accountController.getLoginDetailsDtoById(2));
 
         System.out.println(albumController.getById(1));
         System.out.println(albumController.getById(2));
@@ -75,8 +70,13 @@ public class Application {
         accountController.updatePasswordById(1, "12365");
 
         System.out.println(accountController.getById(1));
-        System.out.println(accountController.getLoginDetailsById(1));
+        System.out.println(accountController.getLoginDetailsDtoById(1));
 
         logger.info("Application has ended, time= {}", LocalDateTime.now());
+    }
+
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
     }
 }

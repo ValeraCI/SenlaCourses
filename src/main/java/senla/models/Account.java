@@ -1,63 +1,24 @@
 package senla.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import senla.util.Role;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
 public class Account {
     private final long id;
+    @Setter
     private String nickname;
     private final Date registrationDate;
+    @Setter
     private Role role;
 
-    private final List<Long> songsIdPerformed;
-    private final List<Long> createdAlbumsId;
-    private final List<Long> savedAlbumsId;
+    private final List<Song> songsPerformed;
+    private final List<Album> createdAlbums;
+    private final List<Album> savedAlbums;
 
-    public Account(long id, String nickname, Date registrationDate, Role role, List<Long> songsIdPerformed,
-                   List<Long> createdAlbumsId, List<Long> savedAlbumsId) {
-        this.id = id;
-        this.nickname = nickname;
-        this.registrationDate = registrationDate;
-        this.role = role;
-        this.songsIdPerformed = songsIdPerformed;
-        this.createdAlbumsId = createdAlbumsId;
-        this.savedAlbumsId = savedAlbumsId;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public Date getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public List<Long> getSongsIdPerformed() {
-        return songsIdPerformed;
-    }
-
-    public List<Long> getCreatedAlbumsId() {
-        return createdAlbumsId;
-    }
-
-    public List<Long> getSavedAlbumsId() {
-        return savedAlbumsId;
-    }
 }

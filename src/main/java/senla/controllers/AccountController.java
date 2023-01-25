@@ -1,8 +1,9 @@
 package senla.controllers;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import senla.dto.AccountDto;
 import senla.dto.LoginDetailsDto;
@@ -11,22 +12,23 @@ import senla.util.Json;
 
 
 @Controller
+@RequiredArgsConstructor
 public class AccountController {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
-    private AccountService accountService;
+    @NonNull
+    private final AccountService accountService;
+    @NonNull
+    private final Json json;
 
-    @Autowired
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+
 
     public void add(String jsonAccountDto, String jsonLoginDetailsDto){
-        AccountDto accountDto = Json.deserialize(jsonAccountDto, AccountDto.class);
-        LoginDetailsDto loginDetailsDto = Json.deserialize(jsonLoginDetailsDto, LoginDetailsDto.class);
+        AccountDto accountDto = json.deserialize(jsonAccountDto, AccountDto.class);
+        LoginDetailsDto loginDetailsDto = json.deserialize(jsonLoginDetailsDto, LoginDetailsDto.class);
         accountService.add(accountDto, loginDetailsDto);
-        logger.info("Добавление аккаунта и данных для входа c индексами {}, {} произошло успешно",
-                accountDto.getId(), loginDetailsDto.getAccountId());
+        logger.info("Добавление аккаунта и данных для входа c индексам {} произошло успешно",
+                accountDto.getId());
     }
 
     public void remove(long id){
@@ -34,7 +36,7 @@ public class AccountController {
     }
 
     public void updateData(String jsonAccountDto){
-        AccountDto accountDto = Json.deserialize(jsonAccountDto, AccountDto.class);
+        AccountDto accountDto = json.deserialize(jsonAccountDto, AccountDto.class);
         accountService.updateData(accountDto);
         logger.info("Обновление аккаунта с индексом {} произошло успешно", accountDto.getId());
     }
@@ -45,11 +47,11 @@ public class AccountController {
     }
 
     public String getById(long id){
-        return Json.serialize(accountService.getById(id));
+        return json.serialize(accountService.getAccountDtoById(id));
     }
 
-    public String getLoginDetailsById(long id){
-        return Json.serialize(accountService.getLoginDetailsById(id));
+    public String getLoginDetailsDtoById(long id){
+        return json.serialize(accountService.getLoginDetailsDtoById(id));
     }
 
     public void addSavedAlbum(long id, long albumId){

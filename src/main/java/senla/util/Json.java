@@ -2,16 +2,17 @@ package senla.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import senla.Application;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import senla.exceptions.JsonDeserializeException;
 import senla.exceptions.JsonSerialazeException;
 
+@AllArgsConstructor
+@Component
 public class Json {
-    private static final ObjectMapper objectMapper = new AnnotationConfigApplicationContext(Application.class)
-            .getBean(ObjectMapper.class);
+    private final ObjectMapper objectMapper;
 
-    public static  <T> T deserialize(String json, Class<T> tClass){
+    public <T> T deserialize(String json, Class<T> tClass){
         try {
             return objectMapper.readValue(json, tClass);
         } catch (JsonProcessingException e) {
@@ -19,7 +20,7 @@ public class Json {
         }
     }
 
-    public static<T> String serialize(T object){
+    public <T> String serialize(T object){
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {

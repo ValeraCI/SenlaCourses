@@ -1,25 +1,25 @@
 package senla.controllers;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import senla.dto.SongCreateDto;
 import senla.services.SongService;
 import senla.util.Json;
 
 @Controller
+@RequiredArgsConstructor
 public class SongController {
     private static final Logger logger = LoggerFactory.getLogger(SongController.class);
+    @NonNull
     private final SongService songService;
-
-    @Autowired
-    public SongController(SongService songService) {
-        this.songService = songService;
-    }
+    @NonNull
+    private final Json json;
 
     public void add(String jsonSongCreateDto){
-        SongCreateDto songCreateDto = Json.deserialize(jsonSongCreateDto, SongCreateDto.class);
+        SongCreateDto songCreateDto = json.deserialize(jsonSongCreateDto, SongCreateDto.class);
         songService.add(songCreateDto);
         logger.info("Добавление песни c индексом {} произошло успешно", songCreateDto.getId());
     }
@@ -30,7 +30,7 @@ public class SongController {
     }
 
     public String getById(long id){
-        return Json.serialize(songService.getById(id));
+        return json.serialize(songService.getSongInfoDtoById(id));
     }
 
     public void addContainedInId(long id, long albumId){

@@ -7,6 +7,8 @@ import senla.exceptions.DeletionIsNotPossibleException;
 import senla.exceptions.ObjectAlreadyExistsException;
 import senla.exceptions.ObjectNotFoundException;
 import senla.models.Album;
+import senla.models.Song;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,56 +19,58 @@ public class AlbumDao {
 
     private static List<Album> albums = new ArrayList<>();
 
-    public Album getById(long id){
-        Optional<Album> OA = albums.stream()
+    public Optional<Album> getById(long id){
+        return albums.stream()
                 .filter(a -> a.getId() == id)
                 .findFirst();
+    }
 
-        if(OA.isEmpty()){
-            String errorMassage = "Альбом с индексом " + id + " не обнаружен";
+    private Album getAlbumById(long id){
+        Optional<Album> accountOptional = getById(id);
+        if(accountOptional.isEmpty()){
+            String errorMassage = "Аккаунт с индексом " + id + " не обнаружен";
             logger.error(errorMassage);
             throw new ObjectNotFoundException(errorMassage);
         }
-
-        return OA.get();
+        return accountOptional.get();
     }
 
     public void add(Album album){
         albums.add(album);
     }
 
-    public void deleteById(long id){
-        Album album = getById(id);
-        if(album.getSongsIdIn().size() != 0){
+    public void delete(long id){
+        Album album = getAlbumById(id);
+
+        if(album.getSongsIn().size() != 0){
             String errorMassage = "Невозможно удалить альбом, в нём есть песни";
             logger.error(errorMassage);
             throw new DeletionIsNotPossibleException(errorMassage);
         }
-
         albums.remove(album);
     }
 
-    public void addSongsIdIn(long id, long songId){
-        Album album = getById(id);
+    public void addSongsIdIn(long id, Song song){
+        Album album = getAlbumById(id);
 
-        if(album.getSongsIdIn().contains(songId)){
-            String errorMassage = "Песня с индексом " + songId + " уже есть в альбоме";
+        if(album.getSongsIn().contains(song)){
+            String errorMassage = "Песня с индексом " + song.getId() + " уже есть в альбоме";
             logger.error(errorMassage);
             throw new ObjectAlreadyExistsException(errorMassage);
         }
 
-        album.getSongsIdIn().add(songId);
+        album.getSongsIn().add(song);
     }
 
-    public void removeSongsIdIn(long id, long songId){
-        Album album = getById(id);
+    public void removeSongsIdIn(long id, Song song){
+        Album album = getAlbumById(id);
 
-        if(!album.getSongsIdIn().contains(songId)){
-            String errorMassage = "Песни с индексом " + songId + " нет в альбоме";
+        if(!album.getSongsIn().contains(song)){
+            String errorMassage = "Песни с индексом " + song.getId() + " нет в альбоме";
             logger.error(errorMassage);
             throw new ObjectNotFoundException(errorMassage);
         }
 
-        album.getSongsIdIn().remove(songId);
+        album.getSongsIn().remove(song);
     }
 }

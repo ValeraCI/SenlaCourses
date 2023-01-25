@@ -6,9 +6,8 @@ import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
-public class LoginDetails {
-    private final Account account;
-    private final String email;
+public class Location {
+    private final Song song;
     @Setter
-    private String password;
+    private String path;
 }

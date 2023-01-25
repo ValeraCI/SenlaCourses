@@ -12,11 +12,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SongCreateDto {
+public class SongInfoDto {
     private long id;
     private String title;
     private Genre genre;
-    private List<Long> authorsId;
-    private String albumCreator;
-    private Long albumId;
+    private List<String> authorsNicknames;
 }

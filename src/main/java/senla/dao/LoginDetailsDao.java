@@ -15,17 +15,20 @@ public class LoginDetailsDao {
 
     private static final List<LoginDetails> loginDetails = new ArrayList<>();
 
-    public LoginDetails getById(long id){
-         Optional<LoginDetails> OLD = loginDetails.stream()
-                .filter(a -> a.getAccountId() == id)
+    public Optional<LoginDetails> getById(long id){
+         return loginDetails.stream()
+                .filter(a -> a.getAccount().getId() == id)
                 .findFirst();
-         if(OLD.isEmpty()){
-             String errorMassage = "Аккаунт с индексом " + id + " не обнаружен";
-             logger.error(errorMassage);
-             throw new ObjectNotFoundException(errorMassage);
-         }
+    }
 
-        return OLD.get();
+    private LoginDetails getLoginDetailsById(long id){
+        Optional<LoginDetails> accountOptional = getById(id);
+        if(accountOptional.isEmpty()){
+            String errorMassage = "Аккаунт с индексом " + id + " не обнаружен";
+            logger.error(errorMassage);
+            throw new ObjectNotFoundException(errorMassage);
+        }
+        return accountOptional.get();
     }
 
     public void add(LoginDetails lDetails){
@@ -33,12 +36,18 @@ public class LoginDetailsDao {
     }
 
     public void updatePassword(long id, String password){
-        LoginDetails lDetails = getById(id);
+        LoginDetails lDetails = getLoginDetailsById(id);
         lDetails.setPassword(password);
     }
 
-    public void deleteById(long id){
-        LoginDetails lDetails = getById(id);
+    public void delete(long id){
+        LoginDetails lDetails = getLoginDetailsById(id);
         loginDetails.remove(lDetails);
+    }
+
+    public Optional<LoginDetails> getByEmail(String email){
+        return loginDetails.stream()
+                .filter(a -> a.getEmail().equals(email))
+                .findFirst();
     }
 }
