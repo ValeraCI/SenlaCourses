@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import senla.util.Role;
+import senla.models.Role;
 
 @Getter
 @Setter

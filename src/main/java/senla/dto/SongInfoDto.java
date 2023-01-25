@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import senla.util.Genre;
+import senla.models.Genre;
 
 import java.util.List;
 

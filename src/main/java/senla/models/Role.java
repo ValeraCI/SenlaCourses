@@ -1,4 +1,4 @@
-package senla.util;
+package senla.models;
 
 public enum Role {
     USER,

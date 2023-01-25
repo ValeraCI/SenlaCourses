@@ -9,7 +9,7 @@ import senla.exceptions.ObjectNotFoundException;
 import senla.models.Account;
 import senla.models.Album;
 import senla.models.Song;
-import senla.util.Role;
+import senla.models.Role;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
