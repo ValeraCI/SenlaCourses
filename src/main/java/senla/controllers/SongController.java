@@ -1,6 +1,5 @@
 package senla.controllers;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +12,8 @@ import senla.util.Json;
 @RequiredArgsConstructor
 public class SongController {
     private static final Logger logger = LoggerFactory.getLogger(SongController.class);
-    @NonNull
+
     private final SongService songService;
-    @NonNull
     private final Json json;
 
     public void add(String jsonSongCreateDto){

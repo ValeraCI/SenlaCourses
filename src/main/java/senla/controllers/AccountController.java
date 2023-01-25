@@ -1,6 +1,5 @@
 package senla.controllers;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +15,7 @@ import senla.util.Json;
 public class AccountController {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
-    @NonNull
     private final AccountService accountService;
-    @NonNull
     private final Json json;
 
 

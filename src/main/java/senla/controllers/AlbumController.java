@@ -1,6 +1,5 @@
 package senla.controllers;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +13,7 @@ import senla.util.Json;
 public class AlbumController {
     private static final Logger logger = LoggerFactory.getLogger(AlbumController.class);
 
-    @NonNull
     private final AlbumService albumService;
-    @NonNull
     private final Json json;
 
     public void add(String jsonAlbumDto){
