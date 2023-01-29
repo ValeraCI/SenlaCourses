@@ -1,131 +1,115 @@
 package senla.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import senla.exceptions.DeletionIsNotPossibleException;
-import senla.exceptions.ObjectAlreadyExistsException;
-import senla.exceptions.ObjectNotFoundException;
-import senla.models.Account;
-import senla.models.Album;
-import senla.models.Song;
-import senla.models.Role;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import senla.dto.*;
+import senla.mappers.AccountDtoMapper;
+import senla.mappers.AccountWithLoginDetailsDtoMapper;
+import senla.util.ConnectionHolder;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 @Repository
+@RequiredArgsConstructor
 public class AccountDao {
-    private static final Logger logger = LoggerFactory.getLogger(AccountDao.class);
-    private static final List<Account> accounts = new ArrayList<>();
+    private final ConnectionHolder connectionHolder;
 
-    public Optional<Account> getById(long id){
-        return accounts.stream()
-                .filter(a -> a.getId() == id)
-                .findFirst();
-    }
-
-    private Account getAccountById(long id){
-        Optional<Account> accountOptional = getById(id);
-        if(accountOptional.isEmpty()){
-            String errorMassage = "Аккаунт с индексом " + id + " не обнаружен";
-            logger.error(errorMassage);
-            throw new ObjectNotFoundException(errorMassage);
+    public AccountDto getAccountDtoById(long id){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            ResultSet resultSet = statement.executeQuery(
+                    "select a.id, nickname, title" +
+                            "    from accounts a join roles r on a.role_id = r.id" +
+                            "    where a.id = " + id);
+            return new AccountDtoMapper().createObject(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return accountOptional.get();
     }
 
-    public void add(Account account){
-        accounts.add(account);
-    }
-
-    public void update(long id, String nickname, Role role){
-        Account account = getAccountById(id);
-
-        account.setNickname(nickname);
-        account.setRole(role);
-    }
-
-    public void addSongIdPerformed(long id, Song song){
-        Account account = getAccountById(id);
-
-        if(account.getSongsPerformed().contains(song)){
-            String errorMassage = "Песня с индексом " + song.getId() + " уже есть в списке исполненных";
-            logger.error(errorMassage);
-            throw new ObjectAlreadyExistsException(errorMassage);
+    public AccountWithLoginDetailsDto getAccountWithLoginDetailsDtoByEmail(String email){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            ResultSet resultSet = statement.executeQuery(
+                    "select a.id, nickname, title, email, password" +
+                            "    from accounts a" +
+                            "        join roles r on a.role_id = r.id" +
+                            "        join login_details ld on a.id = ld.account_id" +
+                            "    where email = '" + email + "'");
+            return new AccountWithLoginDetailsDtoMapper().createObject(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getSongsPerformed().add(song);
     }
 
-    public void removeSongIdPerformed(long id, Song song){
-        Account account = getAccountById(id);
 
-        if(!account.getSongsPerformed().contains(song)){
-            String errorMassage = "Песни с индексом " + song.getId() + " нет в списке исполненных";
-            logger.error(errorMassage);
-            throw new ObjectNotFoundException(errorMassage);
+    public long addAccount(CreateAccountDto accountDto){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            statement.execute(
+                    "insert into accounts(nickname, registration_date, role_id) " +
+                            "values ('" + accountDto.getNickname() + "', '" +
+                             accountDto.getRegistrationDate() + "', 3);");
+
+            ResultSet resultSet = statement.executeQuery("SELECT currval('account_id_seq');");
+            resultSet.next();
+            return resultSet.getLong("currval");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getSongsPerformed().remove(song);
     }
 
-    public void addCreatedAlbum(long id, Album album){
-        Account account = getAccountById(id);
+    public void addLoginDetails(CreateLoginDetailsDto loginDetailsDto){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            statement.execute(
+                    "insert into login_details(account_id, email, password) values " +
+                            "(" + loginDetailsDto.getAccountId() + "," +
+                            " '" + loginDetailsDto.getEmail() + "'," +
+                            " '" + loginDetailsDto.getPassword() + "');");
 
-        if(account.getCreatedAlbums().contains(album)){
-            String errorMassage = "Альбом с индексом " + album.getId() + " уже есть в списке созданных";
-            logger.error(errorMassage);
-            throw new ObjectAlreadyExistsException(errorMassage);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getCreatedAlbums().add(album);
     }
 
-    public void removeCreatedAlbum(long id, Album album){
-        Account account = getAccountById(id);
+    public void update(UpdateAccountDto accountDto){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            statement.execute(
+                    "update accounts" +
+                            "    set nickname = '" + accountDto.getNickname() + "'," +
+                            "        role_id = " + accountDto.getRoleId() + " " +
+                            "    where id = " + accountDto.getId()  + ";");
 
-        if(!account.getCreatedAlbums().contains(album)){
-            String errorMassage = "Альбома с индексом " + album.getId() + " нет в списке созданных";
-            logger.error(errorMassage);
-            throw new ObjectNotFoundException(errorMassage);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getCreatedAlbums().remove(album);
     }
 
-    public void addSavedAlbum(long id, Album album){
-        Account account = getAccountById(id);
+    public void deleteById(long id){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            statement.execute(
+                    "delete from accounts where id = " + id + ";");
 
-        if(account.getSavedAlbums().contains(album)){
-            String errorMassage = "Альбом с индексом " + album.getId() + " уже есть в списке сохранённых";
-            logger.error(errorMassage);
-            throw new ObjectAlreadyExistsException(errorMassage);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getSavedAlbums().add(album);
     }
 
-    public void removeSavedAlbum(long id, Album album){
-        Account account = getAccountById(id);
+    public void updatePasswordById(long id, String password){
+        String threadName = Thread.currentThread().getName();
+        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
+            statement.execute(
+                    "update login_details " +
+                            "set password = '" + password + "'" +
+                            "where account_id = " + id + ";");
 
-        if(!account.getSavedAlbums().contains(album)){
-            String errorMassage = "Альбома с индексом " + album.getId() + " нет в списке сохранённых";
-            logger.error(errorMassage);
-            throw new ObjectNotFoundException(errorMassage);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        account.getSavedAlbums().remove(album);
     }
 
-    public void delete(long id){
-        Account account = getAccountById(id);
-
-        if(account.getCreatedAlbums().size() != 0 || account.getSongsPerformed().size() != 0){
-            String errorMassage = "Невозможно удалить аккаунт, существуют связи";
-            logger.error(errorMassage);
-            throw new DeletionIsNotPossibleException(errorMassage);
-        }
-        accounts.remove(account);
-    }
 }

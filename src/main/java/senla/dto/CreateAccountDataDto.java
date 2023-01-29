@@ -3,13 +3,12 @@ package senla.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginDetailsDto {
+@NoArgsConstructor
+@Getter
+public class CreateAccountDataDto {
+    private String nickname;
     private String email;
     private String password;
 }
