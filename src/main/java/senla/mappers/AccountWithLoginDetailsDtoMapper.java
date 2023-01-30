@@ -13,27 +13,21 @@ import java.util.List;
 public class AccountWithLoginDetailsDtoMapper implements Mapper{
     @Override
     public List<AccountWithLoginDetailsDto> createObjects(ResultSet resultSet) {
-        List<AccountWithLoginDetailsDto> accountWithLoginDetailsDtoList = new ArrayList<>();
-
         try {
+            List<AccountWithLoginDetailsDto> accountWithLoginDetailsDtoList = new ArrayList<>();
             while (resultSet.next()) {
-                try {
-                    long id = resultSet.getLong("id");
-                    String nickname = resultSet.getString("nickname");
-                    Role role = Role.valueOf(resultSet.getString("title").toUpperCase());
-                    String email = resultSet.getString("email");
-                    String password = resultSet.getString("password");
-                    AccountWithLoginDetailsDto accountDto = new AccountWithLoginDetailsDto(id, nickname, role, email, password);
-                    accountWithLoginDetailsDtoList.add(accountDto);
-                } catch (SQLException e) {
-                    new RuntimeException(e);
-                }
+                long id = resultSet.getLong("id");
+                String nickname = resultSet.getString("nickname");
+                Role role = Role.valueOf(resultSet.getString("title").toUpperCase());
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("password");
+                AccountWithLoginDetailsDto accountDto = new AccountWithLoginDetailsDto(id, nickname, role, email, password);
+                accountWithLoginDetailsDtoList.add(accountDto);
             }
+            return accountWithLoginDetailsDtoList;
         }catch (SQLException e) {
-            new RuntimeException(e);
+            throw new RuntimeException(e);
         }
-
-        return accountWithLoginDetailsDtoList;
     }
 
     @Override

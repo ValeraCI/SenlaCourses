@@ -2,7 +2,6 @@ package senla.mappers;
 
 import org.springframework.stereotype.Component;
 import senla.dto.AccountDto;
-import senla.dto.AccountWithLoginDetailsDto;
 import senla.exceptions.MultipleObjectsFoundException;
 import senla.models.Role;
 
@@ -15,9 +14,8 @@ import java.util.List;
 public class AccountDtoMapper implements Mapper{
     @Override
     public List<AccountDto> createObjects(ResultSet resultSet) {
-        List<AccountDto> accountDtoList = new ArrayList<>();
-
         try {
+            List<AccountDto> accountDtoList = new ArrayList<>();
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String nickname = resultSet.getString("nickname");
@@ -25,11 +23,10 @@ public class AccountDtoMapper implements Mapper{
                 AccountDto accountDto = new AccountDto(id, nickname, role);
                 accountDtoList.add(accountDto);
             }
+            return accountDtoList;
         }catch (SQLException e) {
-            new RuntimeException(e);
+            throw new RuntimeException(e);
         }
-
-        return accountDtoList;
     }
 
     @Override
