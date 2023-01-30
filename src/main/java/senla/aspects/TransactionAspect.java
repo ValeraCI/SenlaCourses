@@ -5,6 +5,9 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 import senla.util.ConnectionHolder;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 @Component
 @Aspect
 @RequiredArgsConstructor
@@ -16,17 +19,40 @@ public class TransactionAspect {
     public void transactionPointсut(){
     }
 
+    @Before("transactionPointсut()")
+    public void before(){
+        String threadName = Thread.currentThread().getName();
+
+        try {
+            connectionHolder.getConnection(threadName).setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @AfterReturning("transactionPointсut()")
     public void afterReturning(){
         String threadName = Thread.currentThread().getName();
 
-        connectionHolder.commit(threadName);
+        Connection connection = connectionHolder.getConnection(threadName);
+        try {
+            connectionHolder.commit(threadName);
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterThrowing("transactionPointсut()")
     public void afterThrowing(){
         String threadName = Thread.currentThread().getName();
 
-        connectionHolder.rollback(threadName);
+        Connection connection = connectionHolder.getConnection(threadName);
+        try {
+            connectionHolder.rollback(threadName);
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

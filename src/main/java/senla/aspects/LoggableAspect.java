@@ -25,16 +25,16 @@ public class LoggableAspect {
         try {
             result = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
-            logger.error("Method {} was throwing exception {}", proceedingJoinPoint.getSignature().getName(),
+            logger.error("Method {} was throwing exception {}", proceedingJoinPoint.getSignature().toLongString(),
                     e.getMessage());
             throw new RuntimeException(e);
         }
 
         if(Objects.isNull(result)) {
-            logger.info("Method {} was finished", proceedingJoinPoint.getSignature().getName());
+            logger.info("Method {} was finished", proceedingJoinPoint.getSignature().toLongString());
         }
         else {
-            logger.info("Method {} was finished and return {}", proceedingJoinPoint.getSignature().getName(),
+            logger.info("Method {} was finished and return {}", proceedingJoinPoint.getSignature().toLongString(),
                     result);
         }
         return result;

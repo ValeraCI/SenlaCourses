@@ -4,13 +4,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.sql.Connection;
 import java.util.Map;
+import java.util.List;
 
 @Component
 public class ConnectionHolder {
     private Map<String, Connection> connectionMap;
+    private List<Connection> unusedConnections;
 
     @Value("${db.url}")
     private String url;
@@ -21,15 +24,31 @@ public class ConnectionHolder {
 
     public ConnectionHolder() {
         connectionMap = new HashMap<>();
+        unusedConnections = new ArrayList<>();
     }
 
-    public Connection getConnection(String threadName){
+    public synchronized Connection getConnection(String threadName){
         if(connectionMap.containsKey(threadName)){
             return connectionMap.get(threadName);
         }
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
-            connection.setAutoCommit(false);
+            Connection connection = null;
+            if(unusedConnections.size() > 0){
+                while (unusedConnections.size() > 0){
+                    connection = unusedConnections.remove(0);
+                    if(!connection.isClosed()){
+                        break;
+                    }
+                    unusedConnections.remove(connection);
+                    if(unusedConnections.size() == 0){
+                        connection = DriverManager.getConnection(url, username, password);
+                        break;
+                    }
+                }
+            }
+            else {
+                connection = DriverManager.getConnection(url, username, password);
+            }
             connectionMap.put(threadName, connection);
             return connection;
         } catch (SQLException e) {
@@ -41,7 +60,7 @@ public class ConnectionHolder {
         try {
             Connection connection = connectionMap.remove(threadName);
             connection.commit();
-            connection.close();
+            unusedConnections.add(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -51,9 +70,19 @@ public class ConnectionHolder {
         try {
             Connection connection = connectionMap.remove(threadName);
             connection.rollback();
-            connection.close();
+            unusedConnections.add(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void close(){
+        for (Connection connection: unusedConnections) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
