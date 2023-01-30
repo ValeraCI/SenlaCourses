@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import javax.sql.DataSource;
+
 @Configuration
 @PropertySource("application.properties")
 public class DaoConfiguration {
@@ -18,10 +20,10 @@ public class DaoConfiguration {
     @Value("${db.password}")
     private String password;
     @Autowired
-    private PGSimpleDataSource dataSource;
+    private DataSource dataSource;
 
     @Bean
-    public PGSimpleDataSource dataSource(){
+    public DataSource dataSource(){
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setURL(url);
         dataSource.setUser(username);

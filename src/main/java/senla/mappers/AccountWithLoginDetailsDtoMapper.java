@@ -1,5 +1,6 @@
 package senla.mappers;
 
+import org.springframework.stereotype.Component;
 import senla.dto.AccountWithLoginDetailsDto;
 import senla.exceptions.MultipleObjectsFoundException;
 import senla.models.Role;
@@ -8,35 +9,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class AccountWithLoginDetailsDtoMapper implements Mapper{
     @Override
     public List<AccountWithLoginDetailsDto> createObjects(ResultSet resultSet) {
         List<AccountWithLoginDetailsDto> accountWithLoginDetailsDtoList = new ArrayList<>();
 
-        while (true){
-            try {
-                if (!resultSet.next()) break;
-            } catch (SQLException e) {
-                new RuntimeException(e);
+        try {
+            while (resultSet.next()) {
+                try {
+                    long id = resultSet.getLong("id");
+                    String nickname = resultSet.getString("nickname");
+                    Role role = Role.valueOf(resultSet.getString("title").toUpperCase());
+                    String email = resultSet.getString("email");
+                    String password = resultSet.getString("password");
+                    AccountWithLoginDetailsDto accountDto = new AccountWithLoginDetailsDto(id, nickname, role, email, password);
+                    accountWithLoginDetailsDtoList.add(accountDto);
+                } catch (SQLException e) {
+                    new RuntimeException(e);
+                }
             }
-
-            long id = 0;
-            String nickname = "";
-            Role role = null;
-            String email = "";
-            String password = "";
-            try {
-                id = resultSet.getLong("id");
-                nickname = resultSet.getString("nickname");
-                role = Role.valueOf(resultSet.getString("title").toUpperCase());
-                email = resultSet.getString("email");
-                password = resultSet.getString("password");
-            } catch (SQLException e) {
-                new RuntimeException(e);
-            }
-
-            AccountWithLoginDetailsDto accountDto = new AccountWithLoginDetailsDto(id, nickname, role, email, password);
-            accountWithLoginDetailsDtoList.add(accountDto);
+        }catch (SQLException e) {
+            new RuntimeException(e);
         }
 
         return accountWithLoginDetailsDtoList;

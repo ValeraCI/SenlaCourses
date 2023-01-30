@@ -3,6 +3,7 @@ package senla.aspects;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+import senla.exceptions.TransactionalException;
 import senla.util.ConnectionHolder;
 
 import java.sql.Connection;
@@ -26,7 +27,7 @@ public class TransactionAspect {
         try {
             connectionHolder.getConnection(threadName).setAutoCommit(false);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new TransactionalException(e);
         }
     }
 
@@ -39,7 +40,7 @@ public class TransactionAspect {
             connectionHolder.commit(threadName);
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new TransactionalException(e);
         }
     }
 
@@ -52,7 +53,7 @@ public class TransactionAspect {
             connectionHolder.rollback(threadName);
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new TransactionalException(e);
         }
     }
 }
