@@ -16,6 +16,5 @@ public class Song {
     private final List<Account> authors;
     @Setter
     private Location location;
-    private final List<Album> containedIn;
 
 }

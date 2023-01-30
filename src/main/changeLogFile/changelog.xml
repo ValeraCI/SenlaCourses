@@ -158,4 +158,8 @@
     <changeSet id="homework-2-refactor-location-table" author="Valera Cidik">
         <sqlFile encoding="utf8" path="./sql/37.refactor-location-table.sql" relativeToChangelogFile="true"/>
     </changeSet>
+
+    <changeSet id="homework-5-refactor-login_details-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/38.refactor-login_details-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog> 

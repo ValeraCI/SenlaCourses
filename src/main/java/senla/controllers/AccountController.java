@@ -1,11 +1,10 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import senla.dto.AccountDto;
-import senla.dto.LoginDetailsDto;
+import senla.annotations.Loggable;
+import senla.dto.CreateAccountDataDto;
+import senla.dto.UpdateAccountDto;
 import senla.services.AccountService;
 import senla.util.Json;
 
@@ -14,48 +13,41 @@ import senla.util.Json;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final AccountService accountService;
     private final Json json;
 
-
-
-    public void add(String jsonAccountDto, String jsonLoginDetailsDto){
-        AccountDto accountDto = json.deserialize(jsonAccountDto, AccountDto.class);
-        LoginDetailsDto loginDetailsDto = json.deserialize(jsonLoginDetailsDto, LoginDetailsDto.class);
-        accountService.add(accountDto, loginDetailsDto);
-        logger.info("Добавление аккаунта и данных для входа c индексам {} произошло успешно",
-                accountDto.getId());
-    }
-
-    public void remove(long id){
-        accountService.deleteById(id);
-    }
-
-    public void updateData(String jsonAccountDto){
-        AccountDto accountDto = json.deserialize(jsonAccountDto, AccountDto.class);
-        accountService.updateData(accountDto);
-        logger.info("Обновление аккаунта с индексом {} произошло успешно", accountDto.getId());
-    }
-
-    public void updatePasswordById(long id, String password){
-        accountService.updatePassword(id, password);
-        logger.info("Обновление пароля для аккаунта с индексом {} произошло успешно", id);
-    }
-
+    @Loggable
     public String getById(long id){
         return json.serialize(accountService.getAccountDtoById(id));
     }
 
-    public String getLoginDetailsDtoById(long id){
-        return json.serialize(accountService.getLoginDetailsDtoById(id));
+    @Loggable
+    public String getByEmail(String email) {
+        return json.serialize(accountService.getAccountWithLoginDetailsDtoByEmail(email));
     }
 
-    public void addSavedAlbum(long id, long albumId){
-        accountService.addSavedAlbum(id, albumId);
+    @Loggable
+    public void add(String jsonCreateAccountDataDto){
+        CreateAccountDataDto createAccountDataDto = json.deserialize(jsonCreateAccountDataDto,
+                CreateAccountDataDto.class);
+
+        accountService.add(createAccountDataDto);
     }
 
-    public void removeSavedAlbum(long id, long albumId){
-        accountService.removeSavedAlbum(id, albumId);
+    @Loggable
+    public void remove(long id){
+        accountService.deleteById(id);
+    }
+
+    @Loggable
+    public void updateData(String jsonUpdateAccountDto){
+        UpdateAccountDto accountDto = json.deserialize(jsonUpdateAccountDto, UpdateAccountDto.class);
+        accountService.updateData(accountDto);
+
+    }
+
+    @Loggable
+    public void updatePasswordById(long id, String password){
+        accountService.updatePassword(id, password);
     }
 }
