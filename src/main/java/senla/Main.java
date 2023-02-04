@@ -3,9 +3,7 @@ package senla;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import senla.configuration.Application;
 import senla.controllers.AccountController;
-
-import java.util.ArrayList;
-import java.util.List;
+import senla.dto.CreateAccountDataDto;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,23 +11,14 @@ public class Main {
 
         AccountController accountController = context.getBean(AccountController.class);
 
-        List<Thread> threadList = new ArrayList<>();
+        accountController.add("{\"nickname\":\"Oleg1\",\"email\":\"Oleg1@gmail.com\",\"password\":\"1111Oleg\"}");
 
-        for(int i = 0; i < 20; i++){
-            threadList.add(new TestThread("{\"nickname\":\"nickname" + i + "\",\"email\":\"test@gmail.com" + i + "\"," +
-                    "\"password\":\"1234\"}",
-                    accountController));
-            threadList.get(i).start();
-        }
-        System.out.println(accountController.getById(1));
+        //System.out.println(accountController.getById(1));
+        //System.out.println(accountController.getById(2));
+        //System.out.println(accountController.getById(10));
 
-        for(int i = 0; i < 20; i++) {
-            try {
-                threadList.get(i).join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        context.close();
+        //accountController.deleteById(668);
+
+        //System.out.println(accountController.getByEmail("cidikvalera@gmail.com"));
     }
 }

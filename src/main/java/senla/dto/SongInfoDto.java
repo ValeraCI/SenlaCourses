@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import senla.models.Genre;
+import senla.models.GenreTitle;
 
 import java.util.List;
 
@@ -15,6 +15,6 @@ import java.util.List;
 public class SongInfoDto {
     private long id;
     private String title;
-    private Genre genre;
+    private GenreTitle genre;
     private List<String> authorsNicknames;
 }

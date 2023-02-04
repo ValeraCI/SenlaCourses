@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import senla.models.Role;
+import senla.models.RoleTitle;
 
 @Getter
 @Setter
@@ -13,5 +13,5 @@ import senla.models.Role;
 public class AccountDto {
     private long id;
     private String nickname;
-    private Role role;
+    private RoleTitle role;
 }

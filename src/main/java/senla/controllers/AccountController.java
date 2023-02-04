@@ -50,4 +50,9 @@ public class AccountController {
     public void updatePasswordById(long id, String password){
         accountService.updatePassword(id, password);
     }
+
+    @Loggable
+    public void deleteById(long id){
+        accountService.deleteById(id);
+    }
 }

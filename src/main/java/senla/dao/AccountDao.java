@@ -1,132 +1,59 @@
 package senla.dao;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.criteria.*;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Repository;
-import senla.dto.*;
-import senla.mappers.AccountDtoMapper;
-import senla.mappers.AccountWithLoginDetailsDtoMapper;
-import senla.util.ConnectionHolder;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import senla.dao.abstractDao.AbstractDao;
+import senla.exceptions.DataBaseWorkException;
+import senla.models.Account;
+import senla.models.Account_;
+import senla.models.LoginDetails_;
 
 @Repository
-@RequiredArgsConstructor
-public class AccountDao {
-    private final ConnectionHolder connectionHolder;
-    private final AccountDtoMapper accountDtoMapper;
-    private final AccountWithLoginDetailsDtoMapper accountWithLoginDetailsDtoMapper;
+public class AccountDao extends AbstractDao<Account, Long> {
 
-    public AccountDto getAccountDtoById(long id){
-        String threadName = Thread.currentThread().getName();
-        String sqlRequest = """
-                    select a.id, nickname, title
-                           from accounts a join roles r on a.role_id = r.id
-                           where a.id = %d;
-                """.formatted(id);
+    public AccountDao(EntityManager entityManager) {
+        super(Account.class, entityManager);
+    }
 
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sqlRequest);
-            return accountDtoMapper.createObject(resultSet);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    @Override
+    public Long save(Account entity) {
+        try {
+            EntityTransaction ent = entityManager.getTransaction();
+            ent.begin();
+            entityManager.persist(entity);
+            entityManager.persist(entity.getLoginDetails());
+            ent.commit();
+        }
+        catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+
+        return 0l;
+    }
+
+    public Account findByEmail(String email){
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.LOGIN_DETAILS, JoinType.INNER);
+            root.fetch(Account_.ROLE, JoinType.INNER);
+            query
+                    .select(root)
+                    .where(builder
+                            .equal(root.get(LoginDetails_.EMAIL), email)
+                    );
+
+            return entityManager.createQuery(query).getSingleResult();
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
         }
     }
 
-    public AccountWithLoginDetailsDto getAccountWithLoginDetailsDtoByEmail(String email){
-        String threadName = Thread.currentThread().getName();
-        String sqlRequest = """
-                    select a.id, nickname, title, email, password
-                           from accounts a
-                                join roles r on a.role_id = r.id
-                                join login_details ld on a.id = ld.account_id
-                           where email = '%s';
-                """.formatted(email);
-
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sqlRequest);
-            return accountWithLoginDetailsDtoMapper.createObject(resultSet);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public long addAccount(CreateAccountDto accountDto){
-        String threadName = Thread.currentThread().getName();
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            String sqlRequest = """
-                        insert into accounts(nickname, registration_date, role_id)
-                               values ('%s', '%s', 3);
-                    """.formatted(accountDto.getNickname(), accountDto.getRegistrationDate(), 3);
-
-            statement.execute(sqlRequest);
-
-            ResultSet resultSet = statement.executeQuery("SELECT currval('account_id_seq');");
-            resultSet.next();
-            return resultSet.getLong("currval");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void addLoginDetails(CreateLoginDetailsDto loginDetailsDto){
-        String threadName = Thread.currentThread().getName();
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            String sqlRequest = """
-                insert into login_details(account_id, email, password) values
-                            ( %d, '%s','%s');
-                """.formatted(loginDetailsDto.getAccountId(), loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
-
-            statement.execute(sqlRequest);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void update(UpdateAccountDto accountDto){
-        String threadName = Thread.currentThread().getName();
-        String sqlRequest = """
-                update accounts
-                       set nickname = '%s',
-                           role_id = %d
-                       where id = %d;
-                """.formatted(accountDto.getNickname(), accountDto.getRoleId(), accountDto.getId());
-
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            statement.execute(sqlRequest);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void deleteById(long id){
-        String threadName = Thread.currentThread().getName();
-
-        String sqlRequest = "delete from accounts where id = %d;"
-                .formatted(id);
-
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            statement.execute(sqlRequest);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void updatePasswordById(long id, String password){
-        String threadName = Thread.currentThread().getName();
-        String sqlRequest = """
-                update login_details 
-                       set password = '%s'
-                       where account_id = %d;
-                """.formatted(password, id);
-
-        try(Statement statement = connectionHolder.getConnection(threadName).createStatement()) {
-            statement.execute(sqlRequest);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }

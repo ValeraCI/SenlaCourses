@@ -7,7 +7,7 @@
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
       http://www.liquibase.org/xml/ns/pro 
       http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd"
-      logicalFilePath="homework-2">  
+      logicalFilePath="homework-2">
     
     
     
@@ -161,5 +161,17 @@
 
     <changeSet id="homework-5-refactor-login_details-table" author="Valera Cidik">
         <sqlFile encoding="utf8" path="./sql/38.refactor-login_details-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-6-update-roles-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/39.update-roles-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-6-update-genres-table" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/40.update-genres-table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="homework-6-add-genres-column" author="Valera Cidik">
+        <sqlFile encoding="utf8" path="./sql/41.add-genres-column.sql" relativeToChangelogFile="true"/>
     </changeSet>
 </databaseChangeLog> 

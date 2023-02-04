@@ -14,7 +14,7 @@ import java.util.Objects;
 public class LoggableAspect {
     private final Logger logger = LoggerFactory.getLogger(LoggableAspect.class);
 
-    @Pointcut("@annotation(senla.annotations.Loggable)")
+    @Pointcut(value = "@annotation(senla.annotations.Loggable)")
     public void transactionLoggable(){
     }
 
