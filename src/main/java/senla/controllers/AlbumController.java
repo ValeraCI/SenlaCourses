@@ -2,7 +2,8 @@ package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import senla.dto.AlbumDto;
+import senla.annotations.Loggable;
+import senla.dto.album.AlbumCreateDto;
 import senla.services.AlbumService;
 import senla.util.Json;
 
@@ -12,16 +13,34 @@ public class AlbumController {
     private final AlbumService albumService;
     private final Json json;
 
-    public void add(String jsonAlbumDto){
-        AlbumDto albumDto = json.deserialize(jsonAlbumDto, AlbumDto.class);
-        albumService.add(albumDto);
+    @Loggable
+    public void save(String jsonAlbumDto){
+        AlbumCreateDto albumDto = json.deserialize(jsonAlbumDto, AlbumCreateDto.class);
+        albumService.save(albumDto);
     }
 
-    public void remove(long id){
+    @Loggable
+    public void remove(Long id){
         albumService.deleteById(id);
     }
 
-    public String getById(long id){
-        return json.serialize(albumService.getAlbumDtoById(id));
+    @Loggable
+    public String getById(Long id){
+        return json.serialize(albumService.findAlbumInfoDtoById(id));
+    }
+
+    @Loggable
+    public void addSongIn(Long albumId, Long songId){
+        albumService.addSongIn(albumId, songId);
+    }
+
+    @Loggable
+    public void removeSongIn(Long albumId, Long songId){
+        albumService.removeSongIn(albumId, songId);
+    }
+
+    @Loggable
+    private String getSongsIn(Long id){
+        return json.serialize(albumService.findSongsIn(id));
     }
 }

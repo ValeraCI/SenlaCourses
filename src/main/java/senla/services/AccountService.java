@@ -1,57 +1,54 @@
 package senla.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
+import senla.dao.AlbumDao;
+import senla.dao.LoginDetailsDao;
 import senla.dao.RoleDao;
-import senla.dto.*;
+import senla.dto.account.AccountDataDto;
+import senla.dto.account.AccountDto;
+import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.AccountWithLoginDetailsDto;
+import senla.dto.album.AlbumInfoDto;
 import senla.models.Account;
+import senla.models.Album;
 import senla.models.LoginDetails;
-import senla.models.LoginDetails_;
-import senla.models.Role;
 
-import java.util.Date;
+import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
+@AllArgsConstructor
 public class AccountService {
     private AccountDao accountDao;
+    private AlbumDao albumDao;
+    private LoginDetailsDao loginDetailsDao;
     private RoleDao roleDao;
 
-    @Autowired
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
-    }
-
-    @Autowired
-    public void setRoleDao(RoleDao roleDao) {
-        this.roleDao = roleDao;
-    }
-
-    @Transactional()
-    public void add(CreateAccountDataDto createAccountDataDto){
+    @Transactional
+    public void save(AccountDataDto accountDataDto){
         Account account = new Account();
-        account.setNickname(createAccountDataDto.getNickname());
+        account.setNickname(accountDataDto.getNickname());
         LoginDetails loginDetails =
-                new LoginDetails(account, createAccountDataDto.getEmail(), createAccountDataDto.getPassword());
+                new LoginDetails(account, accountDataDto.getEmail(), accountDataDto.getPassword());
         account.setLoginDetails(loginDetails);
         account.setRegistrationDate(new Date());
-        account.setRole(roleDao.findById(3l));
+        account.setRole(roleDao.findById(3L));
         accountDao.save(account);
-
-        throw new RuntimeException("Check");
+        loginDetailsDao.save(loginDetails);
     }
 
-    public AccountDto getAccountDtoById(long id) {
+    @Transactional
+    public AccountMainDataDto getAccountDtoById(Long id) {
        Account account = accountDao.findById(id);
-       AccountDto accountDto = new AccountDto();
-       accountDto.setId(account.getId());
-       accountDto.setNickname(account.getNickname());
-       accountDto.setRole(account.getRole().getRoleTitle());
+       AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
+       accountMainDataDto.setId(account.getId());
+       accountMainDataDto.setNickname(account.getNickname());
+       accountMainDataDto.setRoleTitle(account.getRole().getRoleTitle().toString());
 
-       return accountDto;
+       return accountMainDataDto;
     }
 
     @Transactional
@@ -70,17 +67,70 @@ public class AccountService {
 
 
     @Transactional
-    public void updateData(UpdateAccountDto updateAccountDto){
+    public void updateData(AccountDto accountDto){
+        Account account = new Account();
+        account.setId(accountDto.getId());
+        account.setNickname(accountDto.getNickname());
+        account.setRole(roleDao.findById(accountDto.getRoleId()));
+        accountDao.update(account);
 
-    }
-
-    @Transactional
-    public void updatePassword(long id, String password){
-
+        LoginDetails loginDetails =
+                new LoginDetails(account, null, accountDto.getPassword());
+        loginDetailsDao.update(loginDetails);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteById(long id){
         accountDao.deleteById(id);
+    }
+
+    @Transactional
+    public Set<AlbumInfoDto> getSavedAlbumsById(Long id){
+        Set<Album> savedAlbums = accountDao.findSavedAlbumsById(id);
+        Set<AlbumInfoDto> savedAlbumsInfoDto = new HashSet<>();
+
+        //TODO вынести парсинг в отдельный метод
+
+        for (Album album: savedAlbums) {
+            AlbumInfoDto albumInfoDto = new AlbumInfoDto();
+            albumInfoDto.setId(album.getId());
+            albumInfoDto.setTitle(album.getTitle());
+
+            savedAlbumsInfoDto.add(albumInfoDto);
+        }
+
+        return savedAlbumsInfoDto;
+    }
+
+    @Transactional
+    public void addSavedAlbum(Long accountId, Long albumId){
+        Album album = albumDao.findById(albumId);
+
+        accountDao.addSavedAlbum(accountId, album);
+    }
+
+    @Transactional
+    public void removeSavedAlbum(Long accountId, Long albumId){
+        Album album = albumDao.findById(albumId);
+
+        accountDao.removeSavedAlbum(accountId, album);
+    }
+
+    @Transactional
+    public Set<AlbumInfoDto> findCreatedAlbumsById(Long id){
+        Set<Album> createdAlbums = accountDao.findCreatedAlbumsById(id);
+        Set<AlbumInfoDto> createdAlbumsInfoDto = new HashSet<>();
+
+        //TODO вынести парсинг в отдельный метод
+
+        for (Album album: createdAlbums) {
+            AlbumInfoDto albumInfoDto = new AlbumInfoDto();
+            albumInfoDto.setId(album.getId());
+            albumInfoDto.setTitle(album.getTitle());
+
+            createdAlbumsInfoDto.add(albumInfoDto);
+        }
+
+        return createdAlbumsInfoDto;
     }
 }

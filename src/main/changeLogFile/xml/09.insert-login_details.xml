@@ -1,0 +1,71 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="Valera Cidik" id="06.insert-login_details">
+        <insert tableName="login_details">
+            <column name="account_id" value="1"/>
+            <column name="email" value="cidikvalera@gmail.com"/>
+            <column name="password" value="1111"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="2"/>
+            <column name="email" value="adminUser1@gmail.com"/>
+            <column name="password" value="admin1"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="3"/>
+            <column name="email" value="adminUser2@gmail.com"/>
+            <column name="password" value="admin2"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="4"/>
+            <column name="email" value="adminUser3@gmail.com"/>
+            <column name="password" value="admin3"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="5"/>
+            <column name="email" value="testUser@gmail.com"/>
+            <column name="password" value="test"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="6"/>
+            <column name="email" value="AlisherMorgen@gmail.com"/>
+            <column name="password" value="OLALA"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="7"/>
+            <column name="email" value="Tentacion@gmail.com"/>
+            <column name="password" value="Revenge"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="8"/>
+            <column name="email" value="Lida@gmail.com"/>
+            <column name="password" value="qwertyLD"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="9"/>
+            <column name="email" value="MaksimSam@gmail.com"/>
+            <column name="password" value="48646f98fsq"/>
+        </insert>
+
+        <insert tableName="login_details">
+            <column name="account_id" value="10"/>
+            <column name="email" value="AlicaPopersik@gmail.com"/>
+            <column name="password" value="sffe5s568_fsef"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

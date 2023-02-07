@@ -1,26 +1,30 @@
 package senla.configuration;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import liquibase.integration.spring.SpringLiquibase;
-import org.hibernate.cfg.Environment;
-import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.TransactionManager;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 @Configuration
 @PropertySource("application.properties")
+@EnableTransactionManagement
 public class DaoConfiguration {
+    @Value("${db.driverClassName}")
+    private String driverClassName;
     @Value("${db.url}")
     private String url;
     @Value("${db.username}")
@@ -34,62 +38,63 @@ public class DaoConfiguration {
 
     @Bean
     public DataSource dataSource(){
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setURL(url);
-        dataSource.setUser(username);
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
         dataSource.setPassword(password);
+
         return dataSource;
     }
 
-    /*@Bean
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource){
-        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
-                new LocalContainerEntityManagerFactoryBean();
 
-        localContainerEntityManagerFactoryBean.setPackagesToScan("senla/models");
-        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
-
-        Properties jpaProperties = new Properties();
-
-        jpaProperties.put(Environment.DIALECT, sqlDialect);
-        jpaProperties.put(Environment.SHOW_SQL, showSql);
-
-        localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
-
-        return localContainerEntityManagerFactoryBean;
-    }*/
-
+    // Конфигурируем адаптер поставщика jpa (см. Реальный бой p320)
     @Bean
-    public FactoryBean<EntityManagerFactory> entityManagerFactory(DataSource dataSource) {
-        final LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
-                new LocalContainerEntityManagerFactoryBean();
-        localContainerEntityManagerFactoryBean.setPackagesToScan("senla/models");
-        localContainerEntityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
-        Properties jpaProperties = new Properties();
-
-        jpaProperties.put(Environment.DIALECT, sqlDialect);
-        jpaProperties.put(Environment.SHOW_SQL, showSql);
-
-        localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
-        return localContainerEntityManagerFactoryBean;
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        // Установить тип базы данных
+        jpaVendorAdapter.setDatabase(Database.POSTGRESQL);
+        // Устанавливаем показ генерируемого sql
+        jpaVendorAdapter.setShowSql(showSql);
+        // Устанавливаем не генерировать операторы DDL
+        jpaVendorAdapter.setGenerateDdl(false);
+        // Установить диалект
+        jpaVendorAdapter.setDatabasePlatform(sqlDialect);
+        return jpaVendorAdapter;
     }
 
+    // Настройка фабрики диспетчера сущностей
     @Bean
-    public TransactionManager transactionManager(FactoryBean<EntityManagerFactory> entityManagerFactory) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
+        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+        // Вставить источник данных
+        emfb.setDataSource(dataSource);
+        // Внедрить адаптер производителя jpa
+        emfb.setJpaVendorAdapter(jpaVendorAdapter);
+        // Установить базовый пакет сканирования
+        emfb.setPackagesToScan("senla.models");
+        return emfb;
+    }
+
+    // Настройка менеджера транзакций jpa
+    @Bean
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean emf) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        try {
-            transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
-        } catch (Exception e) {
-            e.printStackTrace(); //TODO сделать что-то тут
-        }
+        // Настройка фабрики диспетчера сущностей
+        transactionManager.setEntityManagerFactory(emf.getObject());
         return transactionManager;
     }
 
     @Bean
-    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
-        return entityManagerFactory.createEntityManager();
+    public EntityManager entityManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+        return entityManagerFactory.getObject().createEntityManager();
+
+    }
+
+    @Bean
+    public CriteriaBuilder criteriaBuilder(EntityManager entityManager){
+        return entityManager.getCriteriaBuilder();
     }
 
 

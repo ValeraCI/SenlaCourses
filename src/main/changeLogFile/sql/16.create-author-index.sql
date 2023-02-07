@@ -1,1 +1,0 @@
-create index author_account_id_idx on author(account_id);

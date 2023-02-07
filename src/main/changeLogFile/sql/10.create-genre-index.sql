@@ -1,1 +1,0 @@
-create index genre_title_idx on genre(title);

@@ -2,7 +2,8 @@ package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import senla.dto.SongCreateDto;
+import senla.annotations.Loggable;
+import senla.dto.song.SongCreateDto;
 import senla.services.SongService;
 import senla.util.Json;
 
@@ -13,16 +14,19 @@ public class SongController {
     private final SongService songService;
     private final Json json;
 
+    @Loggable
     public void add(String jsonSongCreateDto){
         SongCreateDto songCreateDto = json.deserialize(jsonSongCreateDto, SongCreateDto.class);
         songService.add(songCreateDto);
     }
 
-    public void remove(long id){
+    @Loggable
+    public void deleteById(Long id){
         songService.deleteById(id);
     }
 
-    public String getById(long id){
-        return json.serialize(songService.getSongInfoDtoById(id));
+    @Loggable
+    public String getById(Long id){
+        return json.serialize(songService.findSongInfoDtoById(id));
     }
 }

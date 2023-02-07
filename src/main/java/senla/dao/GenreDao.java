@@ -4,11 +4,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
-import senla.models.Role;
+import senla.models.Genre;
 
 @Repository
-public class RoleDao extends AbstractDao<Role, Long> {
-    public RoleDao(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
-        super(Role.class, entityManager, criteriaBuilder);
+public class GenreDao extends AbstractDao<Genre, Long> {
+    public GenreDao(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
+        super(Genre.class, entityManager, criteriaBuilder);
     }
 }

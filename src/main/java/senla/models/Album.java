@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Date;
@@ -12,14 +13,22 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "album-only-entity-graph"),
+        @NamedEntityGraph(name = "album-songsIn-entity-graph",
+                attributeNodes = {@NamedAttributeNode("songsIn")})
+})
 @Table(name = "albums")
 public class Album extends AEntity{
+    @Setter
     @Column(name = "title")
     private String title;
 
+    @Setter
     @Column(name = "create_date")
     private Date createDate;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private Account creator;

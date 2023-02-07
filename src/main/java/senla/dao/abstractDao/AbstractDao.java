@@ -1,11 +1,9 @@
 package senla.dao.abstractDao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.*;
+import lombok.AllArgsConstructor;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.AEntity;
 import senla.models.AEntity_;
@@ -13,27 +11,25 @@ import senla.models.AEntity_;
 import java.io.Serializable;
 import java.util.List;
 
-
-public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
+@AllArgsConstructor
+public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, Long> {
 
     protected final Class<T> typeParameterClass;
+    @PersistenceContext
     protected final EntityManager entityManager;
 
-    public AbstractDao(Class<T> typeParameterClass, EntityManager entityManager) {
-        this.typeParameterClass = typeParameterClass;
-        this.entityManager = entityManager;
-    }
+    protected final CriteriaBuilder criteriaBuilder;
 
     @Override
-    public PK save(T entity) {
+    public Long save(T entity) {
         try {
-
+            entityManager.persist(entity);
         }
         catch (Exception e){
             throw new DataBaseWorkException(e);
         }
 
-        return null;
+        return entity.getId();
     }
 
     @Override
@@ -47,13 +43,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    //@Transactional
-    public void deleteById(PK id) {
+    public void deleteById(Long id) {
         try {
-            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaDelete<T> criteriaDelete = builder.createCriteriaDelete(typeParameterClass);
-            Root<T> root = criteriaDelete.getRoot();
-            criteriaDelete.where(builder.equal(root.get(AEntity_.ID), id));
+            CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(typeParameterClass);
+            Root<T> root = criteriaDelete.from(typeParameterClass);
+            criteriaDelete.where(criteriaBuilder.equal(root.get(AEntity_.ID), id));
 
             entityManager.createQuery(criteriaDelete).executeUpdate();
         }
@@ -65,8 +59,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public List<T> findAll() {
         try {
-            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = builder.createQuery(typeParameterClass);
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
 
             criteriaQuery.select(criteriaQuery.from(typeParameterClass));
             return entityManager.createQuery(criteriaQuery).getResultList();
@@ -77,15 +70,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public T findById(PK id) {
+    public T findById(Long id) {
         try {
-            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<T> criteriaQuery = builder.createQuery(typeParameterClass);
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
             Root<T> root = criteriaQuery.from(typeParameterClass);
 
             criteriaQuery
                     .select(root)
-                    .where(builder
+                    .where(criteriaBuilder
                             .equal(root.get(AEntity_.ID), id)
                     );
 

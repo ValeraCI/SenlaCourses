@@ -1,52 +1,43 @@
 package senla.dao;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.criteria.*;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
-import senla.models.Account;
-import senla.models.Account_;
-import senla.models.LoginDetails_;
+import senla.models.*;
+
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {
 
-    public AccountDao(EntityManager entityManager) {
-        super(Account.class, entityManager);
+    public AccountDao(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
+        super(Account.class, entityManager, criteriaBuilder);
     }
 
     @Override
     public Long save(Account entity) {
         try {
-            EntityTransaction ent = entityManager.getTransaction();
-            ent.begin();
             entityManager.persist(entity);
-            entityManager.persist(entity.getLoginDetails());
-            ent.commit();
-        }
-        catch (Exception e){
+            return entity.getId();
+        } catch (Exception e){
             throw new DataBaseWorkException(e);
         }
-
-        return 0l;
     }
 
     public Account findByEmail(String email){
         try {
-            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
 
             Root<Account> root = query.from(typeParameterClass);
-            root.fetch(Account_.LOGIN_DETAILS, JoinType.INNER);
+            Join<Account, LoginDetails> join = root.join(Account_.LOGIN_DETAILS);
             root.fetch(Account_.ROLE, JoinType.INNER);
             query
                     .select(root)
-                    .where(builder
-                            .equal(root.get(LoginDetails_.EMAIL), email)
+                    .where(criteriaBuilder
+                            .equal(join.get(LoginDetails_.EMAIL), email)
                     );
 
             return entityManager.createQuery(query).getSingleResult();
@@ -55,5 +46,103 @@ public class AccountDao extends AbstractDao<Account, Long> {
         }
     }
 
+    @Override
+    public void update(Account entity) {
+        try {
+            CriteriaUpdate<Account> criteriaAccountUpdate =
+                    criteriaBuilder.createCriteriaUpdate(typeParameterClass);
+            Root<Account> rootAccount = criteriaAccountUpdate.from(typeParameterClass);
 
+            criteriaAccountUpdate
+                    .set(rootAccount.get(Account_.NICKNAME), entity.getNickname())
+                    .set(rootAccount.get(Account_.ROLE), entity.getRole())
+                    .where(criteriaBuilder.equal(rootAccount.get(AEntity_.ID), entity.getId()));
+
+            entityManager.createQuery(criteriaAccountUpdate).executeUpdate();
+        } catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+    }
+
+    public void addSavedAlbum(Long accountId, Album album){
+        try {
+            //TODO вынести в отдельный метод
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.SAVED_ALBUMS);
+            query
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(root.get(Account_.ID), accountId)
+                    );
+
+            Account account = entityManager.createQuery(query).getSingleResult();
+
+            if(!account.getSavedAlbums().contains(album)) {
+                account.getSavedAlbums().add(album);
+            }
+            else{
+                throw new RuntimeException("У пользователя этот альбом уже сохранён");
+            }
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+    }
+
+    public void removeSavedAlbum(Long accountId, Album album){
+        try {
+            //TODO вынести в отдельный метод
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.SAVED_ALBUMS);
+            query
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(root.get(Account_.ID), accountId)
+                    );
+
+            Account account = entityManager.createQuery(query).getSingleResult();
+
+            if(account.getSavedAlbums().contains(album)) {
+                account.getSavedAlbums().remove(album);
+            }
+            else{
+                throw new RuntimeException("У пользователя этот альбом не сохранён");
+            }
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+    }
+
+    public Set<Album> findSavedAlbumsById(Long id){
+        try {
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.SAVED_ALBUMS);
+
+            query.select(root)
+                    .where(criteriaBuilder.equal(root.get(Account_.ID), id));
+
+            return entityManager.createQuery(query).getSingleResult().getSavedAlbums();
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+    }
+
+    public Set<Album> findCreatedAlbumsById(Long id){
+        try {
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.CREATED_ALBUMS);
+
+            query.select(root)
+                    .where(criteriaBuilder.equal(root.get(Account_.ID), id));
+
+            return entityManager.createQuery(query).getSingleResult().getCreatedAlbums();
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
+    }
 }
