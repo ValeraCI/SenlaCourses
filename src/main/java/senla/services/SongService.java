@@ -38,7 +38,7 @@ public class SongService{
     }
 
     @Transactional
-    public void add(SongCreateDto songCreateDto){
+    public void save(SongCreateDto songCreateDto){
         Song song = new Song();
         List<Account> authors = new ArrayList<>();
 
@@ -66,8 +66,7 @@ public class SongService{
         SongInfoDto songInfoDto = new SongInfoDto();
 
         Song song = songDao.findById(id);
-
-        songInfoDto.setId(song.getId());
+        songInfoDto.setId(id);
         songInfoDto.setTitle(song.getTitle());
         List<String> authorsNicknames = new ArrayList<>();
         for (Account author: song.getAuthors()) {

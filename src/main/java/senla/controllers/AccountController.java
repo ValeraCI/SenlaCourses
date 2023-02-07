@@ -6,11 +6,9 @@ import senla.annotations.Loggable;
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.models.Album;
 import senla.services.AccountService;
 import senla.util.Json;
 
-import java.util.List;
 import java.util.Set;
 
 

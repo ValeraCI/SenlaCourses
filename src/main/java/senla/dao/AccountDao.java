@@ -5,9 +5,9 @@ import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
+import senla.exceptions.DataChangesException;
 import senla.models.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -64,26 +64,29 @@ public class AccountDao extends AbstractDao<Account, Long> {
         }
     }
 
+    private Account findAccountWithSavedAlbumsById(Long id){
+        CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+
+        Root<Account> root = query.from(typeParameterClass);
+        root.fetch(Account_.SAVED_ALBUMS);
+        query
+                .select(root)
+                .where(criteriaBuilder
+                        .equal(root.get(Account_.ID), id)
+                );
+
+        return entityManager.createQuery(query).getSingleResult();
+    }
+
     public void addSavedAlbum(Long accountId, Album album){
         try {
-            //TODO вынести в отдельный метод
-            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
-
-            Root<Account> root = query.from(typeParameterClass);
-            root.fetch(Account_.SAVED_ALBUMS);
-            query
-                    .select(root)
-                    .where(criteriaBuilder
-                            .equal(root.get(Account_.ID), accountId)
-                    );
-
-            Account account = entityManager.createQuery(query).getSingleResult();
+            Account account = findAccountWithSavedAlbumsById(accountId);
 
             if(!account.getSavedAlbums().contains(album)) {
                 account.getSavedAlbums().add(album);
             }
             else{
-                throw new RuntimeException("У пользователя этот альбом уже сохранён");
+                throw new DataChangesException("У пользователя этот альбом уже сохранён");
             }
         }catch (Exception e){
             throw new DataBaseWorkException(e);
@@ -92,24 +95,13 @@ public class AccountDao extends AbstractDao<Account, Long> {
 
     public void removeSavedAlbum(Long accountId, Album album){
         try {
-            //TODO вынести в отдельный метод
-            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
-
-            Root<Account> root = query.from(typeParameterClass);
-            root.fetch(Account_.SAVED_ALBUMS);
-            query
-                    .select(root)
-                    .where(criteriaBuilder
-                            .equal(root.get(Account_.ID), accountId)
-                    );
-
-            Account account = entityManager.createQuery(query).getSingleResult();
+            Account account = findAccountWithSavedAlbumsById(accountId);
 
             if(account.getSavedAlbums().contains(album)) {
                 account.getSavedAlbums().remove(album);
             }
             else{
-                throw new RuntimeException("У пользователя этот альбом не сохранён");
+                throw new DataChangesException("У пользователя этот альбом не сохранён");
             }
         }catch (Exception e){
             throw new DataBaseWorkException(e);
@@ -135,12 +127,14 @@ public class AccountDao extends AbstractDao<Account, Long> {
         try {
             CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
             Root<Account> root = query.from(typeParameterClass);
-            root.fetch(Account_.CREATED_ALBUMS);
+            root.fetch(Account_.CREATED_ALBUMS, JoinType.LEFT);
 
             query.select(root)
                     .where(criteriaBuilder.equal(root.get(Account_.ID), id));
 
-            return entityManager.createQuery(query).getSingleResult().getCreatedAlbums();
+            Account account = entityManager.createQuery(query).getSingleResult();
+
+            return account.getCreatedAlbums();
         }catch (Exception e){
             throw new DataBaseWorkException(e);
         }

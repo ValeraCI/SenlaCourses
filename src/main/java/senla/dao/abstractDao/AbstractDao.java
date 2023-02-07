@@ -24,12 +24,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public Long save(T entity) {
         try {
             entityManager.persist(entity);
+            return entity.getId();
         }
         catch (Exception e){
             throw new DataBaseWorkException(e);
         }
-
-        return entity.getId();
     }
 
     @Override

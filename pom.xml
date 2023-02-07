@@ -147,10 +147,6 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-
-            <resource>
-                <directory>src/tests/resources</directory>
-            </resource>
         </resources>
     </build>
 

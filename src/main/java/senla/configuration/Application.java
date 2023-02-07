@@ -6,7 +6,6 @@ import org.springframework.context.annotation.*;
 
 @Configuration
 @ComponentScan("senla")
-@PropertySource("application.properties")
 @EnableAspectJAutoProxy
 @Import(DaoConfiguration.class)
 public class Application {

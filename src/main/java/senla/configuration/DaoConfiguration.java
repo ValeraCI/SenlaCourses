@@ -3,7 +3,6 @@ package senla.configuration;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import liquibase.integration.spring.SpringLiquibase;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +47,7 @@ public class DaoConfiguration {
     }
 
 
-    // Конфигурируем адаптер поставщика jpa (см. Реальный бой p320)
+    // Конфигурируем адаптер поставщика jpa
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();

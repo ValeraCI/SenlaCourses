@@ -79,19 +79,10 @@ public class AccountService {
         loginDetailsDao.update(loginDetails);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deleteById(long id){
-        accountDao.deleteById(id);
-    }
-
-    @Transactional
-    public Set<AlbumInfoDto> getSavedAlbumsById(Long id){
-        Set<Album> savedAlbums = accountDao.findSavedAlbumsById(id);
+    private Set<AlbumInfoDto> albumSerToAlbumInfoDtoSet(Set<Album> albums){
         Set<AlbumInfoDto> savedAlbumsInfoDto = new HashSet<>();
 
-        //TODO вынести парсинг в отдельный метод
-
-        for (Album album: savedAlbums) {
+        for (Album album: albums) {
             AlbumInfoDto albumInfoDto = new AlbumInfoDto();
             albumInfoDto.setId(album.getId());
             albumInfoDto.setTitle(album.getTitle());
@@ -100,6 +91,17 @@ public class AccountService {
         }
 
         return savedAlbumsInfoDto;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteById(long id){
+        accountDao.deleteById(id);
+    }
+
+    @Transactional
+    public Set<AlbumInfoDto> getSavedAlbumsById(Long id){
+        Set<Album> savedAlbums = accountDao.findSavedAlbumsById(id);
+        return albumSerToAlbumInfoDtoSet(savedAlbums);
     }
 
     @Transactional
@@ -119,18 +121,7 @@ public class AccountService {
     @Transactional
     public Set<AlbumInfoDto> findCreatedAlbumsById(Long id){
         Set<Album> createdAlbums = accountDao.findCreatedAlbumsById(id);
-        Set<AlbumInfoDto> createdAlbumsInfoDto = new HashSet<>();
 
-        //TODO вынести парсинг в отдельный метод
-
-        for (Album album: createdAlbums) {
-            AlbumInfoDto albumInfoDto = new AlbumInfoDto();
-            albumInfoDto.setId(album.getId());
-            albumInfoDto.setTitle(album.getTitle());
-
-            createdAlbumsInfoDto.add(albumInfoDto);
-        }
-
-        return createdAlbumsInfoDto;
+        return albumSerToAlbumInfoDtoSet(createdAlbums);
     }
 }

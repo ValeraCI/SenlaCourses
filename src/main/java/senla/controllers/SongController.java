@@ -17,7 +17,7 @@ public class SongController {
     @Loggable
     public void add(String jsonSongCreateDto){
         SongCreateDto songCreateDto = json.deserialize(jsonSongCreateDto, SongCreateDto.class);
-        songService.add(songCreateDto);
+        songService.save(songCreateDto);
     }
 
     @Loggable
