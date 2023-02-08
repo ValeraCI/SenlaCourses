@@ -1,18 +1,46 @@
 package senla.models;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
-public class Album {
-    private final long id;
+@NoArgsConstructor
+@Entity
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "album-only-entity-graph"),
+        @NamedEntityGraph(name = "album-songsIn-entity-graph",
+                attributeNodes = {@NamedAttributeNode("songsIn")})
+})
+@Table(name = "albums")
+public class Album extends AEntity{
+    @Setter
+    @Column(name = "title")
     private String title;
-    private final Date createDate;
-    private final List<Song> songsIn;
-    private final Account creator;
-    private final List<Account> savedFrom;
+
+    @Setter
+    @Column(name = "create_date")
+    private LocalDate createDate;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private Account creator;
+
+    @ManyToMany(mappedBy = "savedAlbums")
+    private Set<Account> savedFrom;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "songs_in_albums",
+            joinColumns = @JoinColumn(name = "album_id"),
+            inverseJoinColumns = @JoinColumn(name = "song_id")
+    )
+    private Set<Song> songsIn;
 }

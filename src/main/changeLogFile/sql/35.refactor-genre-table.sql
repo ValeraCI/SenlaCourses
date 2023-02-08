@@ -1,1 +1,0 @@
-ALTER TABLE genre RENAME TO genres;

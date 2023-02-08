@@ -1,1 +1,0 @@
-ALTER TABLE email_password RENAME TO login_details;

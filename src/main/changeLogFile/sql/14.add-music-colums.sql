@@ -1,9 +1,0 @@
-insert into music(title, genre_id) values ('Лиза', 1);
-insert into music(title, genre_id) values ('TEASER', 2);
-insert into music(title, genre_id) values ('UGU', 2);
-insert into music(title, genre_id) values ('B', 2);
-insert into music(title, genre_id) values ('KATRINA', 2);
-insert into music(title, genre_id) values ('цветы', 1);
-insert into music(title, genre_id) values ('SAD!', 2);
-insert into music(title, genre_id) values ('NUMB', 2);
-insert into music(title, genre_id) values ('Hope', 2);

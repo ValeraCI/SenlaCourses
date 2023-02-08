@@ -1,0 +1,76 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="Valera Cidik" id="06.insert-accounts">
+        <insert tableName="accounts">
+            <column name="nickname" value="Valerix"/>
+            <column name="registration_date" value="2022-12-29"/>
+            <column name="role_id" value="1"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="MaJIeHkuu_Ho_BeJIuKuu"/>
+            <column name="registration_date" value="2022-12-30"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="N.E.O.N"/>
+            <column name="registration_date" value="2022-12-30"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="W1zarD"/>
+            <column name="registration_date" value="2022-12-30"/>
+            <column name="role_id" value="2"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="Tester228"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="MORGENSHTERN"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="XXXTENTCION"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="Lida"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="Максим"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <insert tableName="accounts">
+            <column name="nickname" value="Алиса"/>
+            <column name="registration_date" value="2022-12-31"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="accounts"/>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

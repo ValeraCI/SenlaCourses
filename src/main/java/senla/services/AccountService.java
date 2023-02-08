@@ -1,55 +1,75 @@
 package senla.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
-import senla.dto.*;
-import senla.annotations.Transaction;
+import senla.dao.LoginDetailsDao;
+import senla.dao.RoleDao;
+import senla.dto.account.AccountDataDto;
+import senla.dto.account.AccountDto;
+import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.AccountWithLoginDetailsDto;
+import senla.models.Account;
+import senla.models.LoginDetails;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class AccountService {
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
+    private final LoginDetailsDao loginDetailsDao;
+    private final RoleDao roleDao;
 
-    @Autowired
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
+    public Long save(AccountDataDto accountDataDto){
+        Account account = new Account();
+        account.setNickname(accountDataDto.getNickname());
+        LoginDetails loginDetails =
+                new LoginDetails(account, accountDataDto.getEmail(), accountDataDto.getPassword());
+        account.setLoginDetails(loginDetails);
+        account.setRegistrationDate(LocalDate.now());
+        account.setRole(roleDao.findById(3L));
+        return accountDao.save(account);
     }
 
-    @Transaction
-    public void add(CreateAccountDataDto createAccountDataDto){
-        CreateAccountDto createAccountDto = new CreateAccountDto(createAccountDataDto.getNickname(), new Date());
+    public AccountMainDataDto getAccountDtoById(Long id) {
+       Account account = accountDao.findById(id);
+       AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
+       accountMainDataDto.setId(account.getId());
+       accountMainDataDto.setNickname(account.getNickname());
+       accountMainDataDto.setRoleTitle(account.getRole().getRoleTitle().toString());
 
-        long id = accountDao.addAccount(createAccountDto);
-        CreateLoginDetailsDto loginDetailsDto = new CreateLoginDetailsDto(id, createAccountDataDto.getEmail(),
-                createAccountDataDto.getPassword());
-        accountDao.addLoginDetails(loginDetailsDto);
+       return accountMainDataDto;
     }
 
+    public AccountWithLoginDetailsDto getAccountWithLoginDetailsDtoByEmail(String email){
+        Account account = accountDao.findByEmail(email);
+        AccountWithLoginDetailsDto accountWithLoginDetailsDto = new AccountWithLoginDetailsDto();
 
-    @Transaction
-    public AccountDto getAccountDtoById(long id) {
-        return accountDao.getAccountDtoById(id);
+        accountWithLoginDetailsDto.setEmail(email);
+        accountWithLoginDetailsDto.setNickname(account.getNickname());
+        accountWithLoginDetailsDto.setId(account.getId());
+        accountWithLoginDetailsDto.setRole(account.getRole().getRoleTitle());
+        accountWithLoginDetailsDto.setPassword(account.getLoginDetails().getPassword());
+
+        return accountWithLoginDetailsDto;
     }
 
-    @Transaction
-    public AccountWithLoginDetailsDto getAccountWithLoginDetailsDtoByEmail(String email) {
-        return accountDao.getAccountWithLoginDetailsDtoByEmail(email);
+    public void updateData(AccountDto accountDto){
+        Account account = new Account();
+        account.setId(accountDto.getId());
+        account.setNickname(accountDto.getNickname());
+        account.setRole(roleDao.findById(accountDto.getRoleId()));
+        accountDao.update(account);
+
+        LoginDetails loginDetails =
+                new LoginDetails(account, null, accountDto.getPassword());
+        loginDetailsDao.update(loginDetails);
     }
 
-    @Transaction
-    public void updateData(UpdateAccountDto updateAccountDto){
-        accountDao.update(updateAccountDto);
-    }
-
-    @Transaction
-    public void updatePassword(long id, String password){
-        accountDao.updatePasswordById(id, password);
-    }
-
-    @Transaction
-    public void deleteById(long accountId){
-      accountDao.deleteById(accountId);
+    public void deleteById(long id){
+        accountDao.deleteById(id);
     }
 }

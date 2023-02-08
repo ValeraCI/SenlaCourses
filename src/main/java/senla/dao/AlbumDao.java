@@ -1,30 +1,66 @@
 package senla.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
-import senla.models.Album;
-import senla.models.Song;
+import senla.dao.abstractDao.AbstractDao;
+import senla.exceptions.DataBaseWorkException;
+import senla.models.*;
+import java.util.List;
 
 @Repository
-public class AlbumDao {
-    //Домашнее задание требовало реализации одного репозитория, по этому этот пустой
+public class AlbumDao extends AbstractDao<Album, Long> {
 
-    public Album getAlbumById(long id){
-        return null;
+    public AlbumDao(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
+        super(Album.class, entityManager, criteriaBuilder);
     }
 
-    public void add(Album album){
+    public List<Album> findByTitle(String title) {
+        try {
+            CriteriaQuery<Album> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Album> root = criteriaQuery.from(typeParameterClass);
+            root.fetch(Album_.SONGS_IN, JoinType.LEFT);
 
+            criteriaQuery
+                    .select(root)
+                    .where(criteriaBuilder
+                            .like(root.get(Album_.TITLE), "%" + title + "%")
+                    );
+
+            return entityManager.createQuery(criteriaQuery).getResultList();
+        }
+        catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
     }
 
-    public void delete(long id){
+    public List<Album> findSavedFromByAccountId(Long id){
+        try {
+            CriteriaQuery<Album> query = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Album> root = query.from(typeParameterClass);
+            Join<Album, Account> join = root.join(Album_.SAVED_FROM, JoinType.RIGHT);
 
+            query.select(root)
+                    .where(criteriaBuilder.equal(join.get(Account_.ID), id));
+
+            return entityManager.createQuery(query).getResultList();
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
     }
 
-    public void addSongsIn(long id, Song song){
+    public List<Album> findCreatedFromAccountId(Long id){
+        try {
+            CriteriaQuery<Album> query = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Album> root = query.from(typeParameterClass);
+            Join<Album, Account> join = root.join(Album_.CREATOR, JoinType.RIGHT);
 
-    }
+            query.select(root)
+                    .where(criteriaBuilder.equal(join.get(Account_.ID), id));
 
-    public void removeSongsIn(long id, Song song){
-
+            return entityManager.createQuery(query).getResultList();
+        }catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
     }
 }

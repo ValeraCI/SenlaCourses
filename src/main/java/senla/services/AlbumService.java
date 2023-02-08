@@ -1,36 +1,70 @@
 package senla.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
-import senla.dto.AlbumDto;
+import senla.dao.SongDao;
+import senla.dto.album.AlbumCreateDto;
+import senla.dto.album.AlbumInfoDto;
+import senla.exceptions.DataChangesException;
+import senla.models.Account;
 import senla.models.Album;
+import senla.models.Song;
+
+import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class AlbumService {
 
-    private AlbumDao albumDao;
+    private final AlbumDao albumDao;
+    private final AccountDao accountDao;
+    private final SongDao songDao;
 
-    @Autowired
-    public void setAlbumDao(AlbumDao albumDao) {
-        this.albumDao = albumDao;
+    public Long save(AlbumCreateDto albumDto){
+        Album album = new Album();
+        album.setTitle(albumDto.getTitle());
+        Account account = accountDao.findById(albumDto.getCreatorId());
+        album.setCreator(account);
+        album.setCreateDate(LocalDate.now());
+        account.getCreatedAlbums().add(album);
+
+        return albumDao.save(album);
     }
 
-    public void add(AlbumDto albumDto){
-
+    public AlbumInfoDto findAlbumInfoDtoById(Long id) {
+        Album album = albumDao.findById(id);
+        return new AlbumInfoDto(id, album.getTitle());
     }
 
-    public Album getAlbumById(long id) {
-       return albumDao.getAlbumById(id);
+    public void deleteById(Long id){
+        albumDao.deleteById(id);
     }
 
-    public AlbumDto getAlbumDtoById(long id) {
-        Album album = getAlbumById(id);
-        AlbumDto albumDto = new AlbumDto(id, album.getTitle(), album.getSongsIn().size(), album.getCreator().getId());
-        return albumDto;
+    public void addSongIn(Long albumId, Long songId){
+        Song song = songDao.findById(songId);
+        Album album = albumDao.findById(albumId);
+
+        if(!album.getSongsIn().contains(song)){
+            album.getSongsIn().add(song);
+        }
+        else {
+            throw new DataChangesException("Альбом уже содержит такую песню");
+        }
     }
 
-    public void deleteById(long id){
-        albumDao.delete(id);
+    public void removeSongIn(Long albumId, Long songId){
+        Song song = songDao.findById(songId);
+        Album album = albumDao.findById(albumId);
+
+        if(album.getSongsIn().contains(song)){
+            album.getSongsIn().remove(song);
+        }
+        else {
+            throw new DataChangesException("Альбом не содержит такую песню");
+        }
     }
 }

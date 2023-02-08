@@ -6,160 +6,54 @@
    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
       http://www.liquibase.org/xml/ns/pro 
-      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd"
-      logicalFilePath="homework-2">  
-    
-    
-    
-    <changeSet id="homework-2-account" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/01.create-account-tabel.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-43.1.xsd"
+      logicalFilePath="homework-2">
 
-    <changeSet id="homework-2-add-account-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/02.add-account-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <preConditions>
+        <or>
+            <dbms  type="h2"/>
+            <dbms  type="postgresql"/>
+        </or>
+    </preConditions>
 
-    <changeSet id="homework-2-email_password" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/03.create-email_password-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/01.create-roles-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/02.create-roles-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/03.insert-roles.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-email_password-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/04.create-email_password-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/04.create-accounts-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/05.create-accounts-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/06.insert-accounts.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-add-email_password-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/05.add-email_password-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/07.create-login_details-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/08.create-login_details-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/09.insert-login_details.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-album" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/06.create-album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/10.create-albums-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/11.create-albums-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/12.insert-albums.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-album-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/07.create-album-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/13.create-genres-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/14.create-genres-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/15.insert-genres.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-add-album-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/08.add-album-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/16.create-songs-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/17.create-songs-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/18.insert-songs.xml" relativeToChangelogFile="true"/>
 
-     <changeSet id="homework-2-genre" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/09.create-genre-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/19.create-authors-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/20.create-authors-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/21.insert-authors.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-genre-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/10.create-genre-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/22.create-songs_in_albums-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/23.create-songs_in_albums-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/24.insert-songs_in_albums.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-add-genre-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/11.add-genre-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/25.create-saved_albums-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/26.create-saved_albums-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/27.insert-saved_albums.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-music" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/12.create-music-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
+    <include file="xml/28.create-locations-table.xml" relativeToChangelogFile="true"/>
+    <include file="xml/29.create-locations-index.xml" relativeToChangelogFile="true"/>
+    <include file="xml/30.insert-locations.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="homework-2-music-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/13.create-music-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-add-music-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/14.add-music-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-author" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/15.create-author-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-author-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/16.create-author-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-add-author-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/17.add-author-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-music_in_album" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/18.create-music_in_album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-music_in_album-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/19.create-music_in_album-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-add-music_in_album-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/20.add-music_in_album-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-saved_album" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/21.create-saved_album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-  
-    <changeSet id="homework-2-saved_album-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/22.create-saved_album-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-add-saved_album-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/23.add-saved_album-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-location" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/24.create-location-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-add-location-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/25.add-location-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
- 
-    <changeSet id="homework-2-roles" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/26.create-roles-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-	
-    <changeSet id="homework-2-add-roles-column" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/27.add-roles-colums.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-account-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/28.refactor-account-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-accounts-index" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/29.create-accounts-index.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-saved_album-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/30.refactor-saved_album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-music-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/31.refactor-music-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-album-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/32.refactor-album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-music_in_album-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/33.refactor-music_in_album-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
- 
-    <changeSet id="homework-2-refactor-author-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/34.refactor-author-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-genre-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/35.refactor-genre-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-email_password-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/36.refactor-email_password-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-2-refactor-location-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/37.refactor-location-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="homework-5-refactor-login_details-table" author="Valera Cidik">
-        <sqlFile encoding="utf8" path="./sql/38.refactor-login_details-table.sql" relativeToChangelogFile="true"/>
-    </changeSet>
 </databaseChangeLog> 
