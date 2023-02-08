@@ -15,6 +15,11 @@
         <createIndex indexName="index_genre_title" tableName="genres">
             <column name="title"/>
         </createIndex>
+
+        <rollback>
+            <dropIndex indexName="index_genre_id" tableName="genres"/>
+            <dropIndex indexName="index_genre_title" tableName="genres"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

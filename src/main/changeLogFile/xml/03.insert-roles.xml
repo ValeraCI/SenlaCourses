@@ -17,5 +17,9 @@
         <insert tableName="roles">
             <column name="title" value="USER"/>
         </insert>
+
+        <rollback>
+            <delete tableName="roles"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -16,5 +16,9 @@
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="roles"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

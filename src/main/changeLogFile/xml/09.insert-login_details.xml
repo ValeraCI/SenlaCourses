@@ -67,5 +67,9 @@
             <column name="email" value="AlicaPopersik@gmail.com"/>
             <column name="password" value="sffe5s568_fsef"/>
         </insert>
+
+        <rollback>
+            <delete tableName="login_details"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

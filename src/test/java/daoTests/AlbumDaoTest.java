@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
+import senla.exceptions.DataBaseWorkException;
 import senla.models.Album;
-import senla.models.Song;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -33,43 +33,77 @@ public class AlbumDaoTest {
         Album album = new Album();
 
         album.setTitle("TestAlbum");
-        album.setCreateDate(new Date());
+        album.setCreateDate(LocalDate.now());
         album.setCreator(accountDao.findById(1L));
 
         return album;
     }
 
     @Test
-    public void CRUDMethods(){
-        Album album = createAlbum();
+    public void findByIdTest(){
+        Album album = albumDao.findById(1L);
 
-        albumDao.save(album);
-
-        Album daoAlbum = albumDao.findByTitle(album.getTitle()).get(0);
-        Assert.assertEquals(daoAlbum.getTitle(), album.getTitle());
-
-        daoAlbum.setTitle("TestAlbum123123213213123123");
-        albumDao.update(daoAlbum);
-
-        daoAlbum = albumDao.findByTitle("TestAlbum123123213213123123").get(0);
-        Assert.assertEquals(daoAlbum.getTitle(), "TestAlbum123123213213123123");
-
-        albumDao.deleteById(daoAlbum.getId());
+        Assert.assertEquals("?", album.getTitle());
+        Assert.assertEquals(1L, album.getId());
     }
 
     @Test
-    public void operationsWithSongIn(){
-        List<Song> songsIn = albumDao.getSongsIn(1L);
-        songsIn.stream().forEach(s -> System.out.println(s.getTitle()));
-        Song song = songsIn.get(0);
+    public void findByTitleTest(){
+        List<Album> albums = albumDao.findByTitle("?");
 
-        albumDao.removeSongIn(1L, song);
-        songsIn = albumDao.getSongsIn(1L);
-        songsIn.stream().forEach(s -> System.out.println(s.getTitle()));
+        Album album = albums.stream().filter(a -> a.getId() == 1).findFirst().get();
 
-
-        albumDao.addSongIn(1L, song);
-        songsIn = albumDao.getSongsIn(1L);
-        songsIn.stream().forEach(s -> System.out.println(s.getTitle()));
+        Assert.assertEquals("?", album.getTitle());
+        Assert.assertEquals(7L, album.getCreator().getId());
+        Assert.assertEquals(1L, album.getId());
     }
+
+    @Test
+    public void findAllTest(){
+        List<Album> albums = albumDao.findAll();
+
+        for(int i = 0; i < albums.size(); i++){
+            Assert.assertEquals(albums.get(i).getTitle(), albumDao.findById(i+1L).getTitle());
+        }
+    }
+
+    @Test
+    public void saveTest(){
+        Album album = createAlbum();
+
+        Long index = albumDao.save(album);
+        album = albumDao.findById(index);
+
+        Assert.assertEquals("TestAlbum", album.getTitle());
+        Assert.assertEquals(1L, album.getCreator().getId());
+    }
+
+    @Test
+    public void updateTest(){
+        Album album = albumDao.findById(2L);
+        Assert.assertEquals("LAST ONE", album.getTitle());
+
+        album.setTitle("LAST TWO");
+        albumDao.update(album);
+
+        album = albumDao.findById(2L);
+        Assert.assertEquals("LAST TWO", album.getTitle());
+    }
+
+    @Test(expected = DataBaseWorkException.class)
+    public void deleteByIdTest(){
+        albumDao.deleteById(4L);
+        Album album = albumDao.findById(4L);
+    }
+
+    @Test
+    public void findSavedFromByAccountIdTest(){
+        albumDao.findSavedFromByAccountId(1L).stream().forEach(System.out::println);
+    }
+
+    @Test
+    public void findSavedFromByAccountId(){
+        albumDao.findSavedFromByAccountId(1L).stream().forEach(System.out::println);
+    }
+
 }

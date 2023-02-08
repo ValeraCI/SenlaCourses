@@ -19,5 +19,9 @@
                 <constraints nullable="false" foreignKeyName="songs_genre_id_FK" references="genres(id)"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="songs"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

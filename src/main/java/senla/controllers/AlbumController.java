@@ -38,9 +38,4 @@ public class AlbumController {
     public void removeSongIn(Long albumId, Long songId){
         albumService.removeSongIn(albumId, songId);
     }
-
-    @Loggable
-    private String getSongsIn(Long id){
-        return json.serialize(albumService.findSongsIn(id));
-    }
 }

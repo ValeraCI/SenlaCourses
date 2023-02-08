@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
@@ -26,12 +26,15 @@ public class Album extends AEntity{
 
     @Setter
     @Column(name = "create_date")
-    private Date createDate;
+    private LocalDate createDate;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private Account creator;
+
+    @ManyToMany(mappedBy = "savedAlbums")
+    private Set<Account> savedFrom;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -39,5 +42,5 @@ public class Album extends AEntity{
             joinColumns = @JoinColumn(name = "album_id"),
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
-    private List<Song> songsIn;
+    private Set<Song> songsIn;
 }

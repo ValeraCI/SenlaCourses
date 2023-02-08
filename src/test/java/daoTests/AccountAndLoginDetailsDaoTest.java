@@ -11,12 +11,12 @@ import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.LoginDetailsDao;
 import senla.dao.RoleDao;
+import senla.exceptions.DataBaseWorkException;
 import senla.models.Account;
-import senla.models.Album;
 import senla.models.LoginDetails;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.List;
+import java.time.LocalDate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -34,59 +34,80 @@ public class AccountAndLoginDetailsDaoTest {
     private Account createAccount(){
         Account account = new Account();
 
-        account.setNickname("Tester7899877");
-        account.setRegistrationDate(new Date());
+        account.setNickname("Tester");
+        account.setRegistrationDate(LocalDate.now());
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
         account.setRole(roleDao.findById(3L));
         return account;
     }
 
     @Test
-    public void CRUDMethods(){
-        Account account = createAccount();
+    public void findByIdTest(){
+        Account account = accountDao.findById(1L);
 
-        accountDao.save(account);
-        loginDetailsDao.save(account.getLoginDetails());
-
-        Account daoAccount = accountDao.findByEmail(account.getLoginDetails().getEmail());
-        Assert.assertEquals(account.getNickname(), daoAccount.getNickname());
-        daoAccount.setNickname("Tester7899877");
-        accountDao.update(daoAccount);
-        daoAccount = accountDao.findByEmail(account.getLoginDetails().getEmail());
-        Assert.assertEquals("Tester7899877", daoAccount.getNickname());
-
-        accountDao.deleteById(daoAccount.getId());
+        Assert.assertEquals("Valerix", account.getNickname());
+        Assert.assertEquals(1L, account.getRole().getId());
     }
 
     @Test
-    public void updatePassword(){
+    public void findByEmailTest(){
+        Account account = accountDao.findByEmail("cidikvalera@gmail.com");
+
+        Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
+        Assert.assertEquals("Valerix", account.getNickname());
+        Assert.assertEquals(1L, account.getRole().getId());
+    }
+
+    @Test
+    public void findAllTest(){
+       List<Account> accounts = accountDao.findAll();
+
+       for(int i = 0; i < accounts.size(); i++){
+          Assert.assertEquals(accounts.get(i).getNickname(), accountDao.findById(i+1L).getNickname());
+       }
+    }
+
+    @Test
+    public void saveTest(){
+        Account account = createAccount();
+
+        Long index = accountDao.save(account);
+        account = accountDao.findById(index);
+
+        Assert.assertEquals("test@mail.ru", account.getLoginDetails().getEmail());
+        Assert.assertEquals("Tester", account.getNickname());
+        Assert.assertEquals(3L, account.getRole().getId());
+    }
+
+    @Test
+    public void updateTest(){
+        Account account = accountDao.findById(2L);
+        Assert.assertEquals("MaJIeHkuu_Ho_BeJIuKuu", account.getNickname());
+
+        account.setNickname("MaJIeHkuu_u_He_BeJIuKuu");
+        accountDao.update(account);
+
+        account = accountDao.findById(2L);
+        Assert.assertEquals("MaJIeHkuu_u_He_BeJIuKuu", account.getNickname());
+    }
+
+    @Test
+    public void updatePasswordTest(){
         Account account = accountDao.findById(1L);
         account.getLoginDetails().setPassword("123456");
         loginDetailsDao.update(account.getLoginDetails());
 
-        LoginDetails daoLoginDetails = accountDao.findById(account.getId()).getLoginDetails();
+        account = accountDao.findById(1L);
 
-        Assert.assertEquals("123456", daoLoginDetails.getPassword());
+        Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
+        Assert.assertEquals("Valerix", account.getNickname());
+        Assert.assertEquals(1, account.getRole().getId());
+        Assert.assertEquals("123456", account.getLoginDetails().getPassword());
     }
 
-    @Test
-    public void operationsWithSavedAlbums(){
-        Set<Album> savedAlbums = accountDao.findSavedAlbumsById(1L);
-        int albumsSize = savedAlbums.size();
-        Album album = savedAlbums.stream().findFirst().get();
-
-        accountDao.removeSavedAlbum(1L, album);
-
-        Assert.assertEquals(albumsSize-1, accountDao.findSavedAlbumsById(1L).size());
-
-        accountDao.addSavedAlbum(1L, album);
-
-        Assert.assertEquals(albumsSize, accountDao.findSavedAlbumsById(1L).size());
-    }
-
-    @Test
-    public void getCreatedAlbums(){
-        Set<Album> createdAlbums = accountDao.findCreatedAlbumsById(1L);
-        createdAlbums.stream().forEach(a -> System.out.println(a.getTitle()));
+    @Test(expected = DataBaseWorkException.class)
+    public void deleteByIdTest(){
+        accountDao.deleteById(3L);
+        Account account = accountDao.findById(3L);
     }
 }

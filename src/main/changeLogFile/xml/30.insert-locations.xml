@@ -53,5 +53,8 @@
             <column name="path" value=".\music\XXXTENTCION\?\Hope.mp3"/>
         </insert>
 
+        <rollback>
+            <delete tableName="locations"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

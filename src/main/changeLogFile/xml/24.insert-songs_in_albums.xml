@@ -53,5 +53,8 @@
             <column name="album_id" value="1"/>
         </insert>
 
+        <rollback>
+            <delete tableName="songs_in_albums"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

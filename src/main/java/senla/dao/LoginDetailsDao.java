@@ -30,13 +30,4 @@ public class LoginDetailsDao {
             throw new DataBaseWorkException(e);
         }
     }
-
-    public Long save(LoginDetails loginDetails) {
-        try {
-            entityManager.persist(loginDetails);
-            return loginDetails.getAccount().getId();
-        } catch (Exception e){
-            throw new DataBaseWorkException(e);
-        }
-    }
 }

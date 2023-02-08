@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,7 +30,10 @@ public class Song extends AEntity{
     @ManyToMany(mappedBy = "songsPerformed", fetch = FetchType.LAZY)
     private List<Account> authors;
 
-    @OneToOne(mappedBy = "song", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "song", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Location location;
+
+    @ManyToMany(mappedBy = "songsIn")
+    private Set<Album> containedIn;
 
 }

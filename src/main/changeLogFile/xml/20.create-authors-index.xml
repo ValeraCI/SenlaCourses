@@ -15,6 +15,11 @@
         <createIndex indexName="index_authors_song_id" tableName="authors">
             <column name="song_id"/>
         </createIndex>
+
+        <rollback>
+            <dropIndex indexName="index_authors_account_id" tableName="authors"/>
+            <dropIndex indexName="index_authors_song_id" tableName="authors"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

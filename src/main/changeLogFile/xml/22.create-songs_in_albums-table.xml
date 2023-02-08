@@ -23,5 +23,9 @@
                 columnNames="song_id, album_id"
                 constraintName="songs_in_albums_PK"
                 tableName="songs_in_albums"/>
+
+        <rollback>
+            <dropTable tableName="songs_in_albums"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

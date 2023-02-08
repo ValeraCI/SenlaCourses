@@ -35,6 +35,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public void update(T entity) {
         try {
             entityManager.merge(entity);
+            entityManager.flush();
         }
         catch (Exception e){
             throw new DataBaseWorkException(e);
@@ -47,8 +48,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(typeParameterClass);
             Root<T> root = criteriaDelete.from(typeParameterClass);
             criteriaDelete.where(criteriaBuilder.equal(root.get(AEntity_.ID), id));
-
             entityManager.createQuery(criteriaDelete).executeUpdate();
+            entityManager.flush();
         }
         catch (Exception e){
             throw new DataBaseWorkException(e);

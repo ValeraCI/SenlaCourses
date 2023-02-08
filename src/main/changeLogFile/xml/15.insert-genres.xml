@@ -55,5 +55,9 @@
         <insert tableName="genres">
             <column name="title" value="SPIRITUAL"/>
         </insert>
+
+        <rollback>
+            <delete tableName="genres"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

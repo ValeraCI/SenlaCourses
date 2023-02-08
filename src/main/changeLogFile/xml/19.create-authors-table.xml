@@ -23,5 +23,9 @@
                 columnNames="song_id, account_id"
                 constraintName="authors_PK"
                 tableName="authors"/>
+
+        <rollback>
+            <dropTable tableName="authors"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

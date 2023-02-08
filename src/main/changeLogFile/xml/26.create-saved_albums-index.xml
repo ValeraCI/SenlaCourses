@@ -15,6 +15,11 @@
         <createIndex indexName="index_saved_albums_album_id" tableName="saved_albums">
             <column name="album_id"/>
         </createIndex>
+
+        <rollback>
+            <dropIndex indexName="index_saved_albums_account_id" tableName="saved_albums"/>
+            <dropIndex indexName="index_saved_albums_album_id" tableName="saved_albums"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

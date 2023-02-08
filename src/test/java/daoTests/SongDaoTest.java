@@ -38,7 +38,7 @@ public class SongDaoTest {
         Song song = new Song();
 
         song.setTitle("TestSong");
-        song.setGenre(genreDao.findById(1L));
+        song.setGenre(genreDao.findById(2L));
         Location location = new Location(song, "./somePath");
         song.setLocation(location);
         song.setAuthors(new ArrayList(Arrays.asList(accountDao.findById(1L))));
@@ -46,24 +46,82 @@ public class SongDaoTest {
     }
 
     @Test
-    public void CRUDMethods(){
-        Song song = createSong();
+    public void findByIdTest(){
+        Song song = songDao.findById(1L);
 
-        Song daoSong = songDao.findById(songDao.save(song));
-        Assert.assertEquals(daoSong.getTitle(), song.getTitle());
-
-        daoSong.setTitle("TestSong1");
-        songDao.update(daoSong);
-
-        daoSong = songDao.findByTitle("TestSong1").get(0);
-        Assert.assertEquals(daoSong.getTitle(), "TestSong1");
-
-        songDao.deleteById(daoSong.getId());
+        Assert.assertEquals("Лиза", song.getTitle());
+        Assert.assertEquals(1L, song.getId());
     }
 
     @Test
-    public void findByGenre(){
-        List<Song> songList = songDao.findByGenre(genreDao.findById(1L));
-        songList.stream().forEach(s -> System.out.println(s.getTitle()));
+    public void findByTitleTest(){
+        List<Song> songs = songDao.findByTitle("Лиза");
+
+        Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
+
+        Assert.assertEquals("Лиза", song.getTitle());
+        Assert.assertEquals(1L, song.getGenre().getId());
+        Assert.assertEquals(1L, song.getId());
+    }
+
+    @Test
+    public void findByGenreTest(){
+        List<Song> songs = songDao.findByGenre(genreDao.findById(1L));
+
+        Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
+
+        Assert.assertEquals("Лиза", song.getTitle());
+        Assert.assertEquals(1L, song.getGenre().getId());
+        Assert.assertEquals(1L, song.getId());
+    }
+
+    @Test
+    public void findByAlbumIdTest(){
+        List<Song> songs = songDao.findByAlbumId(3L);
+
+        Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
+
+        Assert.assertEquals("Лиза", song.getTitle());
+        Assert.assertEquals(1L, song.getGenre().getId());
+        Assert.assertEquals(1L, song.getId());
+    }
+
+    @Test
+    public void findAllTest(){
+        List<Song> songs = songDao.findAll();
+
+        for(int i = 0; i < songs.size(); i++){
+            Assert.assertEquals(songs.get(i).getTitle(), songDao.findById(i+1L).getTitle());
+        }
+    }
+
+    @Test
+    public void saveTest(){
+        Song song = createSong();
+
+        Long index = songDao.save(song);
+        song = songDao.findById(index);
+
+        Assert.assertEquals("TestSong", song.getTitle());
+        Assert.assertEquals(2L, song.getGenre().getId());
+    }
+
+    @Test
+    public void updateTest(){
+        Song song = songDao.findById(2L);
+        Assert.assertEquals("TEASER", song.getTitle());
+
+        song.setTitle("TEASER TWO");
+        songDao.update(song);
+
+        song = songDao.findById(2L);
+        Assert.assertEquals("TEASER TWO", song.getTitle());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void deleteByIdTest(){
+        songDao.deleteById(5L);
+        Song song = songDao.findById(5L);
+        System.out.println(song.getTitle());
     }
 }

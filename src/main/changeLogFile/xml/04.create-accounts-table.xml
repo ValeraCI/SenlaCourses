@@ -22,5 +22,9 @@
                 <constraints nullable="false" foreignKeyName="role_id_FK" references="roles(id)"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="accounts"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

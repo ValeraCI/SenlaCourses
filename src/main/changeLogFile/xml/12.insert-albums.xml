@@ -31,5 +31,9 @@
             <column name="create_date" value="2023-01-01"/>
             <column name="creator_id" value="6"/>
         </insert>
+
+        <rollback>
+            <delete tableName="albums"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

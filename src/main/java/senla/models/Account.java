@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 
@@ -23,7 +23,7 @@ public class Account extends AEntity{
 
     @Setter
     @Column(name = "registration_date")
-    private Date registrationDate;
+    private LocalDate registrationDate;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,7 +31,7 @@ public class Account extends AEntity{
     private Role role;
 
     @Setter
-    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private LoginDetails loginDetails;
 
     @ManyToMany(fetch = FetchType.LAZY)

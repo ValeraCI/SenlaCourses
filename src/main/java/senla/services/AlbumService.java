@@ -1,6 +1,6 @@
 package senla.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
@@ -8,81 +8,63 @@ import senla.dao.AlbumDao;
 import senla.dao.SongDao;
 import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.song.SongInfoDto;
+import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
 import senla.models.Song;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional
 public class AlbumService {
 
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final SongDao songDao;
 
-    @Transactional
-    public void save(AlbumCreateDto albumDto){
+    public Long save(AlbumCreateDto albumDto){
         Album album = new Album();
         album.setTitle(albumDto.getTitle());
         Account account = accountDao.findById(albumDto.getCreatorId());
         album.setCreator(account);
-        album.setCreateDate(new Date());
+        album.setCreateDate(LocalDate.now());
         account.getCreatedAlbums().add(album);
 
-        albumDao.save(album);
-        accountDao.update(account);
+        return albumDao.save(album);
     }
 
-    @Transactional
     public AlbumInfoDto findAlbumInfoDtoById(Long id) {
         Album album = albumDao.findById(id);
-        AlbumInfoDto albumInfoDto = new AlbumInfoDto(id, album.getTitle());
-        return albumInfoDto ;
+        return new AlbumInfoDto(id, album.getTitle());
     }
 
-    @Transactional
     public void deleteById(Long id){
         albumDao.deleteById(id);
     }
 
-    @Transactional
     public void addSongIn(Long albumId, Long songId){
         Song song = songDao.findById(songId);
+        Album album = albumDao.findById(albumId);
 
-        albumDao.addSongIn(albumId, song);
+        if(!album.getSongsIn().contains(song)){
+            album.getSongsIn().add(song);
+        }
+        else {
+            throw new DataChangesException("Альбом уже содержит такую песню");
+        }
     }
 
-    @Transactional
     public void removeSongIn(Long albumId, Long songId){
         Song song = songDao.findById(songId);
+        Album album = albumDao.findById(albumId);
 
-        albumDao.removeSongIn(albumId, song);
-    }
-
-    @Transactional
-    public List<SongInfoDto> findSongsIn(Long albumId){
-        List<Song> songIn = albumDao.getSongsIn(albumId);
-
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
-
-        for (Song song: songIn) {
-            SongInfoDto songInfoDto = new SongInfoDto();
-            songInfoDto.setId(song.getId());
-            songInfoDto.setTitle(song.getTitle());
-            List<String> authorsNicknames = new ArrayList<>();
-            for (Account author: song.getAuthors()) {
-                authorsNicknames.add(author.getNickname());
-            }
-            songInfoDto.setAuthorsNicknames(authorsNicknames);
-
-            songInfoDtoList.add(songInfoDto);
+        if(album.getSongsIn().contains(song)){
+            album.getSongsIn().remove(song);
         }
-
-        return songInfoDtoList;
+        else {
+            throw new DataChangesException("Альбом не содержит такую песню");
+        }
     }
 }

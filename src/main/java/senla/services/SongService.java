@@ -1,6 +1,6 @@
 package senla.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SongService{
-    private SongDao songDao;
-    private AlbumDao albumDao;
-    private AccountDao accountDao;
-    private GenreDao genreDao;
+    private final SongDao songDao;
+    private final AlbumDao albumDao;
+    private final AccountDao accountDao;
+    private final GenreDao genreDao;
 
     private String createLocation(SongCreateDto songCreateDto){
         StringBuilder sb = new StringBuilder(".\\music\\");
@@ -38,7 +38,7 @@ public class SongService{
     }
 
     @Transactional
-    public void save(SongCreateDto songCreateDto){
+    public Long save(SongCreateDto songCreateDto){
         Song song = new Song();
         List<Account> authors = new ArrayList<>();
 
@@ -53,12 +53,32 @@ public class SongService{
 
         song.setLocation(new Location(song, createLocation(songCreateDto)));
 
-        songDao.save(song);
+        return songDao.save(song);
     }
 
     @Transactional
     public void deleteById(Long id){
         songDao.deleteById(id);
+    }
+
+    @Transactional
+    public List<SongInfoDto> findByAlbumId(Long albumId){
+        List<Song> songs = songDao.findByAlbumId(albumId);
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+
+        for (Song song: songs) {
+            SongInfoDto songInfoDto = new SongInfoDto();
+            songInfoDto.setId(song.getId());
+            songInfoDto.setTitle(song.getTitle());
+            List<String> authorsNicknames = new ArrayList<>();
+            for (Account author: song.getAuthors()) {
+                authorsNicknames.add(author.getNickname());
+            }
+            songInfoDto.setAuthorsNicknames(authorsNicknames);
+            songInfoDtoList.add(songInfoDto);
+        }
+
+        return songInfoDtoList;
     }
 
     @Transactional

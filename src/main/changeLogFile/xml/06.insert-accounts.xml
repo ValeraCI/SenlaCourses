@@ -67,5 +67,10 @@
             <column name="registration_date" value="2022-12-31"/>
             <column name="role_id" value="3"/>
         </insert>
+
+        <rollback>
+            <delete tableName="accounts"/>
+        </rollback>
+
     </changeSet>
 </databaseChangeLog>

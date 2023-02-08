@@ -5,11 +5,8 @@ import org.springframework.stereotype.Controller;
 import senla.annotations.Loggable;
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountDto;
-import senla.dto.album.AlbumInfoDto;
 import senla.services.AccountService;
 import senla.util.Json;
-
-import java.util.Set;
 
 
 @Controller
@@ -47,20 +44,5 @@ public class AccountController {
         AccountDto accountDto = json.deserialize(jsonAccountDto, AccountDto.class);
         accountService.updateData(accountDto);
 
-    }
-
-    @Loggable
-    public Set<AlbumInfoDto> getSavedAlbumsById(Long id){ //TODO возвращать json
-        return accountService.getSavedAlbumsById(id);
-    }
-
-    @Loggable
-    public void addSavedAlbum(Long accountId, Long albumId){
-        accountService.addSavedAlbum(accountId, albumId);
-    }
-
-    @Loggable
-    public void removeSavedAlbum(Long accountId, Long albumId){
-        accountService.removeSavedAlbum(accountId, albumId);
     }
 }

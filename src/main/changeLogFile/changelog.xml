@@ -9,6 +9,13 @@
       http://www.liquibase.org/xml/ns/pro/liquibase-pro-43.1.xsd"
       logicalFilePath="homework-2">
 
+    <preConditions>
+        <or>
+            <dbms  type="h2"/>
+            <dbms  type="postgresql"/>
+        </or>
+    </preConditions>
+
     <include file="xml/01.create-roles-table.xml" relativeToChangelogFile="true"/>
     <include file="xml/02.create-roles-index.xml" relativeToChangelogFile="true"/>
     <include file="xml/03.insert-roles.xml" relativeToChangelogFile="true"/>

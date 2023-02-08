@@ -23,5 +23,9 @@
                 deleteCascade="true"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="albums"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

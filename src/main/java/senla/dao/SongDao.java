@@ -3,16 +3,11 @@ package senla.dao;
 
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
-import senla.models.Genre;
-import senla.models.Song;
-import senla.models.Song_;
+import senla.models.*;
 
 import java.util.List;
 import java.util.Map;
@@ -70,15 +65,15 @@ public class SongDao extends AbstractDao<Song, Long> {
         }
     }
 
-    @Override
-    public Long save(Song song) {
-        try {
-            entityManager.persist(song);
-            entityManager.persist(song.getLocation());
-            return song.getId();
-        }
-        catch (Exception e){
-            throw new DataBaseWorkException(e);
-        }
+    public List<Song> findByAlbumId(Long albumId){
+        CriteriaQuery<Song> query = criteriaBuilder.createQuery(Song.class);
+
+        Root<Song> root = query.from(typeParameterClass);
+        Join<Song, Album> join = root.join(Song_.CONTAINED_IN, JoinType.RIGHT);
+
+        query.select(root)
+                .where(criteriaBuilder.equal(join.get(Album_.ID), albumId));
+
+        return entityManager.createQuery(query).getResultList();
     }
 }

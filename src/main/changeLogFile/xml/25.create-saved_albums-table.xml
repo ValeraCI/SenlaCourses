@@ -23,5 +23,9 @@
                 columnNames="account_id, album_id"
                 constraintName="saved_albums_PK"
                 tableName="saved_albums"/>
+
+        <rollback>
+            <dropTable tableName="saved_albums"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

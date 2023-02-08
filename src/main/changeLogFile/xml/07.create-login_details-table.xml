@@ -21,5 +21,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="login_details"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -15,6 +15,11 @@
         <createIndex indexName="index_role_id_id" tableName="accounts">
             <column name="role_id"/>
         </createIndex>
+
+        <rollback>
+            <dropIndex indexName="index_accounts_id" tableName="accounts"/>
+            <dropIndex indexName="index_role_id_id" tableName="accounts"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

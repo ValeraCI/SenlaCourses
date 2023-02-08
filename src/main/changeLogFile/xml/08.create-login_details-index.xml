@@ -14,6 +14,11 @@
         <createIndex indexName="index_login_details_email" tableName="login_details">
             <column name="email"/>
         </createIndex>
+
+        <rollback>
+            <dropIndex indexName="index_login_details_account_id" tableName="login_details"/>
+            <dropIndex indexName="index_login_details_email" tableName="login_details"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

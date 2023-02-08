@@ -53,5 +53,8 @@
             <column name="genre_id" value="2"/>
         </insert>
 
+        <rollback>
+            <delete tableName="songs"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>
