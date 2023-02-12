@@ -3,16 +3,18 @@ package senla.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import senla.annotations.Loggable;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.GenreDao;
 import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
-import senla.models.Account;
-import senla.models.Genre;
-import senla.models.Location;
-import senla.models.Song;
+import senla.models.*;
+import senla.util.SongFindParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,19 +65,10 @@ public class SongService{
 
     @Transactional
     public List<SongInfoDto> findByAlbumId(Long albumId){
-        List<Song> songs = songDao.findByAlbumId(albumId);
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        for (Song song: songs) {
-            SongInfoDto songInfoDto = new SongInfoDto();
-            songInfoDto.setId(song.getId());
-            songInfoDto.setTitle(song.getTitle());
-            List<String> authorsNicknames = new ArrayList<>();
-            for (Account author: song.getAuthors()) {
-                authorsNicknames.add(author.getNickname());
-            }
-            songInfoDto.setAuthorsNicknames(authorsNicknames);
-            songInfoDtoList.add(songInfoDto);
+        for (Song song: songDao.findByAlbumId(albumId)) {
+            songInfoDtoList.add(songToSongInfoDto(song));
         }
 
         return songInfoDtoList;
@@ -83,16 +76,58 @@ public class SongService{
 
     @Transactional
     public SongInfoDto findSongInfoDtoById(Long id) {
-        SongInfoDto songInfoDto = new SongInfoDto();
+        return songToSongInfoDto(songDao.findById(id));
+    }
 
-        Song song = songDao.findById(id);
-        songInfoDto.setId(id);
+    @Transactional
+    public List<SongInfoDto> findByGenreTitle(String genreTitle) {
+        Genre genre = genreDao.findByTitle(genreTitle);
+
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+
+        for (Song song : songDao.findByGenre(genre)) {
+            songInfoDtoList.add(songToSongInfoDto(song));
+        }
+        return songInfoDtoList;
+    }
+
+    @Transactional
+    public List<SongInfoDto> findByTitle(String title) {
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+
+        for (Song song : songDao.findByTitle(title)) {
+            songInfoDtoList.add(songToSongInfoDto(song));
+        }
+        return songInfoDtoList;
+    }
+
+    public List<SongInfoDto> findByParameter(String parameter, String findBy) {
+        List<SongInfoDto> resultList = null;
+        SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
+
+        switch (songFindParameter){
+            case BY_GENRE -> {
+                resultList = findByGenreTitle(parameter);
+            }
+            case BY_TITLE -> {
+                resultList = findByTitle(parameter);
+            }
+            case BY_ALBUM_ID -> {
+                resultList = findByAlbumId(Long.parseLong(parameter));
+            }
+        }
+        return resultList;
+    }
+
+    private SongInfoDto songToSongInfoDto(Song song){
+        SongInfoDto songInfoDto = new SongInfoDto();
+        songInfoDto.setId(song.getId());
         songInfoDto.setTitle(song.getTitle());
+
         List<String> authorsNicknames = new ArrayList<>();
         for (Account author: song.getAuthors()) {
             authorsNicknames.add(author.getNickname());
         }
-
         songInfoDto.setAuthorsNicknames(authorsNicknames);
 
         return songInfoDto;

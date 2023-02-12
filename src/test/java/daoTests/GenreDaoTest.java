@@ -6,15 +6,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
+import senla.configuration.TestConfig;
 import senla.dao.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
-        loader = AnnotationConfigContextLoader.class)
+        classes = {TestConfig.class})
 @Transactional
 public class GenreDaoTest {
 
@@ -32,5 +30,14 @@ public class GenreDaoTest {
             daoGenres[i] = String.valueOf(genreDao.findById(i+1L).getGenreTitle());
         }
         Assert.assertArrayEquals(programGenres, daoGenres);
+    }
+
+    @Test
+    public void findByTitleTest(){
+        String searchParam = "POP";
+        String genreTitle = String.valueOf(genreDao.findByTitle(searchParam).getGenreTitle());
+
+        Assert.assertEquals(genreTitle, searchParam);
+
     }
 }

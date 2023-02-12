@@ -35,6 +35,10 @@ public class DaoConfiguration {
     @Value("${db.showSql}")
     private boolean showSql;
 
+    public DaoConfiguration(){
+        System.out.println("\n\n\n\n\n\nСоздание DaoConfiguration");
+    }
+
     @Bean
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

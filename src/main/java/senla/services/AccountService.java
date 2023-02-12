@@ -4,22 +4,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
+import senla.dao.AlbumDao;
 import senla.dao.LoginDetailsDao;
 import senla.dao.RoleDao;
-import senla.dto.account.AccountDataDto;
-import senla.dto.account.AccountDto;
-import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.AccountWithLoginDetailsDto;
+import senla.dto.account.*;
+import senla.exceptions.DataChangesException;
 import senla.models.Account;
+import senla.models.Album;
 import senla.models.LoginDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AccountService {
     private final AccountDao accountDao;
+    private final AlbumDao albumDao;
     private final LoginDetailsDao loginDetailsDao;
     private final RoleDao roleDao;
 
@@ -34,7 +37,7 @@ public class AccountService {
         return accountDao.save(account);
     }
 
-    public AccountMainDataDto getAccountDtoById(Long id) {
+    public AccountMainDataDto findAccountMainDataDtoById(Long id) {
        Account account = accountDao.findById(id);
        AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
        accountMainDataDto.setId(account.getId());
@@ -44,7 +47,22 @@ public class AccountService {
        return accountMainDataDto;
     }
 
-    public AccountWithLoginDetailsDto getAccountWithLoginDetailsDtoByEmail(String email){
+    public List<AccountMainDataDto> findAllAccountMainDataDto() {
+        List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
+
+        for (Account account: accountDao.findAll()) {
+            AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
+            accountMainDataDto.setId(account.getId());
+            accountMainDataDto.setNickname(account.getNickname());
+
+            accountMainDataDto.setRoleTitle(account.getRole().getRoleTitle().toString());
+            accountMainDataDtoList.add(accountMainDataDto);
+        }
+
+        return accountMainDataDtoList;
+    }
+
+    public AccountWithLoginDetailsDto findAccountWithLoginDetailsDtoByEmail(String email){
         Account account = accountDao.findByEmail(email);
         AccountWithLoginDetailsDto accountWithLoginDetailsDto = new AccountWithLoginDetailsDto();
 
@@ -57,19 +75,43 @@ public class AccountService {
         return accountWithLoginDetailsDto;
     }
 
-    public void updateData(AccountDto accountDto){
+    public void updateData(Long id, UpdateAccountDto accountUpdateDto){
         Account account = new Account();
-        account.setId(accountDto.getId());
-        account.setNickname(accountDto.getNickname());
-        account.setRole(roleDao.findById(accountDto.getRoleId()));
+        account.setId(id);
+        account.setNickname(accountUpdateDto.getNickname());
+        account.setRole(roleDao.findById(accountUpdateDto.getRoleId()));
         accountDao.update(account);
 
         LoginDetails loginDetails =
-                new LoginDetails(account, null, accountDto.getPassword());
+                new LoginDetails(account, null, accountUpdateDto.getPassword());
         loginDetailsDao.update(loginDetails);
     }
 
-    public void deleteById(long id){
+    public void deleteById(Long id){
         accountDao.deleteById(id);
+    }
+
+    public void addSavedAlbum(Long accountId, Long albumId){
+        Account account = accountDao.findWithSavedAlbums(accountId);
+        Album album = albumDao.findById(accountId);
+
+        if(!account.getSavedAlbums().contains(album)){
+            account.getSavedAlbums().add(album);
+        }
+        else {
+            throw new DataChangesException("Альбом уже сохранён");
+        }
+    }
+
+    public void removeSavedAlbum(Long accountId, Long albumId){
+        Account account = accountDao.findWithSavedAlbums(accountId);
+        Album album = albumDao.findById(accountId);
+
+        if(!account.getSavedAlbums().contains(album)){
+            account.getSavedAlbums().remove(album);
+        }
+        else {
+            throw new DataChangesException("Альбом не сохранён");
+        }
     }
 }

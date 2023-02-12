@@ -12,6 +12,7 @@ import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.GenreDao;
 import senla.dao.SongDao;
+import senla.exceptions.DataBaseWorkException;
 import senla.models.Location;
 import senla.models.Song;
 
@@ -118,7 +119,7 @@ public class SongDaoTest {
         Assert.assertEquals("TEASER TWO", song.getTitle());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = DataBaseWorkException.class)
     public void deleteByIdTest(){
         songDao.deleteById(5L);
         Song song = songDao.findById(5L);

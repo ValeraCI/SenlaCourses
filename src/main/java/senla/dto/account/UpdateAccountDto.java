@@ -1,4 +1,4 @@
-package senla.dto.album;
+package senla.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlbumCreateDto {
-    private long id;
-    private String title;
-    private Long creatorId;
+public class UpdateAccountDto {
+    private String nickname;
+    private Long roleId;
+    private String password;
 }
