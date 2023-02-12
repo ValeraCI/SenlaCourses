@@ -1,19 +1,23 @@
-package daoTests;
+package senla.daoTests;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.TestConfig;
-import senla.dao.*;
+import senla.TestConfiguration.TestConfiguration;
+import senla.dao.GenreDao;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(
-        classes = {TestConfig.class})
+        classes = {TestConfiguration.class},
+        loader = AnnotationConfigContextLoader.class)
 @Transactional
+@WebAppConfiguration
 public class GenreDaoTest {
 
     @Autowired

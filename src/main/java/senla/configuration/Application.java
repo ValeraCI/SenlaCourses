@@ -10,9 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan("senla")
 @EnableAspectJAutoProxy
 @EnableWebMvc
-@Import({DaoConfiguration.class})
 public class Application implements WebMvcConfigurer {
 
+    //Для понятия того, что и где вызывается
     public Application(){
         System.out.println("\n\n\n\n\n\nСоздание Application");
     }
@@ -21,4 +21,6 @@ public class Application implements WebMvcConfigurer {
     public ObjectMapper objectMapper(){
         return new ObjectMapper();
     }
+
+
 }

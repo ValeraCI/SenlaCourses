@@ -1,4 +1,4 @@
-package daoTests;
+package senla.daoTests;
 
 import org.junit.Assert;
 import org.junit.Test;

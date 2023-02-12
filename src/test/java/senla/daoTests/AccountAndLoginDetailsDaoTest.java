@@ -1,4 +1,4 @@
-package daoTests;
+package senla.daoTests;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
