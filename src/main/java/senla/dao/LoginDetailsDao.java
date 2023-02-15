@@ -1,8 +1,8 @@
 package senla.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import senla.exceptions.DataBaseWorkException;

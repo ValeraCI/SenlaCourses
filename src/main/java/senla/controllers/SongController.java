@@ -14,6 +14,8 @@ import java.util.List;
 @RequestMapping("/songs")
 public class SongController {
 
+    //TODO написать тесты на дао слой(точно нужны песни), написать тесты с мокито на сервисы и контролеры
+
     private final SongService songService;
 
     @Loggable

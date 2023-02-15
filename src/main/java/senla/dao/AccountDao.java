@@ -1,7 +1,7 @@
 package senla.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;

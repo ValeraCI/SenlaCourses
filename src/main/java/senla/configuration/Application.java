@@ -12,11 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class Application implements WebMvcConfigurer {
 
-    //Для понятия того, что и где вызывается
-    public Application(){
-        System.out.println("\n\n\n\n\n\nСоздание Application");
-    }
-
     @Bean
     public ObjectMapper objectMapper(){
         return new ObjectMapper();

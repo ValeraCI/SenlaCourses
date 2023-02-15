@@ -1,20 +1,20 @@
-package senla.daoTests;
+package senla.test;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.LoginDetailsDao;
 import senla.dao.RoleDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Account;
 import senla.models.LoginDetails;
+import senla.test.configuration.Application;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -24,6 +24,7 @@ import java.time.LocalDate;
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class AccountAndLoginDetailsDaoTest {
     @Autowired
     private AccountDao accountDao;

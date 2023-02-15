@@ -1,20 +1,21 @@
-package senla.daoTests;
+package senla.test;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.GenreDao;
 import senla.dao.SongDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Location;
 import senla.models.Song;
+import senla.test.configuration.Application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import java.util.List;
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class SongDaoTest {
     @Autowired
     private SongDao songDao;

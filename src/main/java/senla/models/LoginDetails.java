@@ -1,18 +1,20 @@
 package senla.models;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "login_details")
 public class LoginDetails {
     @Id
+    @Column(name="account_id")
+    private Long id;
+
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
@@ -23,4 +25,11 @@ public class LoginDetails {
     @Setter
     @Column(name = "password")
     private String password;
+
+    public LoginDetails(Account account, String email, String password) {
+        this.id = account.getId();
+        this.account = account;
+        this.email = email;
+        this.password = password;
+    }
 }
