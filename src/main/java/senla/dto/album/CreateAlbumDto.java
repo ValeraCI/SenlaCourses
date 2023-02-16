@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAlbumDto {
-    private long id;
     private String title;
     private Long creatorId;
 }

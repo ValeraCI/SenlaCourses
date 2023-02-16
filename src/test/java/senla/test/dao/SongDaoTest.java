@@ -1,4 +1,4 @@
-package senla.test;
+package senla.test.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class SongDaoTest {
         Song song = songDao.findById(1L);
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -63,8 +63,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -74,8 +74,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -85,8 +85,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class SongDaoTest {
         song = songDao.findById(index);
 
         Assert.assertEquals("TestSong", song.getTitle());
-        Assert.assertEquals(2L, song.getGenre().getId());
+        Assert.assertEquals(2L, song.getGenre().getId().longValue());
     }
 
     @Test

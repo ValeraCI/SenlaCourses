@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SongCreateDto {
-    private long id;
     private String title;
     private Long genreId;
     private List<Long> authorsId;

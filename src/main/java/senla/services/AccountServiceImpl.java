@@ -115,7 +115,7 @@ public class AccountServiceImpl implements AccountService{
         Account account = accountDao.findWithSavedAlbums(accountId);
         Album album = albumDao.findById(albumId);
 
-        if(!account.getSavedAlbums().contains(album)){
+        if(account.getSavedAlbums().contains(album)){
             account.getSavedAlbums().remove(album);
         }
         else {

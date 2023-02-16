@@ -63,7 +63,7 @@ public class SongServiceImpl implements SongService{
 
     @Override
     @Transactional
-    public List<SongInfoDto> findByAlbumId(Long albumId){
+    public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId){
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         for (Song song: songDao.findByAlbumId(albumId)) {
@@ -81,7 +81,7 @@ public class SongServiceImpl implements SongService{
 
     @Override
     @Transactional
-    public List<SongInfoDto> findByGenreTitle(String genreTitle) {
+    public List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle) {
         Genre genre = genreDao.findByTitle(genreTitle);
 
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
@@ -94,7 +94,7 @@ public class SongServiceImpl implements SongService{
 
     @Override
     @Transactional
-    public List<SongInfoDto> findByTitle(String title) {
+    public List<SongInfoDto> findSongInfoDtoByTitle(String title) {
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         for (Song song : songDao.findByTitle(title)) {
@@ -109,18 +109,15 @@ public class SongServiceImpl implements SongService{
         List<SongInfoDto> resultList = null;
         SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
 
-        System.out.println(findBy);
-        System.out.println(songFindParameter);
-
         switch (songFindParameter){
             case BY_GENRE:
-                resultList = findByGenreTitle(parameter);
+                resultList = findSongInfoDtoByGenreTitle(parameter);
                 break;
             case BY_TITLE:
-                resultList = findByTitle(parameter);
+                resultList = findSongInfoDtoByTitle(parameter);
                 break;
             case BY_ALBUM_ID:
-                resultList = findByAlbumId(Long.parseLong(parameter));
+                resultList = findSongInfoDtoByAlbumId(Long.parseLong(parameter));
                 break;
         }
         return resultList;

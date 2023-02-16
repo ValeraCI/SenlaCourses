@@ -22,15 +22,15 @@ public class AlbumController {
     }
 
     @Loggable
-    @GetMapping("/search/{id}")
+    @GetMapping("/search/{title}")
     public List<AlbumInfoDto> findByTitle(@PathVariable String title){
         return albumService.findAlbumInfoDtoByTitle(title);
     }
 
     @Loggable
     @PostMapping
-    public void save(@RequestBody CreateAlbumDto createAlbumDto){
-        albumService.save(createAlbumDto);
+    public Long save(@RequestBody CreateAlbumDto createAlbumDto){
+        return albumService.save(createAlbumDto);
     }
 
     @Loggable

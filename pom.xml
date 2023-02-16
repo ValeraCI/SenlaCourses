@@ -16,9 +16,9 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <slf4j.version>2.0.6</slf4j.version>
-        <spring.version>5.3.24</spring.version>
+        <spring.version>5.3.3</spring.version>
         <jackson.version>2.14.1</jackson.version>
-        <hibernate.version>6.1.6.Final</hibernate.version>
+        <hibernate.version>5.6.6.Final</hibernate.version>
     </properties>
 
     <dependencies>
@@ -92,16 +92,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-jpamodelgen -->
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
@@ -150,13 +148,6 @@
             <version>2.1.214</version>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -167,10 +158,25 @@
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.1.1</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
@@ -210,9 +216,9 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <url>http://localhost:8080/</url>
+                    <url>http://localhost:8080/manager/text</url>
                     <server>TomcatServer</server>
-                    <path>/musicApp</path>
+                    <path>/</path>
                 </configuration>
             </plugin>
         </plugins>

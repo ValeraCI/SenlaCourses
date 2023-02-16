@@ -10,13 +10,13 @@ public interface SongService{
 
     void deleteById(Long id);
 
-    List<SongInfoDto> findByAlbumId(Long albumId);
+    List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId);
 
     SongInfoDto findSongInfoDtoById(Long id);
 
-    List<SongInfoDto> findByGenreTitle(String genreTitle);
+    List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle);
 
-    List<SongInfoDto> findByTitle(String title);
+    List<SongInfoDto> findSongInfoDtoByTitle(String title);
 
     List<SongInfoDto> findByParameter(String parameter, String findBy);
 }

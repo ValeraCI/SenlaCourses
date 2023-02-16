@@ -79,7 +79,7 @@ public class SongDao extends AbstractDao<Song, Long> {
             CriteriaQuery<Song> query = criteriaBuilder.createQuery(Song.class);
 
             Root<Song> root = query.from(typeParameterClass);
-            Join<Song, Album> join = root.join(Song_.CONTAINED_IN, JoinType.RIGHT);
+            Join<Album, Song> join = root.join(Song_.CONTAINED_IN, JoinType.LEFT);
 
             query.select(root)
                     .where(criteriaBuilder.equal(join.get(Album_.ID), albumId));

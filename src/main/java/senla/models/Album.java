@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,15 +21,12 @@ import java.util.Set;
 })
 @Table(name = "albums")
 public class Album extends AEntity{
-    @Setter
     @Column(name = "title")
     private String title;
 
-    @Setter
     @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private Account creator;

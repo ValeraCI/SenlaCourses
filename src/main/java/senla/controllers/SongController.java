@@ -13,15 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/songs")
 public class SongController {
-
-    //TODO написать тесты на дао слой(точно нужны песни), написать тесты с мокито на сервисы и контролеры
-
     private final SongService songService;
 
     @Loggable
     @PostMapping
-    public void add(@RequestBody SongCreateDto songCreateDto){
-        songService.save(songCreateDto);
+    public Long save(@RequestBody SongCreateDto songCreateDto){
+        return songService.save(songCreateDto);
     }
 
     @Loggable
@@ -38,7 +35,7 @@ public class SongController {
 
     @Loggable
     @GetMapping("search/{parameter}")
-    public List<SongInfoDto> findByAlbumId(@PathVariable("parameter") String parameter,
+    public List<SongInfoDto> findByParameter(@PathVariable("parameter") String parameter,
                                                          @RequestParam(name = "findBy",
                                                                  defaultValue = "BY_TITLE") String findBy){
         return songService.findByParameter(parameter, findBy);

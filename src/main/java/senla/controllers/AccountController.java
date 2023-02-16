@@ -17,7 +17,6 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Loggable
     @GetMapping
     public List<AccountMainDataDto> findAll() {
         return accountService.findAllAccountMainDataDto();
@@ -32,8 +31,8 @@ public class AccountController {
 
     @Loggable
     @PostMapping()
-    public void save(@RequestBody AccountDataDto accountDataDto){
-        accountService.save(accountDataDto);
+    public Long save(@RequestBody AccountDataDto accountDataDto){
+        return accountService.save(accountDataDto);
     }
 
     @Loggable
@@ -59,6 +58,4 @@ public class AccountController {
     public void removeSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId){
         accountService.removeSavedAlbum(accountId, albumId);
     }
-
-
 }

@@ -1,6 +1,7 @@
-package senla.test;
+package senla.test.dao;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,7 +49,7 @@ public class AccountAndLoginDetailsDaoTest {
         Account account = accountDao.findById(1L);
 
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1L, account.getRole().getId());
+        Assert.assertEquals(1L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -57,7 +58,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1L, account.getRole().getId());
+        Assert.assertEquals(1L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -78,7 +79,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("test@mail.ru", account.getLoginDetails().getEmail());
         Assert.assertEquals("Tester", account.getNickname());
-        Assert.assertEquals(3L, account.getRole().getId());
+        Assert.assertEquals(3L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -103,7 +104,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1, account.getRole().getId());
+        Assert.assertEquals(1, account.getRole().getId().longValue());
         Assert.assertEquals("123456", account.getLoginDetails().getPassword());
     }
 

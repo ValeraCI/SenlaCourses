@@ -14,6 +14,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.sql.DataSource;
 
 @Configuration
@@ -85,7 +87,7 @@ public class DaoConfiguration {
 
     @Bean
     public EntityManager entityManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
-        return entityManagerFactory.getObject();
+        return entityManagerFactory.getObject().createEntityManager();
     }
 
     @Bean
