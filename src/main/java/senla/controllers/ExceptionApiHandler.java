@@ -48,7 +48,7 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> Exception(Exception exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(exception.getLocalizedMessage());
     }
 }

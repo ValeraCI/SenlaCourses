@@ -1,17 +1,26 @@
 package senla.test.configuration;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
+
 @Configuration
-@ComponentScan("senla")
+@ComponentScan(value = "senla")
 @Profile("test")
 @EnableTransactionManagement
 @PropertySource("application.properties")
-@SpringJUnitWebConfig
 public class Application {
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true)
+                .setFieldAccessLevel(PRIVATE);
+        return mapper;
+    }
 }

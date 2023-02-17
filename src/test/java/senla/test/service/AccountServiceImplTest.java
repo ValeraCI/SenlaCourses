@@ -1,10 +1,13 @@
 package senla.test.service;
 
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -13,18 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.LoginDetailsDao;
-import senla.dao.RoleDao;
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.AccountWithLoginDetailsDto;
 import senla.exceptions.DataChangesException;
 import senla.models.*;
-import senla.services.AccountService;
 import senla.services.AccountServiceImpl;
+import senla.services.api.AccountService;
 import senla.test.configuration.Application;
+import senla.util.mappers.AccountMapper;
 
-import java.util.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -43,14 +49,19 @@ public class AccountServiceImplTest {
     private AlbumDao albumDao;
     @Mock
     private LoginDetailsDao loginDetailsDao;
-    @Mock
-    private RoleDao roleDao;
+
+    @Autowired
+    private AccountMapper accountMapper;
 
     private AccountService accountService;
 
     public AccountServiceImplTest(){
         MockitoAnnotations.openMocks(this);
-        accountService = new AccountServiceImpl(accountDao, albumDao, loginDetailsDao, roleDao);
+    }
+
+    @Before
+    public void beforeEach(){
+        this.accountService = new AccountServiceImpl(accountDao, albumDao, loginDetailsDao, accountMapper);
     }
 
     private Role createRole(){
@@ -102,7 +113,6 @@ public class AccountServiceImplTest {
 
         List<AccountMainDataDto> list = accountService.findAllAccountMainDataDto();
 
-        Assert.assertEquals("USER", list.get(0).getRoleTitle());
         Assert.assertEquals("Tester", list.get(0).getNickname());
     }
 
@@ -113,7 +123,6 @@ public class AccountServiceImplTest {
 
         AccountMainDataDto account = accountService.findAccountMainDataDtoById(1L);
 
-        Assert.assertEquals("USER", account.getRoleTitle());
         Assert.assertEquals("Tester", account.getNickname());
     }
 
@@ -132,13 +141,14 @@ public class AccountServiceImplTest {
     }
 
     @Test(expected = DataChangesException.class)
-    public void addSavedAlbumExceptionTest(){
+    public void addSavedAlbumExceptionTest() {
         Account account = createAccount();
 
         given(accountDao.findWithSavedAlbums(1L))
                 .willReturn(account);
         given(albumDao.findById(1L))
                 .willReturn(createAlbum(account));
+
 
         accountService.addSavedAlbum(1L, 1L);
         accountService.addSavedAlbum(1L, 1L);
@@ -162,7 +172,7 @@ public class AccountServiceImplTest {
     }
 
     @Test(expected = DataChangesException.class)
-    public void removeSavedAlbumExceptionTest(){
+    public void removeSavedAlbumExceptionTest() {
         Account account = createAccount();
         Album album = createAlbum(account);
 
@@ -172,6 +182,7 @@ public class AccountServiceImplTest {
                 .willReturn(album);
 
         account.getSavedAlbums().add(album);
+
 
         accountService.removeSavedAlbum(1L, 1L);
         accountService.removeSavedAlbum(1L, 1L);

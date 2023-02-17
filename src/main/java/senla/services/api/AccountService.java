@@ -1,4 +1,4 @@
-package senla.services;
+package senla.services.api;
 
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;

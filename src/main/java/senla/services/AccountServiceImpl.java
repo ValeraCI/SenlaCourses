@@ -6,47 +6,38 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.LoginDetailsDao;
-import senla.dao.RoleDao;
 import senla.dto.account.*;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
 import senla.models.LoginDetails;
-
-import java.time.LocalDate;
+import senla.services.api.AccountService;
+import senla.util.mappers.AccountMapper;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
     private final AccountDao accountDao;
     private final AlbumDao albumDao;
     private final LoginDetailsDao loginDetailsDao;
-    private final RoleDao roleDao;
+    private final AccountMapper accountMapper;
 
     @Override
     public Long save(AccountDataDto accountDataDto){
-        Account account = new Account();
-        account.setNickname(accountDataDto.getNickname());
-        LoginDetails loginDetails =
-                new LoginDetails(account, accountDataDto.getEmail(), accountDataDto.getPassword());
-        account.setLoginDetails(loginDetails);
-        account.setRegistrationDate(LocalDate.now());
-        account.setRole(roleDao.findById(3L));
+        Account account = accountMapper.toEntity(accountDataDto);
+
         return accountDao.save(account);
     }
 
     @Override
     public AccountMainDataDto findAccountMainDataDtoById(Long id) {
        Account account = accountDao.findById(id);
-       AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
-       accountMainDataDto.setId(account.getId());
-       accountMainDataDto.setNickname(account.getNickname());
-       accountMainDataDto.setRoleTitle(account.getRole().getRoleTitle().toString());
 
-       return accountMainDataDto;
+        AccountMainDataDto accountMainDataDto = accountMapper.toAccountMainDataDto(account);
+        return accountMainDataDto;
     }
 
     @Override
@@ -54,11 +45,7 @@ public class AccountServiceImpl implements AccountService{
         List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
 
         for (Account account: accountDao.findAll()) {
-            AccountMainDataDto accountMainDataDto = new AccountMainDataDto();
-            accountMainDataDto.setId(account.getId());
-            accountMainDataDto.setNickname(account.getNickname());
-
-            accountMainDataDto.setRoleTitle(account.getRole().getRoleTitle().toString());
+            AccountMainDataDto accountMainDataDto = accountMapper.toAccountMainDataDto(account);
             accountMainDataDtoList.add(accountMainDataDto);
         }
 
@@ -68,23 +55,16 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public AccountWithLoginDetailsDto findAccountWithLoginDetailsDtoByEmail(String email){
         Account account = accountDao.findByEmail(email);
-        AccountWithLoginDetailsDto accountWithLoginDetailsDto = new AccountWithLoginDetailsDto();
-
-        accountWithLoginDetailsDto.setEmail(email);
-        accountWithLoginDetailsDto.setNickname(account.getNickname());
-        accountWithLoginDetailsDto.setId(account.getId());
-        accountWithLoginDetailsDto.setRole(account.getRole().getRoleTitle());
-        accountWithLoginDetailsDto.setPassword(account.getLoginDetails().getPassword());
+        AccountWithLoginDetailsDto accountWithLoginDetailsDto
+                = accountMapper.toAccountWithLoginDetailsDto(account);
 
         return accountWithLoginDetailsDto;
     }
 
     @Override
     public void updateData(Long id, UpdateAccountDto accountUpdateDto){
-        Account account = new Account();
+        Account account = accountMapper.toEntity(accountUpdateDto);
         account.setId(id);
-        account.setNickname(accountUpdateDto.getNickname());
-        account.setRole(roleDao.findById(accountUpdateDto.getRoleId()));
         accountDao.update(account);
 
         LoginDetails loginDetails =

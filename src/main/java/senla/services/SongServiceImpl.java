@@ -10,18 +10,21 @@ import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.models.*;
+import senla.services.api.SongService;
 import senla.util.SongFindParameter;
+import senla.util.mappers.SongMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SongServiceImpl implements SongService{
+public class SongServiceImpl implements SongService {
     private final SongDao songDao;
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final GenreDao genreDao;
+    private final SongMapper songMapper;
 
     private String createLocation(SongCreateDto songCreateDto){
         StringBuilder sb = new StringBuilder(".\\music\\");
@@ -37,21 +40,14 @@ public class SongServiceImpl implements SongService{
 
     @Override
     @Transactional
-    public Long save(SongCreateDto songCreateDto){
-        Song song = new Song();
+    public Long save(SongCreateDto songCreateDto) {
         List<Account> authors = new ArrayList<>();
-
-        for (Long authorId: songCreateDto.getAuthorsId()){
+        for (Long authorId : songCreateDto.getAuthorsId()) {
             authors.add(accountDao.findById(authorId));
         }
-
-        song.setAuthors(authors);
-        song.setTitle(songCreateDto.getTitle());
         Genre genre = genreDao.findById(songCreateDto.getGenreId());
-        song.setGenre(genre);
 
-        song.setLocation(new Location(song, createLocation(songCreateDto)));
-
+        Song song = songMapper.toEntity(songCreateDto, authors, genre, createLocation(songCreateDto));
         return songDao.save(song);
     }
 
@@ -67,7 +63,7 @@ public class SongServiceImpl implements SongService{
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         for (Song song: songDao.findByAlbumId(albumId)) {
-            songInfoDtoList.add(songToSongInfoDto(song));
+            songInfoDtoList.add(songMapper.toSongInfoDto(song));
         }
 
         return songInfoDtoList;
@@ -76,7 +72,7 @@ public class SongServiceImpl implements SongService{
     @Override
     @Transactional
     public SongInfoDto findSongInfoDtoById(Long id) {
-        return songToSongInfoDto(songDao.findById(id));
+        return songMapper.toSongInfoDto(songDao.findById(id));
     }
 
     @Override
@@ -87,7 +83,7 @@ public class SongServiceImpl implements SongService{
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         for (Song song : songDao.findByGenre(genre)) {
-            songInfoDtoList.add(songToSongInfoDto(song));
+            songInfoDtoList.add(songMapper.toSongInfoDto(song));
         }
         return songInfoDtoList;
     }
@@ -98,7 +94,7 @@ public class SongServiceImpl implements SongService{
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         for (Song song : songDao.findByTitle(title)) {
-            songInfoDtoList.add(songToSongInfoDto(song));
+            songInfoDtoList.add(songMapper.toSongInfoDto(song));
         }
         return songInfoDtoList;
     }
@@ -121,20 +117,5 @@ public class SongServiceImpl implements SongService{
                 break;
         }
         return resultList;
-    }
-
-
-    private SongInfoDto songToSongInfoDto(Song song){
-        SongInfoDto songInfoDto = new SongInfoDto();
-        songInfoDto.setId(song.getId());
-        songInfoDto.setTitle(song.getTitle());
-
-        List<String> authorsNicknames = new ArrayList<>();
-        for (Account author: song.getAuthors()) {
-            authorsNicknames.add(author.getNickname());
-        }
-        songInfoDto.setAuthorsNicknames(authorsNicknames);
-
-        return songInfoDto;
     }
 }

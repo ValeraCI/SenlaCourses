@@ -1,19 +1,21 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import senla.annotations.Loggable;
 import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;
-import senla.services.AlbumService;
+import senla.services.api.AlbumService;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/albums")
 public class AlbumController {
-    private final AlbumService albumService;
+
+    @Autowired
+    private AlbumService albumService;
 
     @Loggable
     @GetMapping("/{id}")
@@ -40,13 +42,13 @@ public class AlbumController {
     }
 
     @Loggable
-    @PostMapping("/{albumId}/{songId}")
+    @PostMapping("/{albumId}/songs/{songId}")
     public void addSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId){
         albumService.addSongIn(albumId, songId);
     }
 
     @Loggable
-    @DeleteMapping("/{albumId}/{songId}")
+    @DeleteMapping("/{albumId}/songs/{songId}")
     public void removeSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId){
         albumService.removeSongIn(albumId, songId);
     }

@@ -1,10 +1,12 @@
 package senla.test.service;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,9 +19,10 @@ import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.models.*;
-import senla.services.SongService;
+import senla.services.api.SongService;
 import senla.services.SongServiceImpl;
 import senla.test.configuration.Application;
+import senla.util.mappers.SongMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,11 +53,20 @@ public class SongServiceImplTest {
     @Mock
     private GenreDao genreDao;
 
+    @Autowired
+    private SongMapper songMapper;
+
+
     private SongService songService;
 
     public SongServiceImplTest(){
         MockitoAnnotations.openMocks(this);
-        this.songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao);
+
+    }
+
+    @Before
+    public void beforeEach(){
+        this.songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao, songMapper);
     }
 
     private Genre createGenre(){

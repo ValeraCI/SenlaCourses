@@ -1,10 +1,12 @@
 package senla.test.service;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,9 +19,10 @@ import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;
 import senla.exceptions.DataChangesException;
 import senla.models.*;
-import senla.services.AlbumService;
+import senla.services.api.AlbumService;
 import senla.services.AlbumServiceImpl;
 import senla.test.configuration.Application;
+import senla.util.mappers.AlbumMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,11 +47,18 @@ public class AlbumServiceImplTest {
     @Mock
     private SongDao songDao;
 
+    @Autowired
+    private AlbumMapper albumMapper;
+
     private AlbumService albumService;
 
     public AlbumServiceImplTest(){
         MockitoAnnotations.openMocks(this);
-        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao);
+    }
+
+    @Before
+    public void beforeEach(){
+        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper);
     }
 
     private Account createAccount(){

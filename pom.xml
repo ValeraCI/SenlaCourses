@@ -177,8 +177,19 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
+        <!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-annotations-api</artifactId>
+            <version>7.0.70</version>
+        </dependency>
 
+    </dependencies>
 
     <build>
         <finalName>musicApplication</finalName>

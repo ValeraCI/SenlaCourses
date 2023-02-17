@@ -1,5 +1,6 @@
 package senla.test.dao;
 
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +18,8 @@ import senla.models.Account;
 import senla.models.LoginDetails;
 import senla.test.configuration.Application;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -36,7 +37,6 @@ public class AccountAndLoginDetailsDaoTest {
 
     private Account createAccount(){
         Account account = new Account();
-
         account.setNickname("Tester");
         account.setRegistrationDate(LocalDate.now());
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));

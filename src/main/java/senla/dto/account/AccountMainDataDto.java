@@ -12,5 +12,4 @@ import lombok.Setter;
 public class AccountMainDataDto {
     private Long id;
     private String nickname;
-    private String roleTitle;
 }

@@ -67,7 +67,6 @@ public class AccountControllerTest {
 
         Assert.assertEquals(account.getNickname(), "Valerix");
         Assert.assertEquals(account.getId().longValue(), 1);
-        Assert.assertEquals(account.getRoleTitle(), "OWNER");
     }
 
     @Test
@@ -87,7 +86,6 @@ public class AccountControllerTest {
                 objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
 
         Assert.assertEquals(account.getNickname(), "nickname");
-        Assert.assertEquals(account.getRoleTitle(), "USER");
     }
 
     @Test
@@ -101,7 +99,7 @@ public class AccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        Assert.assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
@@ -121,7 +119,6 @@ public class AccountControllerTest {
                 objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
 
         Assert.assertEquals(account.getNickname(), "TestNick");
-        Assert.assertEquals(account.getRoleTitle(), "USER");
     }
 
     @Test
@@ -135,25 +132,25 @@ public class AccountControllerTest {
 
     @Test
     public void addSavedAlbumExceptionTest() throws Exception {
-        mockMvc.perform(post("/accounts/{accountId}/{albumId}", 1, 9))
+        mockMvc.perform(post("/accounts//{accountId}/albums/{albumId}", 1, 9))
                 .andDo(MockMvcResultHandlers.print());
 
         MvcResult result = mockMvc.perform(post("/accounts/{accountId}/{albumId}", 1, 9))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        Assert.assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
     public void removeSavedAlbumExceptionTest() throws Exception {
-        mockMvc.perform(delete("/accounts/{accountId}/{albumId}", 1, 9))
+        mockMvc.perform(delete("/accounts/{accountId}/albums/{albumId}", 1, 9))
                 .andDo(MockMvcResultHandlers.print());
 
         MvcResult result = mockMvc.perform(delete("/accounts/{accountId}/{albumId}", 1, 9))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        Assert.assertEquals(404, result.getResponse().getStatus());
     }
 }

@@ -113,7 +113,7 @@ public class AlbumControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        Assert.assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
@@ -146,10 +146,10 @@ public class AlbumControllerTest {
 
     @Test
     public void addRemoveSavedAlbum() throws Exception {
-        mockMvc.perform(post("/albums/{albumId}/{songId}", 1, 1))
+        mockMvc.perform(post("/albums/{albumId}/songs/{songId}", 1, 1))
                 .andDo(MockMvcResultHandlers.print());
 
-        mockMvc.perform(delete("/albums/{albumId}/{songId}", 1, 1))
+        mockMvc.perform(delete("/albums/{albumId}/songs/{songId}", 1, 1))
                 .andDo(MockMvcResultHandlers.print());
     }
 

@@ -1,4 +1,4 @@
-package senla.services;
+package senla.services.api;
 
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;

@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.Application;
-import senla.dto.album.AlbumInfoDto;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 

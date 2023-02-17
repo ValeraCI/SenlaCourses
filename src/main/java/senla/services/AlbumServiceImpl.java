@@ -12,27 +12,28 @@ import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
 import senla.models.Song;
+import senla.services.api.AlbumService;
+import senla.util.mappers.AlbumMapper;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AlbumServiceImpl implements AlbumService{
+public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final SongDao songDao;
+    private final AlbumMapper albumMapper;
 
     @Override
     public Long save(CreateAlbumDto albumDto){
-        Album album = new Album();
-        album.setTitle(albumDto.getTitle());
         Account account = accountDao.findById(albumDto.getCreatorId());
-        album.setCreator(account);
-        album.setCreateDate(LocalDate.now());
+
+        Album album = albumMapper.toEntity(albumDto, account);
+
         account.getCreatedAlbums().add(album);
 
         return albumDao.save(album);
@@ -41,7 +42,7 @@ public class AlbumServiceImpl implements AlbumService{
     @Override
     public AlbumInfoDto findAlbumInfoDtoById(Long id) {
         Album album = albumDao.findById(id);
-        return new AlbumInfoDto(id, album.getTitle());
+        return albumMapper.toAlbumInfoDto(album);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class AlbumServiceImpl implements AlbumService{
     public List<AlbumInfoDto> findSavedAlbumsInfoDtoFromAccountId(Long accountId){
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
         for(Album album: albumDao.findSavedFromByAccountId(accountId)){
-            albumInfoDtoList.add(new AlbumInfoDto(album.getId(), album.getTitle()));
+            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
         }
         return albumInfoDtoList;
     }
@@ -87,7 +88,7 @@ public class AlbumServiceImpl implements AlbumService{
     public List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId){
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
         for(Album album: albumDao.findCreatedFromAccountId(accountId)){
-            albumInfoDtoList.add(new AlbumInfoDto(album.getId(), album.getTitle()));
+            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
         }
         return albumInfoDtoList;
     }
@@ -96,7 +97,7 @@ public class AlbumServiceImpl implements AlbumService{
     public List<AlbumInfoDto> findAllAlbumInfoDto(){
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
         for(Album album: albumDao.findAll()){
-            albumInfoDtoList.add(new AlbumInfoDto(album.getId(), album.getTitle()));
+            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
         }
         return albumInfoDtoList;
     }
@@ -105,7 +106,7 @@ public class AlbumServiceImpl implements AlbumService{
     public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title){
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
         for(Album album: albumDao.findByTitle(title)){
-            albumInfoDtoList.add(new AlbumInfoDto(album.getId(), album.getTitle()));
+            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
         }
         return albumInfoDtoList;
     }

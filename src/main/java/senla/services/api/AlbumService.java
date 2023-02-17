@@ -1,4 +1,4 @@
-package senla.services;
+package senla.services.api;
 
 import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;

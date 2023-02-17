@@ -1,21 +1,22 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import senla.annotations.Loggable;
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.UpdateAccountDto;
-import senla.services.AccountService;
+import senla.services.api.AccountService;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/accounts")
 public class AccountController {
 
-    private final AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
     @GetMapping
     public List<AccountMainDataDto> findAll() {
@@ -48,13 +49,13 @@ public class AccountController {
     }
 
     @Loggable
-    @PostMapping("/{accountId}/{albumId}")
+    @PostMapping("/{accountId}/albums/{albumId}")
     public void addSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId){
         accountService.addSavedAlbum(accountId, albumId);
     }
 
     @Loggable
-    @DeleteMapping("/{accountId}/{albumId}")
+    @DeleteMapping("/{accountId}/albums/{albumId}")
     public void removeSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId){
         accountService.removeSavedAlbum(accountId, albumId);
     }
