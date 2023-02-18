@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class AccountMapper {
@@ -100,13 +101,10 @@ public class AccountMapper {
     }
 
     public List<AccountMainDataDto> toAccountMainDataDtoList(List<Account> accounts) {
-       List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
-
-       for (Account account : accounts) {
-           accountMainDataDtoList.add(
-                   Objects.isNull(account) ? null : mapper.map(account, AccountMainDataDto.class)
-           );
-       }
+       List<AccountMainDataDto> accountMainDataDtoList = accounts
+               .stream()
+               .map(account -> Objects.isNull(account) ? null : mapper.map(account, AccountMainDataDto.class))
+               .collect(Collectors.toList());
 
        return accountMainDataDtoList;
     }

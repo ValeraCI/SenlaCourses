@@ -4,6 +4,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import senla.dto.account.AccountMainDataDto;
 import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;
 import senla.models.*;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class AlbumMapper {
@@ -54,12 +56,11 @@ public class AlbumMapper {
     }
 
     public List<AlbumInfoDto> toAlbumInfoDtoList(List<Album> albums){
-        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
-        for(Album album: albums){
-            albumInfoDtoList.add(
-                    Objects.isNull(album) ? null : mapper.map(album, AlbumInfoDto.class)
-            );
-        }
+        List<AlbumInfoDto> albumInfoDtoList = albums
+                .stream()
+                .map(album -> Objects.isNull(album) ? null : mapper.map(album, AlbumInfoDto.class))
+                .collect(Collectors.toList());
+
         return albumInfoDtoList;
     }
 }

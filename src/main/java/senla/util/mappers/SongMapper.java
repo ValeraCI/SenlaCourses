@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class SongMapper {
@@ -64,12 +65,10 @@ public class SongMapper {
     }
 
     public List<SongInfoDto> toSongInfoDtoList(List<Song> songs){
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
-        for (Song song: songs) {
-            songInfoDtoList.add(
-                Objects.isNull(song) ? null : mapper.map(song, SongInfoDto.class)
-            );
-        }
+        List<SongInfoDto> songInfoDtoList = songs
+                .stream()
+                .map(song -> Objects.isNull(song) ? null : mapper.map(song, SongInfoDto.class))
+                .collect(Collectors.toList());
 
         return songInfoDtoList;
     }
