@@ -60,11 +60,10 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId){
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
-
-        for (Song song: songDao.findByAlbumId(albumId)) {
-            songInfoDtoList.add(songMapper.toSongInfoDto(song));
-        }
+        List<SongInfoDto> songInfoDtoList =
+                songMapper.toSongInfoDtoList(
+                        songDao.findByAlbumId(albumId)
+                );
 
         return songInfoDtoList;
     }
@@ -80,22 +79,22 @@ public class SongServiceImpl implements SongService {
     public List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle) {
         Genre genre = genreDao.findByTitle(genreTitle);
 
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList =
+                songMapper.toSongInfoDtoList(
+                        songDao.findByGenre(genre)
+                );
 
-        for (Song song : songDao.findByGenre(genre)) {
-            songInfoDtoList.add(songMapper.toSongInfoDto(song));
-        }
         return songInfoDtoList;
     }
 
     @Override
     @Transactional
     public List<SongInfoDto> findSongInfoDtoByTitle(String title) {
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList =
+                songMapper.toSongInfoDtoList(
+                        songDao.findByTitle(title)
+                );
 
-        for (Song song : songDao.findByTitle(title)) {
-            songInfoDtoList.add(songMapper.toSongInfoDto(song));
-        }
         return songInfoDtoList;
     }
 

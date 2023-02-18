@@ -77,37 +77,41 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<AlbumInfoDto> findSavedAlbumsInfoDtoFromAccountId(Long accountId){
-        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
-        for(Album album: albumDao.findSavedFromByAccountId(accountId)){
-            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
-        }
+        List<AlbumInfoDto> albumInfoDtoList =
+                albumMapper.toAlbumInfoDtoList(
+                        albumDao.findSavedFromByAccountId(accountId)
+                );
+
         return albumInfoDtoList;
     }
 
     @Override
     public List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId){
-        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
-        for(Album album: albumDao.findCreatedFromAccountId(accountId)){
-            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
-        }
+        List<AlbumInfoDto> albumInfoDtoList =
+                albumMapper.toAlbumInfoDtoList(
+                        albumDao.findCreatedFromAccountId(accountId)
+                );
+
         return albumInfoDtoList;
     }
 
     @Override
     public List<AlbumInfoDto> findAllAlbumInfoDto(){
-        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
-        for(Album album: albumDao.findAll()){
-            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
-        }
+        List<AlbumInfoDto> albumInfoDtoList =
+                albumMapper.toAlbumInfoDtoList(
+                        albumDao.findAll()
+                );
+
         return albumInfoDtoList;
     }
 
     @Override
     public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title){
-        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
-        for(Album album: albumDao.findByTitle(title)){
-            albumInfoDtoList.add(albumMapper.toAlbumInfoDto(album));
-        }
+        List<AlbumInfoDto> albumInfoDtoList =
+                albumMapper.toAlbumInfoDtoList(
+                        albumDao.findByTitle(title)
+                );
+
         return albumInfoDtoList;
     }
 }

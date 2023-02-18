@@ -4,6 +4,8 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import senla.dto.album.AlbumInfoDto;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.models.*;
@@ -59,5 +61,16 @@ public class SongMapper {
         song.setLocation(new Location(song, path));
 
         return song;
+    }
+
+    public List<SongInfoDto> toSongInfoDtoList(List<Song> songs){
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
+        for (Song song: songs) {
+            songInfoDtoList.add(
+                Objects.isNull(song) ? null : mapper.map(song, SongInfoDto.class)
+            );
+        }
+
+        return songInfoDtoList;
     }
 }

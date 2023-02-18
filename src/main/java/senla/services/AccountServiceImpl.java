@@ -13,7 +13,6 @@ import senla.models.Album;
 import senla.models.LoginDetails;
 import senla.services.api.AccountService;
 import senla.util.mappers.AccountMapper;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,12 +41,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountMainDataDto> findAllAccountMainDataDto() {
-        List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
-
-        for (Account account: accountDao.findAll()) {
-            AccountMainDataDto accountMainDataDto = accountMapper.toAccountMainDataDto(account);
-            accountMainDataDtoList.add(accountMainDataDto);
-        }
+        List<AccountMainDataDto> accountMainDataDtoList =
+                accountMapper.toAccountMainDataDtoList(accountDao.findAll());
 
         return accountMainDataDtoList;
     }

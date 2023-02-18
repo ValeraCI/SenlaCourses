@@ -10,6 +10,8 @@ import senla.models.*;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -51,4 +53,13 @@ public class AlbumMapper {
         return Objects.isNull(entity) ? null : mapper.map(entity, AlbumInfoDto.class);
     }
 
+    public List<AlbumInfoDto> toAlbumInfoDtoList(List<Album> albums){
+        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
+        for(Album album: albums){
+            albumInfoDtoList.add(
+                    Objects.isNull(album) ? null : mapper.map(album, AlbumInfoDto.class)
+            );
+        }
+        return albumInfoDtoList;
+    }
 }

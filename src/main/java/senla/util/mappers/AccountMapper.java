@@ -9,6 +9,8 @@ import senla.models.*;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -95,5 +97,17 @@ public class AccountMapper {
 
     public Account toEntity(UpdateAccountDto dto) {
         return Objects.isNull(dto) ? null : mapper.map(dto, Account.class);
+    }
+
+    public List<AccountMainDataDto> toAccountMainDataDtoList(List<Account> accounts) {
+       List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
+
+       for (Account account : accounts) {
+           accountMainDataDtoList.add(
+                   Objects.isNull(account) ? null : mapper.map(account, AccountMainDataDto.class)
+           );
+       }
+
+       return accountMainDataDtoList;
     }
 }
