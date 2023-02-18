@@ -1,26 +1,18 @@
-package senla.configuration;
+package senla.test.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
-
 @Configuration
-@ComponentScan("senla")
-@EnableAspectJAutoProxy
-@EnableWebMvc
-public class Application implements WebMvcConfigurer {
-
-    @Bean
-    public ObjectMapper objectMapper(){
-        return new ObjectMapper();
-    }
-
+@ComponentScan(value = "senla")
+@Profile("test")
+@EnableTransactionManagement
+@PropertySource("application.properties")
+public class Application {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
@@ -31,5 +23,4 @@ public class Application implements WebMvcConfigurer {
                 .setFieldAccessLevel(PRIVATE);
         return mapper;
     }
-
 }

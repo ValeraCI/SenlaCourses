@@ -1,14 +1,11 @@
 package senla.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
-import senla.exceptions.DataChangesException;
 import senla.models.*;
-
-import java.util.Set;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {
@@ -17,7 +14,7 @@ public class AccountDao extends AbstractDao<Account, Long> {
         super(Account.class, entityManager, criteriaBuilder);
     }
 
-    public Account findByEmail(String email){
+    public Account findByEmail(String email) {
         try {
             CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
 
@@ -31,7 +28,7 @@ public class AccountDao extends AbstractDao<Account, Long> {
                     );
 
             return entityManager.createQuery(query).getSingleResult();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
@@ -49,7 +46,26 @@ public class AccountDao extends AbstractDao<Account, Long> {
                     .where(criteriaBuilder.equal(rootAccount.get(AEntity_.ID), entity.getId()));
 
             entityManager.createQuery(criteriaAccountUpdate).executeUpdate();
-        } catch (Exception e){
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e);
+        }
+    }
+
+    public Account findWithSavedAlbums(Long id) {
+        try {
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.ROLE, JoinType.INNER);
+            root.fetch(Account_.SAVED_ALBUMS, JoinType.INNER);
+            query
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(root.get(Account_.ID), id)
+                    );
+
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }

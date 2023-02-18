@@ -1,18 +1,19 @@
-package daoTests;
+package senla.test.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Album;
+import senla.test.configuration.Application;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class AlbumDaoTest {
     @Autowired
     private AlbumDao albumDao;
@@ -44,7 +46,7 @@ public class AlbumDaoTest {
         Album album = albumDao.findById(1L);
 
         Assert.assertEquals("?", album.getTitle());
-        Assert.assertEquals(1L, album.getId());
+        Assert.assertEquals(1L, album.getId().longValue());
     }
 
     @Test
@@ -54,8 +56,8 @@ public class AlbumDaoTest {
         Album album = albums.stream().filter(a -> a.getId() == 1).findFirst().get();
 
         Assert.assertEquals("?", album.getTitle());
-        Assert.assertEquals(7L, album.getCreator().getId());
-        Assert.assertEquals(1L, album.getId());
+        Assert.assertEquals(7L, album.getCreator().getId().longValue());
+        Assert.assertEquals(1L, album.getId().longValue());
     }
 
     @Test
@@ -75,7 +77,7 @@ public class AlbumDaoTest {
         album = albumDao.findById(index);
 
         Assert.assertEquals("TestAlbum", album.getTitle());
-        Assert.assertEquals(1L, album.getCreator().getId());
+        Assert.assertEquals(1L, album.getCreator().getId().longValue());
     }
 
     @Test
@@ -102,8 +104,8 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findSavedFromByAccountId(){
-        albumDao.findSavedFromByAccountId(1L).stream().forEach(System.out::println);
+    public void findCreatedFromAccountIdTest(){
+        albumDao.findCreatedFromAccountId(1L).stream().forEach(System.out::println);
     }
 
 }

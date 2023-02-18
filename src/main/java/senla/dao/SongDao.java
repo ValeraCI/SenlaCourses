@@ -1,9 +1,9 @@
 package senla.dao;
 
 
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
@@ -21,11 +21,20 @@ public class SongDao extends AbstractDao<Song, Long> {
 
     @Override
     public Song findById(Long id) {
-        EntityGraph graph = entityManager.getEntityGraph("song-authors-entity-graph");
-        Map<String, Object> properties = Map.of("javax.persistence.fetchgraph", graph);
-        Song song = entityManager.find(Song.class, id, properties);
+        try {
+            EntityGraph graph = entityManager.getEntityGraph("song-authors-entity-graph");
+            Map<String, Object> properties = Map.of("javax.persistence.fetchgraph", graph);
+            Song song = entityManager.find(Song.class, id, properties);
 
-        return song;
+            if(song == null) {
+                throw new DataBaseWorkException();
+            }
+
+            return song;
+        }
+        catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
     }
 
     public List<Song> findByGenre(Genre genre) {
@@ -66,14 +75,19 @@ public class SongDao extends AbstractDao<Song, Long> {
     }
 
     public List<Song> findByAlbumId(Long albumId){
-        CriteriaQuery<Song> query = criteriaBuilder.createQuery(Song.class);
+        try {
+            CriteriaQuery<Song> query = criteriaBuilder.createQuery(Song.class);
 
-        Root<Song> root = query.from(typeParameterClass);
-        Join<Song, Album> join = root.join(Song_.CONTAINED_IN, JoinType.RIGHT);
+            Root<Song> root = query.from(typeParameterClass);
+            Join<Album, Song> join = root.join(Song_.CONTAINED_IN, JoinType.LEFT);
 
-        query.select(root)
-                .where(criteriaBuilder.equal(join.get(Album_.ID), albumId));
+            query.select(root)
+                    .where(criteriaBuilder.equal(join.get(Album_.ID), albumId));
 
-        return entityManager.createQuery(query).getResultList();
+            return entityManager.createQuery(query).getResultList();
+        }
+        catch (Exception e){
+            throw new DataBaseWorkException(e);
+        }
     }
 }

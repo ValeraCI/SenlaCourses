@@ -1,8 +1,8 @@
 package senla.dao.abstractDao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.AEntity;

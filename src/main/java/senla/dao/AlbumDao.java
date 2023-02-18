@@ -1,7 +1,7 @@
 package senla.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.*;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
@@ -38,9 +38,9 @@ public class AlbumDao extends AbstractDao<Album, Long> {
         try {
             CriteriaQuery<Album> query = criteriaBuilder.createQuery(typeParameterClass);
             Root<Album> root = query.from(typeParameterClass);
-            Join<Album, Account> join = root.join(Album_.SAVED_FROM, JoinType.RIGHT);
+            Join<Account, Album> join = root.join(Album_.SAVED_FROM, JoinType.LEFT);
 
-            query.select(root)
+            query.select(query.from(typeParameterClass))
                     .where(criteriaBuilder.equal(join.get(Account_.ID), id));
 
             return entityManager.createQuery(query).getResultList();
@@ -53,7 +53,7 @@ public class AlbumDao extends AbstractDao<Album, Long> {
         try {
             CriteriaQuery<Album> query = criteriaBuilder.createQuery(typeParameterClass);
             Root<Album> root = query.from(typeParameterClass);
-            Join<Album, Account> join = root.join(Album_.CREATOR, JoinType.RIGHT);
+            Join<Account, Album> join = root.join(Album_.CREATOR, JoinType.LEFT);
 
             query.select(root)
                     .where(criteriaBuilder.equal(join.get(Account_.ID), id));

@@ -1,28 +1,32 @@
-package daoTests;
+package senla.test.dao;
 
-import org.junit.*;
+
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.LoginDetailsDao;
 import senla.dao.RoleDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Account;
 import senla.models.LoginDetails;
+import senla.test.configuration.Application;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class AccountAndLoginDetailsDaoTest {
     @Autowired
     private AccountDao accountDao;
@@ -33,7 +37,6 @@ public class AccountAndLoginDetailsDaoTest {
 
     private Account createAccount(){
         Account account = new Account();
-
         account.setNickname("Tester");
         account.setRegistrationDate(LocalDate.now());
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
@@ -46,7 +49,7 @@ public class AccountAndLoginDetailsDaoTest {
         Account account = accountDao.findById(1L);
 
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1L, account.getRole().getId());
+        Assert.assertEquals(1L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -55,7 +58,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1L, account.getRole().getId());
+        Assert.assertEquals(1L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -76,7 +79,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("test@mail.ru", account.getLoginDetails().getEmail());
         Assert.assertEquals("Tester", account.getNickname());
-        Assert.assertEquals(3L, account.getRole().getId());
+        Assert.assertEquals(3L, account.getRole().getId().longValue());
     }
 
     @Test
@@ -101,7 +104,7 @@ public class AccountAndLoginDetailsDaoTest {
 
         Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
         Assert.assertEquals("Valerix", account.getNickname());
-        Assert.assertEquals(1, account.getRole().getId());
+        Assert.assertEquals(1, account.getRole().getId().longValue());
         Assert.assertEquals("123456", account.getLoginDetails().getPassword());
     }
 

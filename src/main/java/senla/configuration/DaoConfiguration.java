@@ -1,7 +1,5 @@
 package senla.configuration;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,10 +14,12 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("application.properties")
+@PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class DaoConfiguration {
     @Value("${db.driverClassName}")
@@ -88,7 +88,6 @@ public class DaoConfiguration {
     @Bean
     public EntityManager entityManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
         return entityManagerFactory.getObject().createEntityManager();
-
     }
 
     @Bean

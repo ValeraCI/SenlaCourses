@@ -1,22 +1,23 @@
-package daoTests;
-
+package senla.test.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.RoleDao;
+import senla.test.configuration.Application;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class RoleDaoTest {
     @Autowired
     RoleDao roleDao;

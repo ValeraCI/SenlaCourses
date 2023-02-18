@@ -1,19 +1,21 @@
-package daoTests;
+package senla.test.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import senla.configuration.Application;
 import senla.dao.AccountDao;
 import senla.dao.GenreDao;
 import senla.dao.SongDao;
+import senla.exceptions.DataBaseWorkException;
 import senla.models.Location;
 import senla.models.Song;
+import senla.test.configuration.Application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.List;
         classes = {Application.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
+@ActiveProfiles("test")
 public class SongDaoTest {
     @Autowired
     private SongDao songDao;
@@ -50,7 +53,7 @@ public class SongDaoTest {
         Song song = songDao.findById(1L);
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -60,8 +63,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -71,8 +74,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -82,8 +85,8 @@ public class SongDaoTest {
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
         Assert.assertEquals("Лиза", song.getTitle());
-        Assert.assertEquals(1L, song.getGenre().getId());
-        Assert.assertEquals(1L, song.getId());
+        Assert.assertEquals(1L, song.getGenre().getId().longValue());
+        Assert.assertEquals(1L, song.getId().longValue());
     }
 
     @Test
@@ -103,7 +106,7 @@ public class SongDaoTest {
         song = songDao.findById(index);
 
         Assert.assertEquals("TestSong", song.getTitle());
-        Assert.assertEquals(2L, song.getGenre().getId());
+        Assert.assertEquals(2L, song.getGenre().getId().longValue());
     }
 
     @Test
@@ -118,7 +121,7 @@ public class SongDaoTest {
         Assert.assertEquals("TEASER TWO", song.getTitle());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = DataBaseWorkException.class)
     public void deleteByIdTest(){
         songDao.deleteById(5L);
         Song song = songDao.findById(5L);

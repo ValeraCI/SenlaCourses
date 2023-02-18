@@ -1,6 +1,6 @@
 package senla.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,26 +11,22 @@ import java.util.Set;
 
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "accounts")
 public class Account extends AEntity{
-
-    @Setter
     @Column(name = "nickname")
     private String nickname;
 
-    @Setter
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Setter
     @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private LoginDetails loginDetails;
 
