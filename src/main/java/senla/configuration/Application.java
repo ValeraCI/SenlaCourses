@@ -4,14 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
+//TODO добавить шифрование пароля
 
 @Configuration
 @ComponentScan("senla")
+@PropertySource("classpath:application.properties")
 @EnableAspectJAutoProxy
 @EnableWebMvc
 public class Application implements WebMvcConfigurer {
@@ -31,5 +35,11 @@ public class Application implements WebMvcConfigurer {
                 .setFieldAccessLevel(PRIVATE);
         return mapper;
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
 
 }

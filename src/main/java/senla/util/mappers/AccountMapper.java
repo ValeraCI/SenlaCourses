@@ -36,6 +36,8 @@ public class AccountMapper {
 
        mapper.createTypeMap(Account.class, AccountWithLoginDetailsDto.class)
                .addMappings(m -> m.skip(AccountWithLoginDetailsDto::setRole))
+               .addMappings(m -> m.skip(AccountWithLoginDetailsDto::setEmail))
+               .addMappings(m -> m.skip(AccountWithLoginDetailsDto::setPassword))
                .setPostConverter(
                        accountToAccountWithLoginDetailsDtoConverter());
 
@@ -70,6 +72,8 @@ public class AccountMapper {
 
     public void mapAccountWithLoginDetailsDtoSpecificFields(Account source, AccountWithLoginDetailsDto destination) {
         destination.setRole(source.getRole().getRoleTitle());
+        destination.setEmail(source.getLoginDetails().getEmail());
+        destination.setPassword(source.getLoginDetails().getPassword());
     }
 
     public void mapAccountSpecificFields(UpdateAccountDto source, Account destination) {

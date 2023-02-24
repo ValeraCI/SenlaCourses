@@ -50,6 +50,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountWithLoginDetailsDto findAccountWithLoginDetailsDtoByEmail(String email){
         Account account = accountDao.findByEmail(email);
+
         AccountWithLoginDetailsDto accountWithLoginDetailsDto
                 = accountMapper.toAccountWithLoginDetailsDto(account);
 
