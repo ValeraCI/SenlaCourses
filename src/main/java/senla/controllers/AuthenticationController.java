@@ -3,10 +3,12 @@ package senla.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import senla.annotations.Loggable;
 import senla.dto.AuthRequest;
 import senla.util.JwtUtil;
@@ -18,6 +20,8 @@ import java.util.Map;
 @RequestMapping(value = "/authenticate")
 @RequiredArgsConstructor
 public class AuthenticationController {
+
+    //TODO добавить проверку пароля
 
     //private final AuthenticationManager authenticationManager;
 
@@ -31,8 +35,6 @@ public class AuthenticationController {
     @GetMapping("/login")
     public ResponseEntity login(@RequestBody AuthRequest request) {
         try {
-            System.out.println("Email: "+ request.getEmail());
-
             String username = request.getEmail();
             String password = request.getPassword();
 
@@ -50,7 +52,7 @@ public class AuthenticationController {
 
 
             return ResponseEntity.ok(response);
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
             throw new BadCredentialsException("Invalid username or password");
         }
     }

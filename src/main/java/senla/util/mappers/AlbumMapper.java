@@ -4,14 +4,13 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import senla.dto.account.AccountMainDataDto;
 import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Album;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

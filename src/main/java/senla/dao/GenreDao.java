@@ -1,14 +1,15 @@
 package senla.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.models.Genre;
 import senla.models.GenreTitle;
 import senla.models.Genre_;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 @Repository
 public class GenreDao extends AbstractDao<Genre, Long> {

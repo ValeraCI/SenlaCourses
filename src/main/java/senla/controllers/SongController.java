@@ -1,7 +1,6 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import senla.annotations.Loggable;
 import senla.dto.song.SongCreateDto;
@@ -12,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/songs")
+@RequiredArgsConstructor
 public class SongController {
 
-    @Autowired
-    private SongService songService;
+    private final SongService songService;
 
     @Loggable
     @PostMapping

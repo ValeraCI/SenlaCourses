@@ -2,6 +2,7 @@ package senla.services.api;
 
 import senla.dto.album.AlbumInfoDto;
 import senla.dto.album.CreateAlbumDto;
+
 import java.util.List;
 
 public interface AlbumService {

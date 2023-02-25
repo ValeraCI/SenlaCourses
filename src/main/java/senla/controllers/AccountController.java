@@ -1,7 +1,6 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import senla.annotations.Loggable;
 import senla.dto.account.AccountDataDto;
@@ -13,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/accounts")
+@RequiredArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @GetMapping
     public List<AccountMainDataDto> findAll() {

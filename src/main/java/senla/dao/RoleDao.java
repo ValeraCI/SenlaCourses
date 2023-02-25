@@ -1,10 +1,11 @@
 package senla.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.models.Role;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 
 @Repository
 public class RoleDao extends AbstractDao<Role, Long> {

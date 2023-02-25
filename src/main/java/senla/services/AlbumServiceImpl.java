@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
-import senla.dto.album.CreateAlbumDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.CreateAlbumDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
@@ -15,7 +15,6 @@ import senla.models.Song;
 import senla.services.api.AlbumService;
 import senla.util.mappers.AlbumMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

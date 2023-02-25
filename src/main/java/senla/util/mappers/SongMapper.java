@@ -4,11 +4,12 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import senla.dto.album.AlbumInfoDto;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Genre;
+import senla.models.Location;
+import senla.models.Song;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;

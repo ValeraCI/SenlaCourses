@@ -1,11 +1,15 @@
 package senla.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Account_;
+import senla.models.Album;
+import senla.models.Album_;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Repository

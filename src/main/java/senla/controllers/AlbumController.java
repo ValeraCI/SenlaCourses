@@ -1,7 +1,6 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import senla.annotations.Loggable;
 import senla.dto.album.AlbumInfoDto;
@@ -12,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/albums")
+@RequiredArgsConstructor
 public class AlbumController {
 
-    @Autowired
-    private AlbumService albumService;
+    private final AlbumService albumService;
 
     @Loggable
     @GetMapping("/{id}")

@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import senla.configuration.Application;
+import senla.configuration.WebMvcConfig;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { Application.class })
+@ContextConfiguration(classes = { WebMvcConfig.class })
 @WebAppConfiguration()
 public class SongControllerTest {
     @Autowired

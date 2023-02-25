@@ -1,11 +1,12 @@
 package senla.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {

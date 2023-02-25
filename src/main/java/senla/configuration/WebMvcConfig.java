@@ -18,7 +18,7 @@ import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 @PropertySource("classpath:application.properties")
 @EnableAspectJAutoProxy
 @EnableWebMvc
-public class Application implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public ObjectMapper objectMapper(){
@@ -40,6 +40,4 @@ public class Application implements WebMvcConfigurer {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-
 }

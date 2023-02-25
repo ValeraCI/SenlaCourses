@@ -6,13 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.LoginDetailsDao;
-import senla.dto.account.*;
+import senla.dto.account.AccountDataDto;
+import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.AccountWithLoginDetailsDto;
+import senla.dto.account.UpdateAccountDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
 import senla.models.LoginDetails;
 import senla.services.api.AccountService;
 import senla.util.mappers.AccountMapper;
+
 import java.util.List;
 
 @Service

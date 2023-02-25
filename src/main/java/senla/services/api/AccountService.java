@@ -4,6 +4,7 @@ import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.AccountWithLoginDetailsDto;
 import senla.dto.account.UpdateAccountDto;
+
 import java.util.List;
 
 public interface AccountService {

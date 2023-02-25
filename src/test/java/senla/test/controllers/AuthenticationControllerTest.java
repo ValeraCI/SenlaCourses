@@ -15,14 +15,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import senla.configuration.Application;
+import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
 import senla.util.JwtUtil;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { Application.class })
+@ContextConfiguration(classes = { WebMvcConfig.class })
 @WebAppConfiguration()
 public class AuthenticationControllerTest {
     @Autowired

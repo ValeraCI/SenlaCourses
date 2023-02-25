@@ -16,9 +16,6 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
 
    @ExceptionHandler(DataBaseWorkException.class)
     public ResponseEntity<String> dataBaseWorkException(DataBaseWorkException exception) {
-
-       System.out.println("NoResultException");
-
        return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getLocalizedMessage());
