@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.Album;
@@ -28,7 +28,7 @@ public class AlbumServiceImpl implements AlbumService {
     private final AlbumMapper albumMapper;
 
     @Override
-    public Long save(CreateAlbumDto albumDto){
+    public Long save(AlbumCreateUpdateDataDto albumDto) {
         Account account = accountDao.findById(albumDto.getCreatorId());
 
         Album album = albumMapper.toEntity(albumDto, account);
@@ -45,37 +45,35 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         albumDao.deleteById(id);
     }
 
     @Override
-    public void addSongIn(Long albumId, Long songId){
+    public void addSongIn(Long albumId, Long songId) {
         Song song = songDao.findById(songId);
         Album album = albumDao.findById(albumId);
 
-        if(!album.getSongsIn().contains(song)){
+        if (!album.getSongsIn().contains(song)) {
             album.getSongsIn().add(song);
-        }
-        else {
+        } else {
             throw new DataChangesException("Album already contains such a song");
         }
     }
 
-    public void removeSongIn(Long albumId, Long songId){
+    public void removeSongIn(Long albumId, Long songId) {
         Song song = songDao.findById(songId);
         Album album = albumDao.findById(albumId);
 
-        if(album.getSongsIn().contains(song)){
+        if (album.getSongsIn().contains(song)) {
             album.getSongsIn().remove(song);
-        }
-        else {
+        } else {
             throw new DataChangesException("Album does not contain such a song");
         }
     }
 
     @Override
-    public List<AlbumInfoDto> findSavedAlbumsInfoDtoFromAccountId(Long accountId){
+    public List<AlbumInfoDto> findSavedAlbumsInfoDtoFromAccountId(Long accountId) {
         List<AlbumInfoDto> albumInfoDtoList =
                 albumMapper.toAlbumInfoDtoList(
                         albumDao.findSavedFromByAccountId(accountId)
@@ -85,7 +83,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId){
+    public List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId) {
         List<AlbumInfoDto> albumInfoDtoList =
                 albumMapper.toAlbumInfoDtoList(
                         albumDao.findCreatedFromAccountId(accountId)
@@ -95,7 +93,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAllAlbumInfoDto(){
+    public List<AlbumInfoDto> findAllAlbumInfoDto() {
         List<AlbumInfoDto> albumInfoDtoList =
                 albumMapper.toAlbumInfoDtoList(
                         albumDao.findAll()
@@ -105,7 +103,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title){
+    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title) {
         List<AlbumInfoDto> albumInfoDtoList =
                 albumMapper.toAlbumInfoDtoList(
                         albumDao.findByTitle(title)

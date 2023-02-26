@@ -19,21 +19,22 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
 import senla.security.filters.JwtFilter;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { WebMvcConfig.class })
+@ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration()
 public class AlbumControllerTest {
     @Autowired
-    private WebApplicationContext wac;
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private JwtFilter jwtFilter;
@@ -47,7 +48,7 @@ public class AlbumControllerTest {
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(this.wac)
+                .webAppContextSetup(this.webApplicationContext)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilter(jwtFilter)
                 .dispatchOptions(true).build();
@@ -78,7 +79,8 @@ public class AlbumControllerTest {
 
         List<AlbumInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<AlbumInfoDto>>(){});
+                        new TypeReference<List<AlbumInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "?");
         Assert.assertEquals(list.get(0).getId(), 1);
@@ -107,7 +109,8 @@ public class AlbumControllerTest {
 
         List<AlbumInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<AlbumInfoDto>>(){});
+                        new TypeReference<List<AlbumInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "LAST ONE");
         Assert.assertEquals(list.get(0).getId(), 2);
@@ -119,7 +122,7 @@ public class AlbumControllerTest {
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateAlbumDto("TestAlbum", 1L))))
+                                new AlbumCreateUpdateDataDto("TestAlbum", 1L))))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
@@ -142,7 +145,7 @@ public class AlbumControllerTest {
                 .andReturn();
 
 
-        MvcResult result =  mockMvc.perform(get("/albums/{id}", 4)
+        MvcResult result = mockMvc.perform(get("/albums/{id}", 4)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -159,7 +162,8 @@ public class AlbumControllerTest {
 
         List<AlbumInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<AlbumInfoDto>>(){});
+                        new TypeReference<List<AlbumInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "?");
         Assert.assertEquals(list.get(0).getId(), 1);
@@ -174,7 +178,8 @@ public class AlbumControllerTest {
 
         List<AlbumInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<AlbumInfoDto>>(){});
+                        new TypeReference<List<AlbumInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "?");
         Assert.assertEquals(list.get(0).getId(), 1);
@@ -197,7 +202,7 @@ public class AlbumControllerTest {
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print());
 
-        MvcResult result =  mockMvc.perform(post("/albums/{albumId}/{songId}", 1, 1)
+        MvcResult result = mockMvc.perform(post("/albums/{albumId}/{songId}", 1, 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();

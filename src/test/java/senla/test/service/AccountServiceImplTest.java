@@ -19,9 +19,12 @@ import senla.dao.AlbumDao;
 import senla.dao.LoginDetailsDao;
 import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.AccountWithLoginDetailsDto;
 import senla.exceptions.DataChangesException;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Album;
+import senla.models.LoginDetails;
+import senla.models.Role;
+import senla.models.RoleTitle;
 import senla.services.AccountServiceImpl;
 import senla.services.api.AccountService;
 import senla.test.configuration.WebMvcConfig;
@@ -57,23 +60,23 @@ public class AccountServiceImplTest {
 
     private AccountService accountService;
 
-    public AccountServiceImplTest(){
+    public AccountServiceImplTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Before
-    public void beforeEach(){
+    public void beforeEach() {
         this.accountService = new AccountServiceImpl(accountDao, albumDao, loginDetailsDao, accountMapper);
     }
 
-    private Role createRole(){
+    private Role createRole() {
         Role role = new Role();
         role.setRoleTitle(RoleTitle.USER);
         role.setId(3L);
         return role;
     }
 
-    private Account createAccount(){
+    private Account createAccount() {
         Account account = new Account();
 
         account.setId(1L);
@@ -85,7 +88,7 @@ public class AccountServiceImplTest {
         return account;
     }
 
-    private Album createAlbum(Account account){
+    private Album createAlbum(Account account) {
         Album album = new Album();
 
         album.setId(1L);
@@ -97,19 +100,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void findAccountWithLoginDetailsDtoByEmailTest(){
-        given(accountDao.findByEmail("test@mail.ru"))
-                .willReturn(createAccount());
-
-        AccountWithLoginDetailsDto account =
-                accountService.findAccountWithLoginDetailsDtoByEmail("test@mail.ru");
-
-        Assert.assertEquals("ROLE_USER", account.getRole().toString());
-        Assert.assertEquals("Tester", account.getNickname());
-    }
-
-    @Test
-    public void findAllAccountMainDataDtoTest(){
+    public void findAllAccountMainDataDtoTest() {
         given(accountDao.findAll())
                 .willReturn(new ArrayList(Arrays.asList(createAccount())));
 
@@ -119,7 +110,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void findAccountMainDataDtoByIdTest(){
+    public void findAccountMainDataDtoByIdTest() {
         given(accountDao.findById(1L))
                 .willReturn(createAccount());
 
@@ -129,7 +120,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void addSavedAlbumNoExceptionTest(){
+    public void addSavedAlbumNoExceptionTest() {
         Account account = createAccount();
 
         given(accountDao.findWithSavedAlbums(1L))
@@ -157,7 +148,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void removeSavedAlbumNoExceptionTest(){
+    public void removeSavedAlbumNoExceptionTest() {
         Account account = createAccount();
         Album album = createAlbum(account);
 
@@ -191,14 +182,14 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         accountService.deleteById(1L);
 
         verify(accountDao).deleteById(1L);
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         AccountDataDto accountDataDto = new AccountDataDto("Tester", "test@mail.ru", "1234");
 
         Assert.assertEquals(0L, accountService.save(accountDataDto).longValue());

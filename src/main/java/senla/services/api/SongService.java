@@ -5,7 +5,7 @@ import senla.dto.song.SongInfoDto;
 
 import java.util.List;
 
-public interface SongService{
+public interface SongService {
 
     Long save(SongCreateDto songCreateDto);
 

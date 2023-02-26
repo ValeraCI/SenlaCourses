@@ -3,9 +3,10 @@ package senla.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private Key secretKey;
+    private final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @Value("${jwt.token.lifetimeInMinutes}")
     private Integer tokenTime;
@@ -72,8 +74,9 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token);
             return claims.getBody().getExpiration().after(new Date());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
+            logger.error("Method validate was throwing exception {}",
+                    e.getMessage());
             return false;
         }
     }

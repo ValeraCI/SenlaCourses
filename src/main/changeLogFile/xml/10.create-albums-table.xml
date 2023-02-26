@@ -17,7 +17,7 @@
             </column>
             <column name="creator_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="albums_creator_id_FK" references="accounts(id)"
-                deleteCascade="true"/>
+                             deleteCascade="true"/>
             </column>
         </createTable>
 

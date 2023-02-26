@@ -26,15 +26,16 @@ import senla.security.filters.JwtFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { WebMvcConfig.class })
+@ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration()
 public class SongControllerTest {
     @Autowired
-    private WebApplicationContext wac;
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private JwtFilter jwtFilter;
@@ -48,7 +49,7 @@ public class SongControllerTest {
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(this.wac)
+                .webAppContextSetup(this.webApplicationContext)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilter(jwtFilter)
                 .dispatchOptions(true).build();
@@ -115,7 +116,7 @@ public class SongControllerTest {
                 .andReturn();
 
 
-        MvcResult result =  mockMvc.perform(get("/songs/{id}", 5)
+        MvcResult result = mockMvc.perform(get("/songs/{id}", 5)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -132,7 +133,8 @@ public class SongControllerTest {
 
         List<SongInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<SongInfoDto>>(){});
+                        new TypeReference<List<SongInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "NUMB");
         Assert.assertEquals(list.get(0).getId(), 8);
@@ -147,7 +149,8 @@ public class SongControllerTest {
 
         List<SongInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<SongInfoDto>>(){});
+                        new TypeReference<List<SongInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "TEASER");
         Assert.assertEquals(list.get(0).getId(), 2);
@@ -162,7 +165,8 @@ public class SongControllerTest {
 
         List<SongInfoDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<SongInfoDto>>(){});
+                        new TypeReference<List<SongInfoDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getTitle(), "TEASER");
         Assert.assertEquals(list.get(0).getId(), 2);

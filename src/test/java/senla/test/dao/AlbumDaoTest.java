@@ -31,7 +31,7 @@ public class AlbumDaoTest {
     @Autowired
     private AccountDao accountDao;
 
-    private Album createAlbum(){
+    private Album createAlbum() {
         Album album = new Album();
 
         album.setTitle("TestAlbum");
@@ -42,7 +42,7 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findByIdTest(){
+    public void findByIdTest() {
         Album album = albumDao.findById(1L);
 
         Assert.assertEquals("?", album.getTitle());
@@ -50,7 +50,7 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findByTitleTest(){
+    public void findByTitleTest() {
         List<Album> albums = albumDao.findByTitle("?");
 
         Album album = albums.stream().filter(a -> a.getId() == 1).findFirst().get();
@@ -61,16 +61,16 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         List<Album> albums = albumDao.findAll();
 
-        for(int i = 0; i < albums.size(); i++){
-            Assert.assertEquals(albums.get(i).getTitle(), albumDao.findById(i+1L).getTitle());
+        for (int i = 0; i < albums.size(); i++) {
+            Assert.assertEquals(albums.get(i).getTitle(), albumDao.findById(i + 1L).getTitle());
         }
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         Album album = createAlbum();
 
         Long index = albumDao.save(album);
@@ -81,7 +81,7 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void updateTest(){
+    public void updateTest() {
         Album album = albumDao.findById(2L);
         Assert.assertEquals("LAST ONE", album.getTitle());
 
@@ -93,18 +93,18 @@ public class AlbumDaoTest {
     }
 
     @Test(expected = DataBaseWorkException.class)
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         albumDao.deleteById(4L);
         Album album = albumDao.findById(4L);
     }
 
     @Test
-    public void findSavedFromByAccountIdTest(){
+    public void findSavedFromByAccountIdTest() {
         albumDao.findSavedFromByAccountId(1L).stream().forEach(System.out::println);
     }
 
     @Test
-    public void findCreatedFromAccountIdTest(){
+    public void findCreatedFromAccountIdTest() {
         albumDao.findCreatedFromAccountId(1L).stream().forEach(System.out::println);
     }
 

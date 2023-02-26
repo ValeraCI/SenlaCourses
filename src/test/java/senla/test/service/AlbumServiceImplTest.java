@@ -15,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
 import senla.exceptions.DataChangesException;
-import senla.models.*;
-import senla.services.api.AlbumService;
+import senla.models.Account;
+import senla.models.Album;
+import senla.models.LoginDetails;
+import senla.models.Song;
 import senla.services.AlbumServiceImpl;
+import senla.services.api.AlbumService;
 import senla.test.configuration.WebMvcConfig;
 import senla.util.mappers.AlbumMapper;
 
@@ -52,16 +55,16 @@ public class AlbumServiceImplTest {
 
     private AlbumService albumService;
 
-    public AlbumServiceImplTest(){
+    public AlbumServiceImplTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Before
-    public void beforeEach(){
+    public void beforeEach() {
         albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper);
     }
 
-    private Account createAccount(){
+    private Account createAccount() {
         Account account = new Account();
 
         account.setId(1L);
@@ -72,7 +75,7 @@ public class AlbumServiceImplTest {
         return account;
     }
 
-    private Album createAlbum(){
+    private Album createAlbum() {
         Album album = new Album();
 
         album.setId(1L);
@@ -84,17 +87,17 @@ public class AlbumServiceImplTest {
         return album;
     }
 
-    private Song createSong(){
+    private Song createSong() {
         Song song = new Song();
         song.setTitle("TestSong");
         return song;
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         given(accountDao.findById(1L)).willReturn(createAccount());
 
-        CreateAlbumDto albumDto = new CreateAlbumDto("test", 1L);
+        AlbumCreateUpdateDataDto albumDto = new AlbumCreateUpdateDataDto("test", 1L);
 
         Assert.assertEquals(0L, albumService.save(albumDto).longValue());
     }
@@ -111,14 +114,14 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void deleteById(){
+    public void deleteById() {
         albumService.deleteById(1L);
 
         verify(albumDao).deleteById(1L);
     }
 
     @Test
-    public void addSongInNoExceptionTest(){
+    public void addSongInNoExceptionTest() {
         Album album = createAlbum();
 
         given(songDao.findById(1L))
@@ -132,7 +135,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test(expected = DataChangesException.class)
-    public void addSongInExceptionTest(){
+    public void addSongInExceptionTest() {
         Album album = createAlbum();
 
         given(songDao.findById(1L))
@@ -145,7 +148,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void removeSavedAlbumNoExceptionTest(){
+    public void removeSavedAlbumNoExceptionTest() {
         Album album = createAlbum();
         Song song = createSong();
 
@@ -162,7 +165,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test(expected = DataChangesException.class)
-    public void removeSavedAlbumExceptionTest(){
+    public void removeSavedAlbumExceptionTest() {
         Album album = createAlbum();
         Song song = createSong();
 
@@ -179,7 +182,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void findSavedAlbumsInfoDtoFromAccountIdTest(){
+    public void findSavedAlbumsInfoDtoFromAccountIdTest() {
         given(albumDao.findSavedFromByAccountId(1L))
                 .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
 
@@ -187,7 +190,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void findCreatedAlbumInfoDtoFromAccountIdTest(){
+    public void findCreatedAlbumInfoDtoFromAccountIdTest() {
         given(albumDao.findCreatedFromAccountId(1L))
                 .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
 
@@ -195,7 +198,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void findAllAlbumInfoDtoTest(){
+    public void findAllAlbumInfoDtoTest() {
         given(albumDao.findAll())
                 .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
 
@@ -203,7 +206,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void findAlbumInfoDtoByTitleTest(){
+    public void findAlbumInfoDtoByTitleTest() {
         given(albumDao.findByTitle("test"))
                 .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
 

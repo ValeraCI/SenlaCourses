@@ -10,8 +10,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import senla.test.configuration.WebMvcConfig;
 import senla.dao.GenreDao;
+import senla.test.configuration.WebMvcConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -26,20 +26,20 @@ public class GenreDaoTest {
     private GenreDao genreDao;
 
     @Test
-    public void testGenreDao(){
+    public void testGenreDao() {
         String[] programGenres = new String[]{
-            "POP", "RAP", "BLUES", "CHANSON", "CLASSICAL", "DISCO", "ELECTRONIC", "JAZZ", "MUSICAL", "RENAISSANCE",
+                "POP", "RAP", "BLUES", "CHANSON", "CLASSICAL", "DISCO", "ELECTRONIC", "JAZZ", "MUSICAL", "RENAISSANCE",
                 "ROCK", "SPIRITUAL"
         };
         String daoGenres[] = new String[programGenres.length];
-        for(int i = 0; i < daoGenres.length; i++){
-            daoGenres[i] = String.valueOf(genreDao.findById(i+1L).getGenreTitle());
+        for (int i = 0; i < daoGenres.length; i++) {
+            daoGenres[i] = String.valueOf(genreDao.findById(i + 1L).getGenreTitle());
         }
         Assert.assertArrayEquals(programGenres, daoGenres);
     }
 
     @Test
-    public void findByTitleTest(){
+    public void findByTitleTest() {
         String searchParam = "POP";
         String genreTitle = String.valueOf(genreDao.findByTitle(searchParam).getGenreTitle());
 

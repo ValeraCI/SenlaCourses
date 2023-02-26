@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
@@ -26,14 +26,19 @@ import senla.security.filters.JwtFilter;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { WebMvcConfig.class })
+@ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration()
 public class AccountControllerTest {
     @Autowired
-    private WebApplicationContext wac;
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private JwtFilter jwtFilter;
@@ -47,7 +52,7 @@ public class AccountControllerTest {
     @BeforeEach
     public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(this.wac)
+                .webAppContextSetup(this.webApplicationContext)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilter(jwtFilter)
                 .dispatchOptions(true).build();
@@ -78,7 +83,8 @@ public class AccountControllerTest {
 
         List<AccountMainDataDto> list =
                 objectMapper.readValue(result.getResponse().getContentAsString(),
-                        new TypeReference<List<AccountMainDataDto>>(){});
+                        new TypeReference<List<AccountMainDataDto>>() {
+                        });
 
         Assert.assertEquals(list.get(0).getNickname(), "Valerix");
         Assert.assertEquals(list.get(0).getId().longValue(), 1);
@@ -127,7 +133,7 @@ public class AccountControllerTest {
                 .andReturn();
 
 
-        MvcResult result =  mockMvc.perform(get("/accounts/{id}", 10)
+        MvcResult result = mockMvc.perform(get("/accounts/{id}", 10)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -145,7 +151,7 @@ public class AccountControllerTest {
                         .content(objectMapper.writeValueAsString(accountDto)))
                 .andDo(MockMvcResultHandlers.print());
 
-        MvcResult result =  mockMvc.perform(get("/accounts/{id}", 9)
+        MvcResult result = mockMvc.perform(get("/accounts/{id}", 9)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();

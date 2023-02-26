@@ -17,11 +17,11 @@ public class LoggableAspect {
     private final Logger logger = LoggerFactory.getLogger(LoggableAspect.class);
 
     @Pointcut(value = "@annotation(senla.annotations.Loggable)")
-    public void transactionLoggable(){
+    public void transactionLoggable() {
     }
 
     @Around("transactionLoggable()")
-    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint){
+    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint) {
         Object result;
 
         try {
@@ -32,10 +32,9 @@ public class LoggableAspect {
             throw new RuntimeException(e);
         }
 
-        if(Objects.isNull(result)) {
+        if (Objects.isNull(result)) {
             logger.info("Method {} was finished", proceedingJoinPoint.getSignature().toLongString());
-        }
-        else {
+        } else {
             logger.info("Method {} was finished and return {}", proceedingJoinPoint.getSignature().toLongString(),
                     result);
         }

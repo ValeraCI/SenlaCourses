@@ -22,13 +22,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SongServiceImpl implements SongService {
+
     private final SongDao songDao;
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final GenreDao genreDao;
     private final SongMapper songMapper;
 
-    private String createLocation(SongCreateDto songCreateDto){
+    private String createLocation(SongCreateDto songCreateDto) {
         StringBuilder sb = new StringBuilder(".\\music\\");
         sb.append(songCreateDto.getAlbumCreator());
         sb.append("\\");
@@ -55,13 +56,13 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         songDao.deleteById(id);
     }
 
     @Override
     @Transactional
-    public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId){
+    public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId) {
         List<SongInfoDto> songInfoDtoList =
                 songMapper.toSongInfoDtoList(
                         songDao.findByAlbumId(albumId)
@@ -106,7 +107,7 @@ public class SongServiceImpl implements SongService {
         List<SongInfoDto> resultList = null;
         SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
 
-        switch (songFindParameter){
+        switch (songFindParameter) {
             case BY_GENRE:
                 resultList = findSongInfoDtoByGenreTitle(parameter);
                 break;

@@ -1,10 +1,16 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import senla.annotations.Loggable;
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
 import senla.services.api.AlbumService;
 
 import java.util.List;
@@ -18,55 +24,55 @@ public class AlbumController {
 
     @Loggable
     @GetMapping("/{id}")
-    public AlbumInfoDto findById(@PathVariable("id") Long id){
+    public AlbumInfoDto findById(@PathVariable("id") Long id) {
         return albumService.findAlbumInfoDtoById(id);
     }
 
     @Loggable
     @GetMapping("/search/{title}")
-    public List<AlbumInfoDto> findByTitle(@PathVariable String title){
+    public List<AlbumInfoDto> findByTitle(@PathVariable String title) {
         return albumService.findAlbumInfoDtoByTitle(title);
     }
 
     @Loggable
     @PostMapping
-    public Long save(@RequestBody CreateAlbumDto createAlbumDto){
+    public Long save(@RequestBody AlbumCreateUpdateDataDto createAlbumDto) {
         return albumService.save(createAlbumDto);
     }
 
     @Loggable
     @DeleteMapping("/{id}")
-    public void remove(@PathVariable Long id){
+    public void remove(@PathVariable Long id) {
         albumService.deleteById(id);
     }
 
     @Loggable
     @PostMapping("/{albumId}/songs/{songId}")
-    public void addSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId){
+    public void addSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId) {
         albumService.addSongIn(albumId, songId);
     }
 
     @Loggable
     @DeleteMapping("/{albumId}/songs/{songId}")
-    public void removeSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId){
+    public void removeSongIn(@PathVariable("albumId") Long albumId, @PathVariable("songId") Long songId) {
         albumService.removeSongIn(albumId, songId);
     }
 
     @Loggable
     @GetMapping("/savedAlbums/{id}")
-    public List<AlbumInfoDto> findSavedAlbumsFromAccountId(@PathVariable("id") Long id){
+    public List<AlbumInfoDto> findSavedAlbumsFromAccountId(@PathVariable("id") Long id) {
         return albumService.findSavedAlbumsInfoDtoFromAccountId(id);
     }
 
     @Loggable
     @GetMapping("/createdAlbums/{id}")
-    public List<AlbumInfoDto> findCreatedAlbumsFromAccountId(@PathVariable("id") Long id){
+    public List<AlbumInfoDto> findCreatedAlbumsFromAccountId(@PathVariable("id") Long id) {
         return albumService.findCreatedAlbumInfoDtoFromAccountId(id);
     }
 
     @Loggable
     @GetMapping
-    public List<AlbumInfoDto> findAll(){
+    public List<AlbumInfoDto> findAll() {
         return albumService.findAllAlbumInfoDto();
     }
 }

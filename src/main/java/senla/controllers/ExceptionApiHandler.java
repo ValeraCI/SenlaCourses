@@ -15,9 +15,9 @@ import javax.persistence.NoResultException;
 @RestControllerAdvice
 public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
 
-   @ExceptionHandler(DataBaseWorkException.class)
+    @ExceptionHandler(DataBaseWorkException.class)
     public ResponseEntity<String> dataBaseWorkException(DataBaseWorkException exception) {
-       return ResponseEntity
+        return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getLocalizedMessage());
     }

@@ -1,13 +1,13 @@
 package senla.services.api;
 
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
 
 import java.util.List;
 
 public interface AlbumService {
 
-    Long save(CreateAlbumDto albumDto);
+    Long save(AlbumCreateUpdateDataDto albumDto);
 
     AlbumInfoDto findAlbumInfoDtoById(Long id);
 

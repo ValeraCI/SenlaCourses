@@ -1,6 +1,6 @@
 package senla.exceptions;
 
-public class DataBaseWorkException extends RuntimeException{
+public class DataBaseWorkException extends RuntimeException {
     public DataBaseWorkException() {
     }
 

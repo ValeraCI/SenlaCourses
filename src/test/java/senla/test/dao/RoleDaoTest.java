@@ -23,13 +23,13 @@ public class RoleDaoTest {
     RoleDao roleDao;
 
     @Test
-    public void testRoleDao(){
+    public void testRoleDao() {
         String[] programRoles = new String[]{
                 "OWNER", "ADMINISTRATOR", "USER"
         };
         String daoRoles[] = new String[programRoles.length];
-        for(int i = 0; i < daoRoles.length; i++){
-            daoRoles[i] = String.valueOf(roleDao.findById(i+1L).getRoleTitle());
+        for (int i = 0; i < daoRoles.length; i++) {
+            daoRoles[i] = String.valueOf(roleDao.findById(i + 1L).getRoleTitle());
         }
         Assert.assertArrayEquals(programRoles, daoRoles);
     }

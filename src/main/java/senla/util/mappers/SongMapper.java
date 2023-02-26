@@ -46,7 +46,7 @@ public class SongMapper {
 
     public void mapSongInfoDtoSpecificFields(Song source, SongInfoDto destination) {
         List<String> authorsNicknames = new ArrayList<>();
-        for (Account author: source.getAuthors()) {
+        for (Account author : source.getAuthors()) {
             authorsNicknames.add(author.getNickname());
         }
         destination.setAuthorsNicknames(authorsNicknames);
@@ -65,7 +65,7 @@ public class SongMapper {
         return song;
     }
 
-    public List<SongInfoDto> toSongInfoDtoList(List<Song> songs){
+    public List<SongInfoDto> toSongInfoDtoList(List<Song> songs) {
         List<SongInfoDto> songInfoDtoList = songs
                 .stream()
                 .map(song -> Objects.isNull(song) ? null : mapper.map(song, SongInfoDto.class))

@@ -35,7 +35,7 @@ public class AccountAndLoginDetailsDaoTest {
     @Autowired
     private RoleDao roleDao;
 
-    private Account createAccount(){
+    private Account createAccount() {
         Account account = new Account();
         account.setNickname("Tester");
         account.setRegistrationDate(LocalDate.now());
@@ -45,7 +45,7 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test
-    public void findByIdTest(){
+    public void findByIdTest() {
         Account account = accountDao.findById(1L);
 
         Assert.assertEquals("Valerix", account.getNickname());
@@ -53,7 +53,7 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test
-    public void findByEmailTest(){
+    public void findByEmailTest() {
         Account account = accountDao.findByEmail("cidikvalera@gmail.com");
 
         Assert.assertEquals("cidikvalera@gmail.com", account.getLoginDetails().getEmail());
@@ -62,16 +62,16 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test
-    public void findAllTest(){
-       List<Account> accounts = accountDao.findAll();
+    public void findAllTest() {
+        List<Account> accounts = accountDao.findAll();
 
-       for(int i = 0; i < accounts.size(); i++){
-          Assert.assertEquals(accounts.get(i).getNickname(), accountDao.findById(i+1L).getNickname());
-       }
+        for (int i = 0; i < accounts.size(); i++) {
+            Assert.assertEquals(accounts.get(i).getNickname(), accountDao.findById(i + 1L).getNickname());
+        }
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         Account account = createAccount();
 
         Long index = accountDao.save(account);
@@ -83,7 +83,7 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test
-    public void updateTest(){
+    public void updateTest() {
         Account account = accountDao.findById(2L);
         Assert.assertEquals("MaJIeHkuu_Ho_BeJIuKuu", account.getNickname());
 
@@ -95,7 +95,7 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test
-    public void updatePasswordTest(){
+    public void updatePasswordTest() {
         Account account = accountDao.findById(1L);
         account.getLoginDetails().setPassword("123456");
         loginDetailsDao.update(account.getLoginDetails());
@@ -109,7 +109,7 @@ public class AccountAndLoginDetailsDaoTest {
     }
 
     @Test(expected = DataBaseWorkException.class)
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         accountDao.deleteById(3L);
         Account account = accountDao.findById(3L);
     }

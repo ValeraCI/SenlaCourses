@@ -8,8 +8,8 @@
 
     <preConditions>
         <or>
-            <dbms  type="h2"/>
-            <dbms  type="postgresql"/>
+            <dbms type="h2"/>
+            <dbms type="postgresql"/>
         </or>
     </preConditions>
 

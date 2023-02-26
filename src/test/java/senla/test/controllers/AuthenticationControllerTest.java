@@ -24,27 +24,27 @@ import senla.util.JwtUtil;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { WebMvcConfig.class })
+@ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration()
 public class AuthenticationControllerTest {
     @Autowired
-    WebApplicationContext wac;
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
-    ObjectMapper objectMapper;
-
+    private ObjectMapper objectMapper;
 
     @Autowired
     private JwtFilter jwtFilter;
 
     @Autowired
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(SecurityMockMvcConfigurers.springSecurity())
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .addFilter(jwtFilter).dispatchOptions(true).build();
     }
 
@@ -54,8 +54,8 @@ public class AuthenticationControllerTest {
                 new AuthRequest("cidikvalera@gmail.com", "1111"));
 
         MvcResult result = mockMvc.perform(get("/authenticate/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 

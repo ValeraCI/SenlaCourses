@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateAlbumDto {
+public class AlbumCreateUpdateDataDto {
     private String title;
     private Long creatorId;
 }

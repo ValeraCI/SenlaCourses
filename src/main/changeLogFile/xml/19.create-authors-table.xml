@@ -8,11 +8,11 @@
         <createTable tableName="authors">
             <column name="song_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="authors_song_id_FK" references="songs(id)"
-                deleteCascade="true"/>
+                             deleteCascade="true"/>
             </column>
             <column name="account_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="authors_account_id_FK" references="accounts(id)"
-                deleteCascade="true"/>
+                             deleteCascade="true"/>
             </column>
         </createTable>
 

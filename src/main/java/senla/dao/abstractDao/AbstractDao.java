@@ -1,6 +1,6 @@
 package senla.dao.abstractDao;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.AEntity;
 import senla.models.AEntity_;
@@ -14,22 +14,20 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, Long> {
 
     protected final Class<T> typeParameterClass;
-    @PersistenceContext
-    protected final EntityManager entityManager;
 
-    protected final CriteriaBuilder criteriaBuilder;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Override
     public Long save(T entity) {
         try {
             entityManager.persist(entity);
             return entity.getId();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
@@ -39,8 +37,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         try {
             entityManager.merge(entity);
             entityManager.flush();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
@@ -48,13 +45,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public void deleteById(Long id) {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(typeParameterClass);
             Root<T> root = criteriaDelete.from(typeParameterClass);
             criteriaDelete.where(criteriaBuilder.equal(root.get(AEntity_.ID), id));
             entityManager.createQuery(criteriaDelete).executeUpdate();
             entityManager.flush();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
@@ -62,12 +60,13 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public List<T> findAll() {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
 
             criteriaQuery.select(criteriaQuery.from(typeParameterClass));
             return entityManager.createQuery(criteriaQuery).getResultList();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
@@ -75,6 +74,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public T findById(Long id) {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
             Root<T> root = criteriaQuery.from(typeParameterClass);
 
@@ -85,8 +86,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
                     );
 
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }
