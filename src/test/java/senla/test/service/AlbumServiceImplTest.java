@@ -21,7 +21,7 @@ import senla.exceptions.DataChangesException;
 import senla.models.*;
 import senla.services.api.AlbumService;
 import senla.services.AlbumServiceImpl;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 import senla.util.mappers.AlbumMapper;
 
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")

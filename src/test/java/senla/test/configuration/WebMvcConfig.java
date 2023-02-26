@@ -12,7 +12,7 @@ import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 @Profile("test")
 @EnableTransactionManagement
 @PropertySource("application.properties")
-public class Application {
+public class WebMvcConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();

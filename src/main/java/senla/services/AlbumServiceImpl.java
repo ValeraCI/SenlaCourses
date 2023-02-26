@@ -58,7 +58,7 @@ public class AlbumServiceImpl implements AlbumService {
             album.getSongsIn().add(song);
         }
         else {
-            throw new DataChangesException("Альбом уже содержит такую песню");
+            throw new DataChangesException("Album already contains such a song");
         }
     }
 
@@ -70,7 +70,7 @@ public class AlbumServiceImpl implements AlbumService {
             album.getSongsIn().remove(song);
         }
         else {
-            throw new DataChangesException("Альбом не содержит такую песню");
+            throw new DataChangesException("Album does not contain such a song");
         }
     }
 

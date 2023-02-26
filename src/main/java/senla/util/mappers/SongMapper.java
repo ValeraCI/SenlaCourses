@@ -1,8 +1,8 @@
 package senla.util.mappers;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
@@ -18,9 +18,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SongMapper {
-    @Autowired
-    private ModelMapper mapper;
+
+    private final ModelMapper mapper;
 
     @PostConstruct
     public void setupMapper() {
@@ -31,8 +32,7 @@ public class SongMapper {
 
         mapper.createTypeMap(Song.class, SongInfoDto.class)
                 .addMappings(m -> m.skip(SongInfoDto::setAuthorsNicknames))
-                .setPostConverter(
-                        songToSongInfoDtoConverter());
+                .setPostConverter(songToSongInfoDtoConverter());
     }
 
     public Converter<Song, SongInfoDto> songToSongInfoDtoConverter() {

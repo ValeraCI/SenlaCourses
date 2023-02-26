@@ -15,7 +15,7 @@ import senla.dao.SongDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Location;
 import senla.models.Song;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")

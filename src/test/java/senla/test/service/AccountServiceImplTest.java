@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,7 +24,7 @@ import senla.exceptions.DataChangesException;
 import senla.models.*;
 import senla.services.AccountServiceImpl;
 import senla.services.api.AccountService;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 import senla.util.mappers.AccountMapper;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")
@@ -52,6 +53,7 @@ public class AccountServiceImplTest {
 
     @Autowired
     private AccountMapper accountMapper;
+    private PasswordEncoder passwordEncoder;
 
     private AccountService accountService;
 
@@ -102,7 +104,7 @@ public class AccountServiceImplTest {
         AccountWithLoginDetailsDto account =
                 accountService.findAccountWithLoginDetailsDtoByEmail("test@mail.ru");
 
-        Assert.assertEquals("USER", account.getRole().toString());
+        Assert.assertEquals("ROLE_USER", account.getRole().toString());
         Assert.assertEquals("Tester", account.getNickname());
     }
 

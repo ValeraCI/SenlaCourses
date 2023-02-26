@@ -16,14 +16,14 @@ import senla.dao.RoleDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Account;
 import senla.models.LoginDetails;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")

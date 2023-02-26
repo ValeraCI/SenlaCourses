@@ -86,7 +86,7 @@ public class AccountServiceImpl implements AccountService {
             account.getSavedAlbums().add(album);
         }
         else {
-            throw new DataChangesException("Альбом уже сохранён");
+            throw new DataChangesException("Album has already been saved");
         }
     }
 
@@ -99,7 +99,7 @@ public class AccountServiceImpl implements AccountService {
             account.getSavedAlbums().remove(album);
         }
         else {
-            throw new DataChangesException("Альбом не сохранён");
+            throw new DataChangesException("Album not saved");
         }
     }
 }

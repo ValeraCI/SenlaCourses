@@ -21,7 +21,7 @@ import senla.dto.song.SongInfoDto;
 import senla.models.*;
 import senla.services.api.SongService;
 import senla.services.SongServiceImpl;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 import senla.util.mappers.SongMapper;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")

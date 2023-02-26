@@ -65,12 +65,16 @@ public class JwtUtil {
     }
 
     public Boolean validate(String token) {
-        Jws<Claims> claims = Jwts
-                .parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token);
-
-        return claims.getBody().getExpiration().after(new Date());
+        try {
+            Jws<Claims> claims = Jwts
+                    .parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return claims.getBody().getExpiration().after(new Date());
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 }

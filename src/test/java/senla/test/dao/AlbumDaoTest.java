@@ -13,7 +13,7 @@ import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Album;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")
