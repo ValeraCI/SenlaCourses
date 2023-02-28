@@ -15,7 +15,7 @@ import senla.dao.SongDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Location;
 import senla.models.Song;
-import senla.test.configuration.Application;
+import senla.test.configuration.WebMvcConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")
@@ -37,7 +37,7 @@ public class SongDaoTest {
     private AccountDao accountDao;
 
 
-    private Song createSong(){
+    private Song createSong() {
         Song song = new Song();
 
         song.setTitle("TestSong");
@@ -49,7 +49,7 @@ public class SongDaoTest {
     }
 
     @Test
-    public void findByIdTest(){
+    public void findByIdTest() {
         Song song = songDao.findById(1L);
 
         Assert.assertEquals("Лиза", song.getTitle());
@@ -57,7 +57,7 @@ public class SongDaoTest {
     }
 
     @Test
-    public void findByTitleTest(){
+    public void findByTitleTest() {
         List<Song> songs = songDao.findByTitle("Лиза");
 
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
@@ -68,7 +68,7 @@ public class SongDaoTest {
     }
 
     @Test
-    public void findByGenreTest(){
+    public void findByGenreTest() {
         List<Song> songs = songDao.findByGenre(genreDao.findById(1L));
 
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
@@ -79,7 +79,7 @@ public class SongDaoTest {
     }
 
     @Test
-    public void findByAlbumIdTest(){
+    public void findByAlbumIdTest() {
         List<Song> songs = songDao.findByAlbumId(3L);
 
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
@@ -90,16 +90,16 @@ public class SongDaoTest {
     }
 
     @Test
-    public void findAllTest(){
+    public void findAllTest() {
         List<Song> songs = songDao.findAll();
 
-        for(int i = 0; i < songs.size(); i++){
-            Assert.assertEquals(songs.get(i).getTitle(), songDao.findById(i+1L).getTitle());
+        for (int i = 0; i < songs.size(); i++) {
+            Assert.assertEquals(songs.get(i).getTitle(), songDao.findById(i + 1L).getTitle());
         }
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         Song song = createSong();
 
         Long index = songDao.save(song);
@@ -110,7 +110,7 @@ public class SongDaoTest {
     }
 
     @Test
-    public void updateTest(){
+    public void updateTest() {
         Song song = songDao.findById(2L);
         Assert.assertEquals("TEASER", song.getTitle());
 
@@ -122,7 +122,7 @@ public class SongDaoTest {
     }
 
     @Test(expected = DataBaseWorkException.class)
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         songDao.deleteById(5L);
         Song song = songDao.findById(5L);
         System.out.println(song.getTitle());

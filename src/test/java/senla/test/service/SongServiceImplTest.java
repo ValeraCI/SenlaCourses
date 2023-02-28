@@ -18,10 +18,16 @@ import senla.dao.GenreDao;
 import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
-import senla.models.*;
-import senla.services.api.SongService;
+import senla.models.Account;
+import senla.models.Album;
+import senla.models.Genre;
+import senla.models.GenreTitle;
+import senla.models.Location;
+import senla.models.LoginDetails;
+import senla.models.Song;
 import senla.services.SongServiceImpl;
-import senla.test.configuration.Application;
+import senla.services.api.SongService;
+import senla.test.configuration.WebMvcConfig;
 import senla.util.mappers.SongMapper;
 
 import java.time.LocalDate;
@@ -35,7 +41,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {Application.class},
+        classes = {WebMvcConfig.class},
         loader = AnnotationConfigContextLoader.class)
 @Transactional
 @ActiveProfiles("test")
@@ -59,17 +65,17 @@ public class SongServiceImplTest {
 
     private SongService songService;
 
-    public SongServiceImplTest(){
+    public SongServiceImplTest() {
         MockitoAnnotations.openMocks(this);
 
     }
 
     @Before
-    public void beforeEach(){
+    public void beforeEach() {
         this.songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao, songMapper);
     }
 
-    private Genre createGenre(){
+    private Genre createGenre() {
         Genre genre = new Genre();
         genre.setId(1L);
         genre.setGenreTitle(GenreTitle.BLUES);
@@ -77,7 +83,7 @@ public class SongServiceImplTest {
         return genre;
     }
 
-    private Album createAlbum(){
+    private Album createAlbum() {
         Album album = new Album();
 
         album.setId(1L);
@@ -89,7 +95,7 @@ public class SongServiceImplTest {
         return album;
     }
 
-    private Song createSong(){
+    private Song createSong() {
         Song song = new Song();
 
         song.setId(1L);
@@ -101,7 +107,7 @@ public class SongServiceImplTest {
         return song;
     }
 
-    private Account createAccount(){
+    private Account createAccount() {
         Account account = new Account();
 
         account.setId(1L);
@@ -113,7 +119,7 @@ public class SongServiceImplTest {
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         given(accountDao.findById(1L)).willReturn(createAccount());
         given(genreDao.findById(1L)).willReturn(createGenre());
         given(albumDao.findById(1L)).willReturn(createAlbum());
@@ -129,14 +135,14 @@ public class SongServiceImplTest {
     }
 
     @Test
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         songService.deleteById(1L);
 
         verify(songDao).deleteById(1L);
     }
 
     @Test
-    public void findSongInfoDtoByAlbumIdTest(){
+    public void findSongInfoDtoByAlbumIdTest() {
         given(songDao.findByAlbumId(1L))
                 .willReturn(new ArrayList<>(List.of(createSong())));
 
@@ -194,7 +200,7 @@ public class SongServiceImplTest {
         given(songDao.findByGenre(genre))
                 .willReturn(new ArrayList<>(List.of(createSong())));
 
-        SongInfoDto songInfoDto =  songService.findByParameter("BLUES", "BY_GENRE").get(0);
+        SongInfoDto songInfoDto = songService.findByParameter("BLUES", "BY_GENRE").get(0);
 
         Assert.assertEquals("TestSong", songInfoDto.getTitle());
         Assert.assertEquals(1L, songInfoDto.getId());

@@ -2,15 +2,15 @@ package senla.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class SpringMvcDispatcherServlet extends AbstractAnnotationConfigDispatcherServletInitializer  {
+public class MvcDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{Application.class};
+        return null;
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{Application.class};
+        return new Class[]{WebMvcConfig.class};
     }
 
     @Override

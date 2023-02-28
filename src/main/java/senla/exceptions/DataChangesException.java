@@ -1,6 +1,6 @@
 package senla.exceptions;
 
-public class DataChangesException extends RuntimeException{
+public class DataChangesException extends RuntimeException {
     public DataChangesException() {
     }
 

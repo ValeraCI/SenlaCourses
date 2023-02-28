@@ -1,19 +1,18 @@
 package senla.dao;
 
+import org.springframework.stereotype.Repository;
+import senla.exceptions.DataBaseWorkException;
+import senla.models.LoginDetails;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Repository;
-import senla.exceptions.DataBaseWorkException;
-import senla.models.*;
 
 @Repository
-@AllArgsConstructor
 public class LoginDetailsDao {
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    protected EntityManager entityManager;
 
     public void update(LoginDetails loginDetails) {
         try {
@@ -26,7 +25,7 @@ public class LoginDetailsDao {
             query.setParameter("accountParam", loginDetails.getAccount());
 
             query.executeUpdate();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e);
         }
     }

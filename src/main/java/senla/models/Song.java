@@ -1,9 +1,23 @@
 package senla.models;
 
 
-import javax.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +33,7 @@ import java.util.Set;
                 attributeNodes = {@NamedAttributeNode("authors")})
 })
 
-public class Song extends AEntity{
+public class Song extends AEntity {
     @Column(name = "title")
     private String title;
 

@@ -1,50 +1,47 @@
 package senla.util.mappers;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import senla.dto.account.AccountMainDataDto;
+import senla.dto.album.AlbumCreateUpdateDataDto;
 import senla.dto.album.AlbumInfoDto;
-import senla.dto.album.CreateAlbumDto;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Album;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class AlbumMapper {
-    @Autowired
-    private ModelMapper mapper;
+
+    private final ModelMapper mapper;
 
     @PostConstruct
     public void setupMapper() {
-        mapper.createTypeMap(CreateAlbumDto.class, Album.class)
+        mapper.createTypeMap(AlbumCreateUpdateDataDto.class, Album.class)
                 .addMappings(m -> m.skip(Album::setCreator))
                 .addMappings(m -> m.skip(Album::setCreateDate))
-                .setPostConverter(
-                        createAlbumDtoToAlbum());
-
+                .setPostConverter(createAlbumDtoToAlbum());
     }
 
-    public Converter<CreateAlbumDto, Album> createAlbumDtoToAlbum() {
+    public Converter<AlbumCreateUpdateDataDto, Album> createAlbumDtoToAlbum() {
         return context -> {
-            CreateAlbumDto source = context.getSource();
             Album destination = context.getDestination();
-            mapAlbumSpecificFields(source, destination);
+            mapAlbumSpecificFields(destination);
             return context.getDestination();
         };
     }
 
-    public void mapAlbumSpecificFields(CreateAlbumDto source, Album destination) {
+    public void mapAlbumSpecificFields(Album destination) {
         destination.setCreateDate(LocalDate.now());
     }
 
-    public Album toEntity(CreateAlbumDto dto, Account account) {
+    public Album toEntity(AlbumCreateUpdateDataDto dto, Account account) {
         Album album = Objects.isNull(dto) ? null : mapper.map(dto, Album.class);
         album.setCreator(account);
 
@@ -55,7 +52,7 @@ public class AlbumMapper {
         return Objects.isNull(entity) ? null : mapper.map(entity, AlbumInfoDto.class);
     }
 
-    public List<AlbumInfoDto> toAlbumInfoDtoList(List<Album> albums){
+    public List<AlbumInfoDto> toAlbumInfoDtoList(List<Album> albums) {
         List<AlbumInfoDto> albumInfoDtoList = albums
                 .stream()
                 .map(album -> Objects.isNull(album) ? null : mapper.map(album, AlbumInfoDto.class))

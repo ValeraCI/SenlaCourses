@@ -1,6 +1,6 @@
 package senla.exceptions;
 
-public class JsonDeserializeException extends RuntimeException{
+public class JsonDeserializeException extends RuntimeException {
     public JsonDeserializeException() {
     }
 

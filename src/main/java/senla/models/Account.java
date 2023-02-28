@@ -1,14 +1,23 @@
 package senla.models;
 
-import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Set;
-
 
 @Getter
 @Setter
@@ -16,7 +25,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "accounts")
-public class Account extends AEntity{
+public class Account extends AEntity {
     @Column(name = "nickname")
     private String nickname;
 

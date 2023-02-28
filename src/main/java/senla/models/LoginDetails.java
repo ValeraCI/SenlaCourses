@@ -1,9 +1,17 @@
 package senla.models;
 
-import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Getter
 @NoArgsConstructor
@@ -11,7 +19,7 @@ import lombok.Setter;
 @Table(name = "login_details")
 public class LoginDetails {
     @Id
-    @Column(name="account_id")
+    @Column(name = "account_id")
     private Long id;
 
     @MapsId

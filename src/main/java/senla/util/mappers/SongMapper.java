@@ -1,14 +1,15 @@
 package senla.util.mappers;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import senla.dto.album.AlbumInfoDto;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
-import senla.models.*;
+import senla.models.Account;
+import senla.models.Genre;
+import senla.models.Location;
+import senla.models.Song;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -17,9 +18,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SongMapper {
-    @Autowired
-    private ModelMapper mapper;
+
+    private final ModelMapper mapper;
 
     @PostConstruct
     public void setupMapper() {
@@ -30,8 +32,7 @@ public class SongMapper {
 
         mapper.createTypeMap(Song.class, SongInfoDto.class)
                 .addMappings(m -> m.skip(SongInfoDto::setAuthorsNicknames))
-                .setPostConverter(
-                        songToSongInfoDtoConverter());
+                .setPostConverter(songToSongInfoDtoConverter());
     }
 
     public Converter<Song, SongInfoDto> songToSongInfoDtoConverter() {
@@ -45,7 +46,7 @@ public class SongMapper {
 
     public void mapSongInfoDtoSpecificFields(Song source, SongInfoDto destination) {
         List<String> authorsNicknames = new ArrayList<>();
-        for (Account author: source.getAuthors()) {
+        for (Account author : source.getAuthors()) {
             authorsNicknames.add(author.getNickname());
         }
         destination.setAuthorsNicknames(authorsNicknames);
@@ -64,7 +65,7 @@ public class SongMapper {
         return song;
     }
 
-    public List<SongInfoDto> toSongInfoDtoList(List<Song> songs){
+    public List<SongInfoDto> toSongInfoDtoList(List<Song> songs) {
         List<SongInfoDto> songInfoDtoList = songs
                 .stream()
                 .map(song -> Objects.isNull(song) ? null : mapper.map(song, SongInfoDto.class))

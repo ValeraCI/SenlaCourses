@@ -2,9 +2,10 @@ package senla.services.api;
 
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
+
 import java.util.List;
 
-public interface SongService{
+public interface SongService {
 
     Long save(SongCreateDto songCreateDto);
 

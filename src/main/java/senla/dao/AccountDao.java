@@ -1,21 +1,32 @@
 package senla.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
-import senla.models.*;
+import senla.models.AEntity_;
+import senla.models.Account;
+import senla.models.Account_;
+import senla.models.LoginDetails;
+import senla.models.LoginDetails_;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {
 
-    public AccountDao(EntityManager entityManager, CriteriaBuilder criteriaBuilder) {
-        super(Account.class, entityManager, criteriaBuilder);
+    public AccountDao() {
+        super(Account.class);
     }
 
     public Account findByEmail(String email) {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
 
             Root<Account> root = query.from(typeParameterClass);
@@ -36,6 +47,8 @@ public class AccountDao extends AbstractDao<Account, Long> {
     @Override
     public void update(Account entity) {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaUpdate<Account> criteriaAccountUpdate =
                     criteriaBuilder.createCriteriaUpdate(typeParameterClass);
             Root<Account> rootAccount = criteriaAccountUpdate.from(typeParameterClass);
@@ -53,6 +66,8 @@ public class AccountDao extends AbstractDao<Account, Long> {
 
     public Account findWithSavedAlbums(Long id) {
         try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
 
             Root<Account> root = query.from(typeParameterClass);

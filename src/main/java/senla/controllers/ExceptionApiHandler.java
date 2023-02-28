@@ -1,5 +1,6 @@
 package senla.controllers;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,12 +15,9 @@ import javax.persistence.NoResultException;
 @RestControllerAdvice
 public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
 
-   @ExceptionHandler(DataBaseWorkException.class)
+    @ExceptionHandler(DataBaseWorkException.class)
     public ResponseEntity<String> dataBaseWorkException(DataBaseWorkException exception) {
-
-       System.out.println("NoResultException");
-
-       return ResponseEntity
+        return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getLocalizedMessage());
     }
@@ -38,8 +36,15 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
                 .body(exception.getLocalizedMessage());
     }
 
-    @ExceptionHandler(NoResultException.class)
+    @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<String> NoResultException(NoResultException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(NoResultException.class)
+    public ResponseEntity<String> noResultException(NoResultException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getLocalizedMessage());
@@ -49,6 +54,6 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> Exception(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(exception.getLocalizedMessage());
+                .body(exception.getMessage());
     }
 }

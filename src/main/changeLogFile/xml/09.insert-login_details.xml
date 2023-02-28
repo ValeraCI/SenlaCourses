@@ -1,71 +1,78 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
-                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-                   http://www.liquibase.org/xml/ns/dbchangelog
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
     <changeSet author="Valera Cidik" id="06.insert-login_details">
         <insert tableName="login_details">
             <column name="account_id" value="1"/>
             <column name="email" value="cidikvalera@gmail.com"/>
-            <column name="password" value="1111"/>
+            <column name="password" value="$2a$04$tUI3vEC30nNiCfLNhXmV3ebZDhB6idH34nHZG.48o5fa4UFnRV/KW"/>
+            <!--1111-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="2"/>
             <column name="email" value="adminUser1@gmail.com"/>
-            <column name="password" value="admin1"/>
+            <column name="password" value="$2a$04$B6MVVlkD8xiXPXkAMH2AT.TCleNqhWQI9v5682F1h4hhsnnqAr0ZW"/>
+            <!--admin1-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="3"/>
             <column name="email" value="adminUser2@gmail.com"/>
-            <column name="password" value="admin2"/>
+            <column name="password" value="$2a$04$wDkLPlquwr.PycdX/ZnPOe9U26H9X77FE7d/Uvty8MVfIowgl2MQm"/>
+            <!--admin2-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="4"/>
             <column name="email" value="adminUser3@gmail.com"/>
-            <column name="password" value="admin3"/>
+            <column name="password" value="$2a$04$CKCw0.jQqWU0pFIolhrUneohJ3wEnVxWchu1KvOSEKwWlkzhqAfv6"/>
+            <!--admin3-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="5"/>
             <column name="email" value="testUser@gmail.com"/>
-            <column name="password" value="test"/>
+            <column name="password" value="$2a$04$wf5EqqNYS9XWaSLxbybJxu8EQ.KTzy2E5RDSOoCeQWDCtRKrbGN6e"/>
+            <!--test-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="6"/>
             <column name="email" value="AlisherMorgen@gmail.com"/>
-            <column name="password" value="OLALA"/>
+            <column name="password" value="$2a$04$/ecthrZ32auWEgrjoshine0GQpXN50Q20R2VCs3bWdzvFbjdxee0e"/>
+            <!--OLALA-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="7"/>
             <column name="email" value="Tentacion@gmail.com"/>
-            <column name="password" value="Revenge"/>
+            <column name="password" value="$2a$04$J3DXkgUBJc.uKNjlTmlRTelS22kz4IYHd8n6B18qXwuydIVYgbrOq"/>
+            <!--Revenge-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="8"/>
             <column name="email" value="Lida@gmail.com"/>
-            <column name="password" value="qwertyLD"/>
+            <column name="password" value="$2a$04$qdVLbQoGf16JJ66I2wjIP.Rt0xrukuVp6dRTcxWFOFbxPvnRUbG9W"/>
+            <!--qwertyLD-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="9"/>
             <column name="email" value="MaksimSam@gmail.com"/>
-            <column name="password" value="48646f98fsq"/>
+            <column name="password" value="$2a$04$USqITJlGY9buAb0BZ9LyH.foFIbapII1/O/mUrCiFqLo7K3TpnYkK"/>
+            <!--48646f98fsq-->
         </insert>
 
         <insert tableName="login_details">
             <column name="account_id" value="10"/>
             <column name="email" value="AlicaPopersik@gmail.com"/>
-            <column name="password" value="sffe5s568_fsef"/>
+            <column name="password" value="$2a$04$YZ27WmPNLKfS7269z91oX.gVVC.yuyLOLHvAqW.H22NH/ltVZuvRq"/>
+            <!--sffe5s568_fsef-->
         </insert>
 
         <rollback>
