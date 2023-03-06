@@ -2,7 +2,6 @@ package senla.test.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,7 @@ import senla.security.filters.JwtFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,8 +81,8 @@ public class SongControllerTest {
         SongInfoDto song =
                 objectMapper.readValue(result.getResponse().getContentAsString(), SongInfoDto.class);
 
-        Assert.assertEquals(song.getId(), 2);
-        Assert.assertEquals(song.getTitle(), "TEASER");
+        assertEquals(song.getId(), 2);
+        assertEquals(song.getTitle(), "TEASER");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class SongControllerTest {
         SongInfoDto song =
                 objectMapper.readValue(result.getResponse().getContentAsString(), SongInfoDto.class);
 
-        Assert.assertEquals(song.getTitle(), "TestSong");
+        assertEquals(song.getTitle(), "TestSong");
     }
 
     @Test
@@ -121,7 +121,7 @@ public class SongControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 500);
+        assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
@@ -136,8 +136,8 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "NUMB");
-        Assert.assertEquals(list.get(0).getId(), 8);
+        assertEquals("NUMB", list.get(0).getTitle());
+        assertEquals(8, list.get(0).getId());
     }
 
     @Test
@@ -152,8 +152,8 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "TEASER");
-        Assert.assertEquals(list.get(0).getId(), 2);
+        assertEquals("TEASER", list.get(0).getTitle());
+        assertEquals(2, list.get(0).getId());
     }
 
     @Test
@@ -168,7 +168,7 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "TEASER");
-        Assert.assertEquals(list.get(0).getId(), 2);
+        assertEquals("TEASER", list.get(0).getTitle());
+        assertEquals(2, list.get(0).getId());
     }
 }

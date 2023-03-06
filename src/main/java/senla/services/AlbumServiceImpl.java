@@ -33,8 +33,6 @@ public class AlbumServiceImpl implements AlbumService {
 
         Album album = albumMapper.toEntity(albumDto, account);
 
-        account.getCreatedAlbums().add(album);
-
         return albumDao.save(album);
     }
 
@@ -61,6 +59,7 @@ public class AlbumServiceImpl implements AlbumService {
         }
     }
 
+    @Override
     public void removeSongIn(Long albumId, Long songId) {
         Song song = songDao.findById(songId);
         Album album = albumDao.findById(albumId);

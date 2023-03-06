@@ -1,7 +1,6 @@
 package senla.test.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +20,8 @@ import senla.dto.AuthRequest;
 import senla.security.filters.JwtFilter;
 import senla.util.JwtUtil;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
@@ -68,7 +69,7 @@ public class AuthenticationControllerTest {
 
         System.out.println(token);
 
-        Assert.assertTrue(jwtUtil.validate(token));
-        Assert.assertEquals(jwtUtil.getEmail(token), "cidikvalera@gmail.com");
+        assertTrue(jwtUtil.validate(token));
+        assertEquals(jwtUtil.getEmail(token), "cidikvalera@gmail.com");
     }
 }

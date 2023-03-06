@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import senla.annotations.Loggable;
-import senla.dto.account.AccountDataDto;
+import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.UpdateAccountDto;
+import senla.dto.account.UpdateAccountDataDto;
+import senla.dto.account.UpdateAccountRoleDto;
 import senla.services.api.AccountService;
 
 import java.util.List;
@@ -37,9 +38,9 @@ public class AccountController {
     }
 
     @Loggable
-    @PostMapping()
-    public Long save(@RequestBody AccountDataDto accountDataDto) {
-        return accountService.save(accountDataDto);
+    @PostMapping("/register")
+    public Long save(@RequestBody RegistrationRequest loginRequest) {
+        return accountService.save(loginRequest);
     }
 
     @Loggable
@@ -50,7 +51,7 @@ public class AccountController {
 
     @Loggable
     @PatchMapping("/{id}")
-    public void updateData(@PathVariable("id") Long id, @RequestBody UpdateAccountDto accountUpdateDto) {
+    public void updateData(@PathVariable("id") Long id, @RequestBody UpdateAccountDataDto accountUpdateDto) {
         accountService.updateData(id, accountUpdateDto);
     }
 
@@ -64,5 +65,13 @@ public class AccountController {
     @DeleteMapping("/{accountId}/albums/{albumId}")
     public void removeSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId) {
         accountService.removeSavedAlbum(accountId, albumId);
+    }
+
+    @Loggable
+    @PatchMapping("/role/{id}")
+    public void updateRole(@PathVariable("id") Long id, @RequestBody UpdateAccountRoleDto updateAccountRoleDto){
+
+        accountService.updateRole(id, updateAccountRoleDto);
+        System.out.println("Ok");
     }
 }

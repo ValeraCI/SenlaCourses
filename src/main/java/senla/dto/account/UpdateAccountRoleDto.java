@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class AccountDataDto {
-    private String nickname;
-    private String email;
-    private String password;
+public class UpdateAccountRoleDto {
+    private Long roleId;
 }

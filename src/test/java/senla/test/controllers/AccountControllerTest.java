@@ -2,8 +2,8 @@ package senla.test.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
-import senla.dto.account.AccountDataDto;
+import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.UpdateAccountDto;
+import senla.dto.account.UpdateAccountDataDto;
+import senla.dto.account.UpdateAccountRoleDto;
 import senla.security.filters.JwtFilter;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {WebMvcConfig.class})
@@ -86,8 +87,8 @@ public class AccountControllerTest {
                         new TypeReference<List<AccountMainDataDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getNickname(), "Valerix");
-        Assert.assertEquals(list.get(0).getId().longValue(), 1);
+        assertEquals(list.get(0).getNickname(), "Valerix");
+        assertEquals(list.get(0).getId().longValue(), 1);
     }
 
     @Test
@@ -100,29 +101,8 @@ public class AccountControllerTest {
         AccountMainDataDto account =
                 objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
 
-        Assert.assertEquals(account.getNickname(), "Valerix");
-        Assert.assertEquals(account.getId().longValue(), 1);
-    }
-
-    @Test
-    public void saveTest() throws Exception {
-        MvcResult result = mockMvc.perform(post("/accounts")
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                new AccountDataDto("nickname", "email", "password"))))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-
-        result = mockMvc.perform(get("/accounts/{id}", result.getResponse().getContentAsString())
-                        .header("Authorization", token))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-
-        AccountMainDataDto account =
-                objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
-
-        Assert.assertEquals(account.getNickname(), "nickname");
+        assertEquals(account.getNickname(), "Valerix");
+        assertEquals(account.getId().longValue(), 1);
     }
 
     @Test
@@ -138,12 +118,12 @@ public class AccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(500, result.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
     public void updateDataTest() throws Exception {
-        UpdateAccountDto accountDto = new UpdateAccountDto("TestNick", 3L, "testPass");
+        UpdateAccountDataDto accountDto = new UpdateAccountDataDto("TestNick", "TestPass");
 
         mockMvc.perform(patch("/accounts/{id}", 9)
                         .header("Authorization", token)
@@ -159,7 +139,7 @@ public class AccountControllerTest {
         AccountMainDataDto account =
                 objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
 
-        Assert.assertEquals(account.getNickname(), "TestNick");
+        assertEquals(account.getNickname(), "TestNick");
     }
 
     @Test
@@ -173,7 +153,7 @@ public class AccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(200, result.getResponse().getStatus());
+        assertEquals(200, result.getResponse().getStatus());
     }
 
     @Test
@@ -187,7 +167,7 @@ public class AccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(500, result.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
@@ -201,6 +181,56 @@ public class AccountControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(500, result.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void saveTest() throws Exception {
+        MvcResult result = mockMvc.perform(post("/accounts/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new RegistrationRequest("nickname", "email", "password"))))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        result = mockMvc.perform(get("/accounts/{id}", result.getResponse().getContentAsString())
+                        .header("Authorization", token))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        AccountMainDataDto account =
+                objectMapper.readValue(result.getResponse().getContentAsString(), AccountMainDataDto.class);
+
+        assertEquals(account.getNickname(), "nickname");
+    }
+
+    @Test
+    public void testUpdateRole() throws Exception {
+        UpdateAccountRoleDto updateAccountRoleDto = new UpdateAccountRoleDto(2L);
+
+        MvcResult result =
+                mockMvc.perform(patch("/accounts/role/{id}", 8)
+                                .header("Authorization", token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateAccountRoleDto)))
+                        .andDo(MockMvcResultHandlers.print())
+                        .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testUpdateOwnerRole() throws Exception {
+        UpdateAccountRoleDto updateAccountRoleDto = new UpdateAccountRoleDto(2L);
+
+        MvcResult result =
+                mockMvc.perform(patch("/accounts/role/{id}", 1)
+                                .header("Authorization", token)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateAccountRoleDto)))
+                        .andDo(MockMvcResultHandlers.print())
+                        .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
     }
 }

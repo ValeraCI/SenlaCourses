@@ -1,25 +1,22 @@
 package senla.test.dao;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import senla.configuration.WebMvcConfig;
 import senla.dao.GenreDao;
-import senla.test.configuration.WebMvcConfig;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {WebMvcConfig.class},
-        loader = AnnotationConfigContextLoader.class)
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {WebMvcConfig.class})
+@WebAppConfiguration()
 @Transactional
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class GenreDaoTest {
 
     @Autowired
@@ -35,15 +32,15 @@ public class GenreDaoTest {
         for (int i = 0; i < daoGenres.length; i++) {
             daoGenres[i] = String.valueOf(genreDao.findById(i + 1L).getGenreTitle());
         }
-        Assert.assertArrayEquals(programGenres, daoGenres);
+
+        assertArrayEquals(programGenres, daoGenres);
     }
 
     @Test
-    public void findByTitleTest() {
+    public void testFindByTitle() {
         String searchParam = "POP";
         String genreTitle = String.valueOf(genreDao.findByTitle(searchParam).getGenreTitle());
 
-        Assert.assertEquals(genreTitle, searchParam);
-
+        assertEquals(genreTitle, searchParam);
     }
 }

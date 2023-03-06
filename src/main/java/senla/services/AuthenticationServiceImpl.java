@@ -46,7 +46,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             response.put("username", username);
             response.put("token", token);
 
-
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");

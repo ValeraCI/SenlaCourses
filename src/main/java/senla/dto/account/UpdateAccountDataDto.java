@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class UpdateAccountDto {
+@NoArgsConstructor
+public class UpdateAccountDataDto {
     private String nickname;
-    private Long roleId;
     private String password;
 }

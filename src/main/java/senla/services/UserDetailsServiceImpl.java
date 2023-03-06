@@ -26,10 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (Objects.isNull(account)) {
             throw new UsernameNotFoundException("User with email: " + username + " not found");
         }
+
         return User.builder()
                 .username(account.getLoginDetails().getEmail())
                 .password(account.getLoginDetails().getPassword())
-                .roles(account.getRole().toString())
+                .roles(account.getRole().getRoleTitle().name())
                 .build();
 
     }

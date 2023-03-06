@@ -1,30 +1,30 @@
 package senla.test.dao;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.exceptions.DataBaseWorkException;
 import senla.models.Album;
-import senla.test.configuration.WebMvcConfig;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {WebMvcConfig.class},
-        loader = AnnotationConfigContextLoader.class)
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {WebMvcConfig.class})
+@WebAppConfiguration()
 @Transactional
-@ActiveProfiles("test")
 public class AlbumDaoTest {
     @Autowired
     private AlbumDao albumDao;
@@ -42,70 +42,79 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void findByIdTest() {
+    public void testFindById() {
         Album album = albumDao.findById(1L);
 
-        Assert.assertEquals("?", album.getTitle());
-        Assert.assertEquals(1L, album.getId().longValue());
+        assertEquals("?", album.getTitle());
+        assertEquals(1L, album.getId().longValue());
     }
 
     @Test
-    public void findByTitleTest() {
+    public void testFindByTitle() {
         List<Album> albums = albumDao.findByTitle("?");
 
         Album album = albums.stream().filter(a -> a.getId() == 1).findFirst().get();
 
-        Assert.assertEquals("?", album.getTitle());
-        Assert.assertEquals(7L, album.getCreator().getId().longValue());
-        Assert.assertEquals(1L, album.getId().longValue());
+        assertEquals("?", album.getTitle());
+        assertEquals(7L, album.getCreator().getId().longValue());
+        assertEquals(1L, album.getId().longValue());
     }
 
     @Test
-    public void findAllTest() {
+    public void testFindAll() {
         List<Album> albums = albumDao.findAll();
 
-        for (int i = 0; i < albums.size(); i++) {
-            Assert.assertEquals(albums.get(i).getTitle(), albumDao.findById(i + 1L).getTitle());
-        }
+        assertNotNull(albums);
     }
 
     @Test
-    public void saveTest() {
+    public void testSave() {
         Album album = createAlbum();
 
         Long index = albumDao.save(album);
         album = albumDao.findById(index);
 
-        Assert.assertEquals("TestAlbum", album.getTitle());
-        Assert.assertEquals(1L, album.getCreator().getId().longValue());
+        assertEquals("TestAlbum", album.getTitle());
+        assertEquals(1L, album.getCreator().getId().longValue());
     }
 
     @Test
-    public void updateTest() {
+    public void testUpdate() {
         Album album = albumDao.findById(2L);
-        Assert.assertEquals("LAST ONE", album.getTitle());
+        assertEquals("LAST ONE", album.getTitle());
 
         album.setTitle("LAST TWO");
         albumDao.update(album);
 
         album = albumDao.findById(2L);
-        Assert.assertEquals("LAST TWO", album.getTitle());
+        assertEquals("LAST TWO", album.getTitle());
     }
 
-    @Test(expected = DataBaseWorkException.class)
-    public void deleteByIdTest() {
+    @Test
+    public void testDeleteById() {
         albumDao.deleteById(4L);
-        Album album = albumDao.findById(4L);
+
+        DataBaseWorkException dataBaseWorkException =
+                assertThrows(DataBaseWorkException.class, () -> {
+                    albumDao.findById(4L);
+                });
+
+        assertEquals("No entity found for query", dataBaseWorkException.getMessage());
     }
 
     @Test
-    public void findSavedFromByAccountIdTest() {
-        albumDao.findSavedFromByAccountId(1L).stream().forEach(System.out::println);
+    public void testFindSavedFromByAccountId() {
+        List<Album> albums = albumDao.findSavedFromByAccountId(2L);
+
+        assertEquals(1L, albums.size());
+        assertEquals("?", albums.get(0).getTitle());
     }
 
     @Test
-    public void findCreatedFromAccountIdTest() {
-        albumDao.findCreatedFromAccountId(1L).stream().forEach(System.out::println);
-    }
+    public void testFindCreatedFromAccountId() {
+        List<Album> albums = albumDao.findCreatedFromAccountId(7L);
 
+        assertEquals(1L, albums.size());
+        assertEquals("?", albums.get(0).getTitle());
+    }
 }

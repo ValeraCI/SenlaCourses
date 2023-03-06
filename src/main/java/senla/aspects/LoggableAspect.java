@@ -21,7 +21,7 @@ public class LoggableAspect {
     }
 
     @Around("transactionLoggable()")
-    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint) {
+    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object result;
 
         try {
@@ -29,7 +29,7 @@ public class LoggableAspect {
         } catch (Throwable e) {
             logger.error("Method {} was throwing exception {}", proceedingJoinPoint.getSignature().toLongString(),
                     e.getMessage());
-            throw new RuntimeException(e);
+            throw e;
         }
 
         if (Objects.isNull(result)) {
@@ -40,5 +40,4 @@ public class LoggableAspect {
         }
         return result;
     }
-
 }

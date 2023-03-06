@@ -28,7 +28,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             entityManager.persist(entity);
             return entity.getId();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             entityManager.merge(entity);
             entityManager.flush();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             entityManager.createQuery(criteriaDelete).executeUpdate();
             entityManager.flush();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             criteriaQuery.select(criteriaQuery.from(typeParameterClass));
             return entityManager.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
             return entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }

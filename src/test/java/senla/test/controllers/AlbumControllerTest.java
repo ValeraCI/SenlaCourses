@@ -2,7 +2,6 @@ package senla.test.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +24,7 @@ import senla.security.filters.JwtFilter;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -82,8 +82,8 @@ public class AlbumControllerTest {
                         new TypeReference<List<AlbumInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "?");
-        Assert.assertEquals(list.get(0).getId(), 1);
+        assertEquals(list.get(0).getTitle(), "?");
+        assertEquals(list.get(0).getId(), 1);
     }
 
     @Test
@@ -96,8 +96,8 @@ public class AlbumControllerTest {
         AlbumInfoDto album =
                 objectMapper.readValue(result.getResponse().getContentAsString(), AlbumInfoDto.class);
 
-        Assert.assertEquals(album.getTitle(), "?");
-        Assert.assertEquals(album.getId(), 1);
+        assertEquals(album.getTitle(), "?");
+        assertEquals(album.getId(), 1);
     }
 
     @Test
@@ -112,8 +112,8 @@ public class AlbumControllerTest {
                         new TypeReference<List<AlbumInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "LAST ONE");
-        Assert.assertEquals(list.get(0).getId(), 2);
+        assertEquals(list.get(0).getTitle(), "LAST ONE");
+        assertEquals(list.get(0).getId(), 2);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class AlbumControllerTest {
         AlbumInfoDto album =
                 objectMapper.readValue(result.getResponse().getContentAsString(), AlbumInfoDto.class);
 
-        Assert.assertEquals(album.getTitle(), "TestAlbum");
+        assertEquals(album.getTitle(), "TestAlbum");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class AlbumControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(500, result.getResponse().getStatus());
+        assertEquals(404, result.getResponse().getStatus());
     }
 
     @Test
@@ -165,8 +165,8 @@ public class AlbumControllerTest {
                         new TypeReference<List<AlbumInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "?");
-        Assert.assertEquals(list.get(0).getId(), 1);
+        assertEquals(list.get(0).getTitle(), "?");
+        assertEquals(list.get(0).getId(), 1);
     }
 
     @Test
@@ -181,8 +181,8 @@ public class AlbumControllerTest {
                         new TypeReference<List<AlbumInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "?");
-        Assert.assertEquals(list.get(0).getId(), 1);
+        assertEquals(list.get(0).getTitle(), "?");
+        assertEquals(list.get(0).getId(), 1);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class AlbumControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        assertEquals(result.getResponse().getStatus(), 404);
     }
 
     @Test
@@ -221,6 +221,6 @@ public class AlbumControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 404);
+        assertEquals(result.getResponse().getStatus(), 404);
     }
 }

@@ -16,7 +16,6 @@ import senla.services.api.SongService;
 import senla.util.SongFindParameter;
 import senla.util.mappers.SongMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,10 +43,7 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public Long save(SongCreateDto songCreateDto) {
-        List<Account> authors = new ArrayList<>();
-        for (Long authorId : songCreateDto.getAuthorsId()) {
-            authors.add(accountDao.findById(authorId));
-        }
+        List<Account> authors = accountDao.findByIds(songCreateDto.getAuthorsId());
         Genre genre = genreDao.findById(songCreateDto.getGenreId());
 
         Song song = songMapper.toEntity(songCreateDto, authors, genre, createLocation(songCreateDto));

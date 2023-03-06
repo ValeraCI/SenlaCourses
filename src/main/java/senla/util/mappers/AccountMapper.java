@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import senla.dto.account.AccountDataDto;
+import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.UpdateAccountDto;
 import senla.models.Account;
 import senla.models.LoginDetails;
 import senla.models.Role;
@@ -25,42 +24,25 @@ public class AccountMapper {
 
     @PostConstruct
     public void setupMapper() {
-        mapper.createTypeMap(AccountDataDto.class, Account.class)
+        mapper.createTypeMap(RegistrationRequest.class, Account.class)
                 .addMappings(m -> m.skip(Account::setLoginDetails))
                 .addMappings(m -> m.skip(Account::setRegistrationDate))
                 .addMappings(m -> m.skip(Account::setRole))
                 .setPostConverter(
-                        accountDataDtoToAccountConverter());
-
-        mapper.createTypeMap(UpdateAccountDto.class, Account.class)
-                .addMappings(m -> m.skip(Account::setRole))
-                .setPostConverter(
-                        accountToUpdateAccountDtoConverter());
+                        loginRequestToAccountConverter()
+                );
     }
 
-    public Converter<UpdateAccountDto, Account> accountToUpdateAccountDtoConverter() {
+    public Converter<RegistrationRequest, Account> loginRequestToAccountConverter() {
         return context -> {
-            UpdateAccountDto source = context.getSource();
+            RegistrationRequest source = context.getSource();
             Account destination = context.getDestination();
-            mapAccountSpecificFields(source, destination);
+            mapLoginRequestSpecificFields(source, destination);
             return context.getDestination();
         };
     }
 
-    public Converter<AccountDataDto, Account> accountDataDtoToAccountConverter() {
-        return context -> {
-            AccountDataDto source = context.getSource();
-            Account destination = context.getDestination();
-            mapAccountDataDtoSpecificFields(source, destination);
-            return context.getDestination();
-        };
-    }
-
-    public void mapAccountSpecificFields(UpdateAccountDto source, Account destination) {
-        destination.setRole(new Role(source.getRoleId()));
-    }
-
-    public void mapAccountDataDtoSpecificFields(AccountDataDto source, Account destination) {
+    public void mapLoginRequestSpecificFields(RegistrationRequest source, Account destination) {
         destination.setRegistrationDate(LocalDate.now());
         LoginDetails loginDetails =
                 new LoginDetails(destination, source.getEmail(), source.getPassword());
@@ -68,16 +50,12 @@ public class AccountMapper {
         destination.setRole(new Role(3L, RoleTitle.USER));
     }
 
-    public Account toEntity(AccountDataDto dto) {
+    public Account toEntity(RegistrationRequest dto) {
         return Objects.isNull(dto) ? null : mapper.map(dto, Account.class);
     }
 
     public AccountMainDataDto toAccountMainDataDto(Account entity) {
         return Objects.isNull(entity) ? null : mapper.map(entity, AccountMainDataDto.class);
-    }
-
-    public Account toEntity(UpdateAccountDto dto) {
-        return Objects.isNull(dto) ? null : mapper.map(dto, Account.class);
     }
 
     public List<AccountMainDataDto> toAccountMainDataDtoList(List<Account> accounts) {

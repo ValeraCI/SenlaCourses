@@ -38,7 +38,7 @@ public class AlbumDao extends AbstractDao<Album, Long> {
 
             return entityManager.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -48,14 +48,14 @@ public class AlbumDao extends AbstractDao<Album, Long> {
 
             CriteriaQuery<Album> query = criteriaBuilder.createQuery(typeParameterClass);
             Root<Album> root = query.from(typeParameterClass);
-            Join<Account, Album> join = root.join(Album_.SAVED_FROM, JoinType.LEFT);
+            Join<Account, Album> join = root.join(Album_.SAVED_FROM);
 
-            query.select(query.from(typeParameterClass))
+            query.select(root)
                     .where(criteriaBuilder.equal(join.get(Account_.ID), id));
 
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -72,7 +72,7 @@ public class AlbumDao extends AbstractDao<Album, Long> {
 
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }

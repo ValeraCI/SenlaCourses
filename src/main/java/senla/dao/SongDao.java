@@ -34,12 +34,12 @@ public class SongDao extends AbstractDao<Song, Long> {
             Song song = entityManager.find(Song.class, id, properties);
 
             if (song == null) {
-                throw new DataBaseWorkException();
+                throw new DataBaseWorkException("No entity found for query");
             }
 
             return song;
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -60,7 +60,7 @@ public class SongDao extends AbstractDao<Song, Long> {
 
             return entityManager.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -78,7 +78,7 @@ public class SongDao extends AbstractDao<Song, Long> {
                     .where(criteriaBuilder.like(root.get(Song_.TITLE), "%" + title + "%"));
             return entityManager.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -96,7 +96,7 @@ public class SongDao extends AbstractDao<Song, Long> {
 
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }
