@@ -1,6 +1,7 @@
 package senla.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,6 +15,7 @@ import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
+import senla.models.AccountDetails;
 import senla.services.api.AccountService;
 
 import java.util.List;
@@ -45,31 +47,43 @@ public class AccountController {
 
     @Loggable
     @DeleteMapping("/{id}")
-    public void removeById(@PathVariable("id") Long id) {
-        accountService.deleteById(id);
+    public void removeById(@PathVariable("id") Long id,
+                           @AuthenticationPrincipal AccountDetails accountDetails) {
+
+        accountService.deleteById(id, accountDetails);
     }
 
     @Loggable
     @PatchMapping("/{id}")
-    public void updateData(@PathVariable("id") Long id, @RequestBody UpdateAccountDataDto accountUpdateDto) {
-        accountService.updateData(id, accountUpdateDto);
+    public void updateData(@PathVariable("id") Long id,
+                           @RequestBody UpdateAccountDataDto accountUpdateDto,
+                           @AuthenticationPrincipal AccountDetails accountDetails) {
+
+        accountService.updateData(id, accountUpdateDto, accountDetails);
     }
 
     @Loggable
     @PostMapping("/{accountId}/albums/{albumId}")
-    public void addSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId) {
-        accountService.addSavedAlbum(accountId, albumId);
+    public void addSavedAlbum(@PathVariable("accountId") Long accountId,
+                              @PathVariable("albumId") Long albumId,
+                              @AuthenticationPrincipal AccountDetails accountDetails) {
+
+        accountService.addSavedAlbum(accountId, albumId, accountDetails);
     }
 
     @Loggable
     @DeleteMapping("/{accountId}/albums/{albumId}")
-    public void removeSavedAlbum(@PathVariable("accountId") Long accountId, @PathVariable("albumId") Long albumId) {
-        accountService.removeSavedAlbum(accountId, albumId);
+    public void removeSavedAlbum(@PathVariable("accountId") Long accountId,
+                                 @PathVariable("albumId") Long albumId,
+                                 @AuthenticationPrincipal AccountDetails accountDetails) {
+
+        accountService.removeSavedAlbum(accountId, albumId, accountDetails);
     }
 
     @Loggable
     @PatchMapping("/role/{id}")
-    public void updateRole(@PathVariable("id") Long id, @RequestBody UpdateAccountRoleDto updateAccountRoleDto){
+    public void updateRole(@PathVariable("id") Long id,
+                           @RequestBody UpdateAccountRoleDto updateAccountRoleDto){
 
         accountService.updateRole(id, updateAccountRoleDto);
         System.out.println("Ok");

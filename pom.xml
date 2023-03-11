@@ -11,7 +11,6 @@
 
     <name>MusicApplication Maven Webapp</name>
 
-
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -150,7 +149,6 @@
             <version>1.9.19</version>
         </dependency>
 
-
         <!-- Подтягиваем классы, убранные из JDK и необходимые для генерации метомоделей-->
         <!-- API, java.xml.bind module -->
         <dependency>
@@ -170,6 +168,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.1.214</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
@@ -230,6 +229,11 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -272,6 +276,15 @@
                     <url>http://localhost:8080/manager/text</url>
                     <server>TomcatServer</server>
                     <path>/</path>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
         </plugins>

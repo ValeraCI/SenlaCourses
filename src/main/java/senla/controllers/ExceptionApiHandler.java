@@ -9,6 +9,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import senla.exceptions.DataBaseWorkException;
 import senla.exceptions.DataChangesException;
+import senla.exceptions.InsufficientRightsException;
 
 import javax.persistence.NoResultException;
 
@@ -18,7 +19,7 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataBaseWorkException.class)
     public ResponseEntity<String> dataBaseWorkException(DataBaseWorkException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getLocalizedMessage());
     }
 
@@ -32,21 +33,28 @@ public class ExceptionApiHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> mismatchException(MethodArgumentTypeMismatchException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getLocalizedMessage());
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<String> NoResultException(NoResultException exception) {
+    public ResponseEntity<String> expiredJwtException(ExpiredJwtException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getLocalizedMessage());
     }
 
     @ExceptionHandler(NoResultException.class)
     public ResponseEntity<String> noResultException(NoResultException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(InsufficientRightsException.class)
+    public ResponseEntity<String> insufficientRightsException(InsufficientRightsException exception){
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
                 .body(exception.getLocalizedMessage());
     }
 

@@ -15,13 +15,16 @@ import senla.models.LoginDetails;
 import senla.models.Role;
 import senla.models.RoleTitle;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {WebMvcConfig.class})
@@ -30,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AccountDaoTest {
     @Autowired
     private AccountDao accountDao;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     private Account createAccount() {
         Account account = new Account();
@@ -117,8 +122,20 @@ public class AccountDaoTest {
     }
 
     @Test
+    public void testFindWithSavedAlbumsByIdInBetween() {
+        List<Account> accounts = accountDao.findWithSavedAlbumsByIdInBetween(1L, 7L);
+
+        for (Account account: accounts) {
+            entityManager.detach(account);
+            assertNotNull(account.getSavedAlbums());
+            assertTrue(account.getId() >= 1);
+            assertTrue(account.getId() < 7);
+        }
+    }
+
+    @Test
     void testFindByIds() {
-        List<Long> accountIds = Arrays.asList(1L, 2L, 3L);
+        Set<Long> accountIds = Set.of(1L, 2L, 3L);
 
         List<Account> accounts = accountDao.findByIds(accountIds);
 

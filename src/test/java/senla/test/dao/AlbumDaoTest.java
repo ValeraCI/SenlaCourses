@@ -11,12 +11,18 @@ import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.exceptions.DataBaseWorkException;
+import senla.models.AEntity;
 import senla.models.Album;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -30,6 +36,8 @@ public class AlbumDaoTest {
     private AlbumDao albumDao;
     @Autowired
     private AccountDao accountDao;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     private Album createAlbum() {
         Album album = new Album();
@@ -116,5 +124,37 @@ public class AlbumDaoTest {
 
         assertEquals(1L, albums.size());
         assertEquals("?", albums.get(0).getTitle());
+    }
+
+    @Test
+    public void testFindByIdWithCreator(){
+        Album album = albumDao.findById(1L);
+        entityManager.detach(album);
+
+        assertNotNull(album.getCreator());
+        assertEquals("?", album.getTitle());
+        assertEquals(1L, album.getId().longValue());
+    }
+
+    @Test
+    public void testFindByIds() {
+        Set<Long> ids = Set.of(1L, 2L);
+
+        List<Album> albums = albumDao.findByIds(ids);
+        assertEquals(2, albums.size());
+    }
+
+    @Test
+    public void testFindRandomExcept() {
+        Set<Long> excludedIds = Set.of(1L);
+
+        List<Album> albums = albumDao.findRandomExcept(2, excludedIds);
+        assertEquals(2, albums.size());
+        assertFalse(albums
+                .stream()
+                .map(AEntity::getId)
+                .collect(Collectors.toList())
+
+                .contains(1L));
     }
 }

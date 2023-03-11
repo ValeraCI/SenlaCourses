@@ -27,8 +27,8 @@ public class LoggableAspect {
         try {
             result = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
-            logger.error("Method {} was throwing exception {}", proceedingJoinPoint.getSignature().toLongString(),
-                    e.getMessage());
+            logger.error("Method {} was throwing exception {}:{}", proceedingJoinPoint.getSignature().toLongString(),
+                    e.getClass(), e.getMessage());
             throw e;
         }
 

@@ -3,17 +3,21 @@ package senla.dao;
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
 import senla.exceptions.DataBaseWorkException;
+import senla.models.AEntity_;
 import senla.models.Account;
 import senla.models.Account_;
 import senla.models.Album;
 import senla.models.Album_;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class AlbumDao extends AbstractDao<Album, Long> {
@@ -71,6 +75,61 @@ public class AlbumDao extends AbstractDao<Album, Long> {
                     .where(criteriaBuilder.equal(join.get(Account_.ID), id));
 
             return entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public Album findByIdWithCreator(Long id) {
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+            CriteriaQuery<Album> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Album> root = criteriaQuery.from(typeParameterClass);
+            Join<Account, Album> join = root.join(Album_.CREATOR);
+
+            criteriaQuery
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(root.get(AEntity_.ID), id)
+                    );
+
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public List<Album> findByIds(Set<Long> ids) {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Album> query = builder.createQuery(typeParameterClass);
+
+            Root<Album> root = query.from(typeParameterClass);
+            query.select(root).where(root.get(Account_.ID).in(ids));
+
+            return entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public List<Album> findRandomExcept(Integer num, Set<Long> excludedIds) {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Album> query = builder.createQuery(typeParameterClass);
+            Expression<Double> random = builder.function("RAND", Double.class);
+
+            Root<Album> root = query.from(typeParameterClass);
+            query.select(root)
+                    .where(builder
+                            .not(root.get(Account_.ID).in(excludedIds)))
+                    .orderBy(builder.asc(random));
+
+            TypedQuery<Album> typedQuery = entityManager.createQuery(query);
+            typedQuery.setMaxResults(num);
+
+            return typedQuery.getResultList();
         } catch (Exception e) {
             throw new DataBaseWorkException(e.getMessage(), e);
         }

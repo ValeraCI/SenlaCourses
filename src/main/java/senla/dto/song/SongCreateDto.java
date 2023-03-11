@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,7 +14,7 @@ import java.util.List;
 public class SongCreateDto {
     private String title;
     private Long genreId;
-    private List<Long> authorsId;
+    private Set<Long> authorsId;
     private String albumCreator;
     private Long albumId;
 }

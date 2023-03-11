@@ -19,6 +19,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {
@@ -88,7 +89,7 @@ public class AccountDao extends AbstractDao<Account, Long> {
         }
     }
 
-    public Account findWithSavedAlbums(Long id) {
+    public Account findWithSavedAlbumsById(Long id) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
@@ -109,12 +110,35 @@ public class AccountDao extends AbstractDao<Account, Long> {
         }
     }
 
-    public List<Account> findByIds(List<Long> ids) {
+    public List<Account> findWithSavedAlbumsByIdInBetween(Long minId, Long maxId) {
         try {
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Account> query = builder.createQuery(Account.class);
-            Root<Account> root = query.from(Account.class);
+            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.SAVED_ALBUMS, JoinType.INNER);
+
+            query.select(root).where(
+                    builder.and(
+                            builder.greaterThanOrEqualTo(root.get(Account_.ID), minId),
+                            builder.lessThan(root.get(Account_.ID), maxId)
+                    )
+            );
+
+            return entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public List<Account> findByIds(Set<Long> ids) {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
             query.select(root).where(root.get(Account_.ID).in(ids));
+
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new DataBaseWorkException(e.getMessage(), e);

@@ -4,6 +4,7 @@ import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
+import senla.models.AccountDetails;
 
 import java.util.List;
 
@@ -15,13 +16,13 @@ public interface AccountService {
 
     List<AccountMainDataDto> findAllAccountMainDataDto();
 
-    void updateData(Long id, UpdateAccountDataDto accountUpdateDto);
+    void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails);
 
     void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto);
 
-    void deleteById(Long id);
+    void deleteById(Long id, AccountDetails accountDetails);
 
-    void addSavedAlbum(Long accountId, Long albumId);
+    void addSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails);
 
-    void removeSavedAlbum(Long accountId, Long albumId);
+    void removeSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails);
 }

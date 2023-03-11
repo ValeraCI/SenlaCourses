@@ -2,6 +2,7 @@ package senla.services.api;
 
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
+import senla.models.AccountDetails;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public interface SongService {
 
     Long save(SongCreateDto songCreateDto);
 
-    void deleteById(Long id);
+    void deleteById(Long id, AccountDetails accountDetails);
 
     List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId);
 

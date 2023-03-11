@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,6 +18,7 @@ import senla.security.filters.JwtFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
@@ -48,9 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/authenticate/**").permitAll()
 
                 .antMatchers(HttpMethod.POST, "/accounts/register").permitAll()
-
-                .antMatchers(HttpMethod.DELETE, "/accounts/{\\d+}").hasRole("ADMINISTRATOR")
-                .antMatchers(HttpMethod.DELETE, "/accounts/{\\d+}").hasRole("OWNER")
 
                 .antMatchers(HttpMethod.PATCH, "/accounts/role/{\\d+}").hasRole("OWNER")
 

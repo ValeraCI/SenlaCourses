@@ -19,15 +19,16 @@ import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Album;
 import senla.models.LoginDetails;
 import senla.models.Role;
 import senla.models.RoleTitle;
 import senla.services.AccountServiceImpl;
+import senla.test.util.ObjectCreator;
 import senla.util.mappers.AccountMapper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,8 +64,7 @@ public class AccountServiceImplTest {
     @Test
     public void testSave() {
         RegistrationRequest accountDataDto = new RegistrationRequest();
-        Account account = new Account();
-        account.setLoginDetails(new LoginDetails(account,"test@mail.ru", "1234"));
+        Account account = ObjectCreator.createAccount();
 
         when(accountMapper.toEntity(accountDataDto)).thenReturn(account);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
@@ -113,11 +113,13 @@ public class AccountServiceImplTest {
         UpdateAccountDataDto accountUpdateDto = new UpdateAccountDataDto("test", "pass");
         Account account = new Account();
         account.setLoginDetails(new LoginDetails());
+        account.setId(1L);
+        account.setRole(new Role(3L, RoleTitle.USER));
 
         when(accountDao.findById(anyLong())).thenReturn(account);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
-        accountService.updateData(1L, accountUpdateDto);
+        accountService.updateData(1L, accountUpdateDto, new AccountDetails(account));
 
         assertEquals("test", account.getNickname());
         assertEquals("encodedPassword", account.getLoginDetails().getPassword());
@@ -129,8 +131,7 @@ public class AccountServiceImplTest {
     @Test
     public void testUpdateRole() {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(2L);
-        Account account = new Account();
-        account.setRole(new Role(3L, RoleTitle.USER));
+        Account account = ObjectCreator.createAccount();
         Role role = new Role(2L, RoleTitle.ADMINISTRATOR);
 
         when(accountDao.findById(anyLong())).thenReturn(account);
@@ -147,8 +148,7 @@ public class AccountServiceImplTest {
     @Test
     public void testUpdateRoleToOwner() {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(1L);
-        Account userAccount = new Account();
-        userAccount.setRole(new Role(3L, RoleTitle.USER));
+        Account userAccount = ObjectCreator.createAccount();
         Account ownerAccount = new Account();
         ownerAccount.setRole(new Role(3L, RoleTitle.OWNER));
         Role administratorRole = new Role(2L, RoleTitle.ADMINISTRATOR);
@@ -183,84 +183,82 @@ public class AccountServiceImplTest {
             accountService.updateRole(1L, accountUpdateDto);
         });
 
-        assertEquals("You cannot change the \"OWNER\" role", dataChangesException.getMessage());
+        assertEquals("You can't change the \"OWNER\" role", dataChangesException.getMessage());
         verify(accountDao).findById(1L);
     }
 
     @Test
     public void testDeleteById() {
-        accountService.deleteById(1L);
+        Account account = ObjectCreator.createAccount();
+
+        accountService.deleteById(1L, new AccountDetails(account));
 
         verify(accountDao).deleteById(1L);
     }
 
     @Test
     public void testAddSavedAlbum() {
-        Account account = new Account();
-        account.setSavedAlbums(new HashSet<>());
+        Account account = ObjectCreator.createAccount();
         Album album = new Album();
 
-        when(accountDao.findWithSavedAlbums(anyLong())).thenReturn(account);
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
         when(albumDao.findById(anyLong())).thenReturn(album);
 
-        accountService.addSavedAlbum(1L, 1L);
+        accountService.addSavedAlbum(1L, 1L, new AccountDetails(account));
 
         assertEquals(1L, account.getSavedAlbums().size());
-        verify(accountDao).findWithSavedAlbums(1L);
+        verify(accountDao).findWithSavedAlbumsById(1L);
         verify(albumDao).findById(1L);
     }
 
     @Test
     public void testAddSavedAlbumException() {
-        Account account = new Account();
-        account.setSavedAlbums(new HashSet<>());
+        Account account = ObjectCreator.createAccount();
         Album album = new Album();
         account.getSavedAlbums().add(album);
 
-        when(accountDao.findWithSavedAlbums(anyLong())).thenReturn(account);
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
         when(albumDao.findById(anyLong())).thenReturn(album);
 
         DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
-            accountService.addSavedAlbum(1L, 1L);
+            accountService.addSavedAlbum(1L, 1L, new AccountDetails(account));
         });
 
         assertEquals("Album has already been saved", dataChangesException.getMessage());
-        verify(accountDao).findWithSavedAlbums(1L);
+        verify(accountDao).findWithSavedAlbumsById(1L);
         verify(albumDao).findById(1L);
     }
 
     @Test
     public void testRemoveSavedAlbum() {
-       Account account = new Account();
-       account.setSavedAlbums(new HashSet<>());
+       Account account = ObjectCreator.createAccount();
        Album album = new Album();
        account.getSavedAlbums().add(album);
 
-       when(accountDao.findWithSavedAlbums(anyLong())).thenReturn(account);
+       when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
        when(albumDao.findById(anyLong())).thenReturn(album);
 
-        accountService.removeSavedAlbum(1L, 1L);
+       accountService.removeSavedAlbum(1L, 1L, new AccountDetails(account));
 
        assertEquals(0L, account.getSavedAlbums().size());
-       verify(accountDao).findWithSavedAlbums(1L);
+       verify(accountDao).findWithSavedAlbumsById(1L);
        verify(albumDao).findById(1L);
     }
 
     @Test
     public void testRemoveSavedAlbumException() {
-        Account account = new Account();
-        account.setSavedAlbums(new HashSet<>());
+        Account account = ObjectCreator.createAccount();
         Album album = new Album();
 
-        when(accountDao.findWithSavedAlbums(anyLong())).thenReturn(account);
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
         when(albumDao.findById(anyLong())).thenReturn(album);
 
         DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
-            accountService.removeSavedAlbum(1L, 1L);
+            accountService.removeSavedAlbum(1L, 1L, new AccountDetails(account));
         });
 
         assertEquals("Album not saved", dataChangesException.getMessage());
-        verify(accountDao).findWithSavedAlbums(1L);
+        verify(accountDao).findWithSavedAlbumsById(1L);
         verify(albumDao).findById(1L);
     }
 }

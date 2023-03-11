@@ -7,6 +7,7 @@ import senla.models.AEntity_;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,8 +27,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public Long save(T entity) {
         try {
             entityManager.persist(entity);
+            entityManager.flush();
             return entity.getId();
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
+            throw new DataBaseWorkException("this email is already registered", e);
+        } catch (Exception e){
             throw new DataBaseWorkException(e.getMessage(), e);
         }
     }

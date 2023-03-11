@@ -1,6 +1,7 @@
 package senla.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,9 @@ import senla.dto.account.AccountMainDataDto;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
 import senla.exceptions.DataChangesException;
+import senla.exceptions.InsufficientRightsException;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Album;
 import senla.models.Role;
 import senla.models.RoleTitle;
@@ -20,6 +23,7 @@ import senla.services.api.AccountService;
 import senla.util.mappers.AccountMapper;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,20 +51,20 @@ public class AccountServiceImpl implements AccountService {
     public AccountMainDataDto findAccountMainDataDtoById(Long id) {
         Account account = accountDao.findById(id);
 
-        AccountMainDataDto accountMainDataDto = accountMapper.toAccountMainDataDto(account);
-        return accountMainDataDto;
+        return accountMapper.toAccountMainDataDto(account);
     }
 
     @Override
     public List<AccountMainDataDto> findAllAccountMainDataDto() {
-        List<AccountMainDataDto> accountMainDataDtoList =
-                accountMapper.toAccountMainDataDtoList(accountDao.findAll());
-
-        return accountMainDataDtoList;
+        return accountMapper.toAccountMainDataDtoList(accountDao.findAll());
     }
 
     @Override
-    public void updateData(Long id, UpdateAccountDataDto accountUpdateDto) {
+    public void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails) {
+        if(!hasAccess(id, accountDetails)){
+            throw new InsufficientRightsException("You can't update this user");
+        }
+
         Account account = accountDao.findById(id);
 
         String password = passwordEncoder.encode(accountUpdateDto.getPassword()) ;
@@ -68,13 +72,13 @@ public class AccountServiceImpl implements AccountService {
         account.setNickname(accountUpdateDto.getNickname());
         accountDao.update(account);
     }
-    
+
     @Override
     public void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto) {
         Account account = accountDao.findById(id);
 
         if(account.getRole().getRoleTitle() == RoleTitle.OWNER){
-            throw new DataChangesException("You cannot change the \"OWNER\" role");
+            throw new DataChangesException("You can't change the \"OWNER\" role");
         }
 
         Role role = roleDao.findById(accountUpdateDto.getRoleId());
@@ -90,13 +94,21 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id, AccountDetails accountDetails) {
+        if(!hasAccess(id, accountDetails)){
+            throw new InsufficientRightsException("You can't delete this user");
+        }
+
         accountDao.deleteById(id);
     }
 
     @Override
-    public void addSavedAlbum(Long accountId, Long albumId) {
-        Account account = accountDao.findWithSavedAlbums(accountId);
+    public void addSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails) {
+        if(!hasAccess(accountId, accountDetails)){
+            throw new InsufficientRightsException("You can't add an album to this user");
+        }
+
+        Account account = accountDao.findWithSavedAlbumsById(accountId);
         Album album = albumDao.findById(albumId);
 
         if (!account.getSavedAlbums().contains(album)) {
@@ -107,8 +119,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void removeSavedAlbum(Long accountId, Long albumId) {
-        Account account = accountDao.findWithSavedAlbums(accountId);
+    public void removeSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails) {
+        if(!hasAccess(accountId, accountDetails)){
+            throw new InsufficientRightsException("You can't delete this user's album");
+        }
+
+        Account account = accountDao.findWithSavedAlbumsById(accountId);
         Album album = albumDao.findById(albumId);
 
         if (account.getSavedAlbums().contains(album)) {
@@ -116,5 +132,13 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new DataChangesException("Album not saved");
         }
+    }
+
+    private boolean hasAccess(Long id, AccountDetails accountDetails){
+        return Objects.equals(id, accountDetails.getId()) ||
+                accountDetails.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .anyMatch(auth -> auth.equals("ADMINISTRATOR")
+                                || auth.equals("OWNER"));
     }
 }

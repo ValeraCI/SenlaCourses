@@ -22,8 +22,9 @@ import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.security.filters.JwtFilter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -88,7 +89,7 @@ public class SongControllerTest {
     @Test
     public void saveTest() throws Exception {
         SongCreateDto songCreateDto = new SongCreateDto("TestSong", 1L,
-                new ArrayList<>(List.of(6L, 7L, 8L)), "XXXTENTCION", 1L);
+                new HashSet<>(Set.of(6L, 7L, 8L)), "XXXTENTCION", 1L);
 
         MvcResult result = mockMvc.perform(post("/songs")
                         .header("Authorization", token)
@@ -121,7 +122,7 @@ public class SongControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        assertEquals(404, result.getResponse().getStatus());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test

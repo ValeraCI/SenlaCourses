@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
@@ -150,7 +151,7 @@ public class AlbumControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        assertEquals(404, result.getResponse().getStatus());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
@@ -222,5 +223,16 @@ public class AlbumControllerTest {
                 .andReturn();
 
         assertEquals(result.getResponse().getStatus(), 404);
+    }
+
+    @Test
+    @GetMapping("/recommendations")
+    public void findRecommendedFor() throws Exception {
+        MvcResult result = mockMvc.perform(get("/albums/recommendations")
+                .header("Authorization", token))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertEquals(result.getResponse().getStatus(), 200);
     }
 }

@@ -16,10 +16,12 @@ import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Album;
 import senla.models.Genre;
 import senla.models.Song;
 import senla.services.SongServiceImpl;
+import senla.test.util.ObjectCreator;
 import senla.util.mappers.SongMapper;
 
 import java.util.ArrayList;
@@ -84,8 +86,17 @@ public class SongServiceImplTest {
 
     @Test
     public void testDeleteById() {
-        songService.deleteById(1L);
+        Account account = ObjectCreator.createAccount();
+        Song song = new Song();
+        List<Account> authors = new ArrayList<>();
+        authors.add(account);
+        song.setAuthors(authors);
 
+        when(songDao.findById(anyLong())).thenReturn(song);
+
+        songService.deleteById(1L, new AccountDetails(account));
+
+        verify(songDao).findById(1L);
         verify(songDao).deleteById(1L);
     }
 

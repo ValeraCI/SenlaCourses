@@ -1,6 +1,7 @@
 package senla.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
@@ -9,7 +10,10 @@ import senla.dao.GenreDao;
 import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
+import senla.exceptions.InsufficientRightsException;
+import senla.models.AEntity;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Genre;
 import senla.models.Song;
 import senla.services.api.SongService;
@@ -20,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SongServiceImpl implements SongService {
 
     private final SongDao songDao;
@@ -41,7 +46,6 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    @Transactional
     public Long save(SongCreateDto songCreateDto) {
         List<Account> authors = accountDao.findByIds(songCreateDto.getAuthorsId());
         Genre genre = genreDao.findById(songCreateDto.getGenreId());
@@ -51,54 +55,45 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Long id, AccountDetails accountDetails) {
+        Song song = songDao.findById(id);
+
+        if(!hasAccess(song, accountDetails)){
+            throw new InsufficientRightsException("You can't delete a song");
+        }
+
         songDao.deleteById(id);
     }
 
     @Override
-    @Transactional
     public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId) {
-        List<SongInfoDto> songInfoDtoList =
-                songMapper.toSongInfoDtoList(
+        return songMapper.toSongInfoDtoList(
                         songDao.findByAlbumId(albumId)
                 );
-
-        return songInfoDtoList;
     }
 
     @Override
-    @Transactional
     public SongInfoDto findSongInfoDtoById(Long id) {
         return songMapper.toSongInfoDto(songDao.findById(id));
     }
 
     @Override
-    @Transactional
     public List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle) {
         Genre genre = genreDao.findByTitle(genreTitle);
 
-        List<SongInfoDto> songInfoDtoList =
-                songMapper.toSongInfoDtoList(
+        return songMapper.toSongInfoDtoList(
                         songDao.findByGenre(genre)
                 );
-
-        return songInfoDtoList;
     }
 
     @Override
-    @Transactional
     public List<SongInfoDto> findSongInfoDtoByTitle(String title) {
-        List<SongInfoDto> songInfoDtoList =
-                songMapper.toSongInfoDtoList(
+        return songMapper.toSongInfoDtoList(
                         songDao.findByTitle(title)
                 );
-
-        return songInfoDtoList;
     }
 
     @Override
-    @Transactional
     public List<SongInfoDto> findByParameter(String parameter, String findBy) {
         List<SongInfoDto> resultList = null;
         SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
@@ -115,5 +110,16 @@ public class SongServiceImpl implements SongService {
                 break;
         }
         return resultList;
+    }
+
+    private boolean hasAccess(Song song, AccountDetails accountDetails){
+        return song.getAuthors()
+                .stream()
+                .map(AEntity::getId)
+                .anyMatch(id -> id.equals(accountDetails.getId())) ||
+                accountDetails.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .anyMatch(auth -> auth.equals("ADMINISTRATOR")
+                                || auth.equals("OWNER"));
     }
 }
