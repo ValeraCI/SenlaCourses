@@ -16,6 +16,7 @@ import senla.dto.song.SongInfoDto;
 import senla.models.AccountDetails;
 import senla.services.api.SongService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class SongController {
 
     @Loggable
     @PostMapping
-    public Long save(@RequestBody SongCreateDto songCreateDto) {
+    public Long save(@Valid @RequestBody SongCreateDto songCreateDto) {
         return songService.save(songCreateDto);
     }
 

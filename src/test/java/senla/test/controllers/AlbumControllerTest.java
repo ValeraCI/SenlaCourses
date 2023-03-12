@@ -229,7 +229,7 @@ public class AlbumControllerTest {
     @GetMapping("/recommendations")
     public void findRecommendedFor() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/recommendations")
-                .header("Authorization", token))
+                        .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 

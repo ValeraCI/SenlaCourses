@@ -58,7 +58,7 @@ public class SongServiceImpl implements SongService {
     public void deleteById(Long id, AccountDetails accountDetails) {
         Song song = songDao.findById(id);
 
-        if(!hasAccess(song, accountDetails)){
+        if (!hasAccess(song, accountDetails)) {
             throw new InsufficientRightsException("You can't delete a song");
         }
 
@@ -68,8 +68,8 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<SongInfoDto> findSongInfoDtoByAlbumId(Long albumId) {
         return songMapper.toSongInfoDtoList(
-                        songDao.findByAlbumId(albumId)
-                );
+                songDao.findByAlbumId(albumId)
+        );
     }
 
     @Override
@@ -82,15 +82,15 @@ public class SongServiceImpl implements SongService {
         Genre genre = genreDao.findByTitle(genreTitle);
 
         return songMapper.toSongInfoDtoList(
-                        songDao.findByGenre(genre)
-                );
+                songDao.findByGenre(genre)
+        );
     }
 
     @Override
     public List<SongInfoDto> findSongInfoDtoByTitle(String title) {
         return songMapper.toSongInfoDtoList(
-                        songDao.findByTitle(title)
-                );
+                songDao.findByTitle(title)
+        );
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SongServiceImpl implements SongService {
         return resultList;
     }
 
-    private boolean hasAccess(Song song, AccountDetails accountDetails){
+    private boolean hasAccess(Song song, AccountDetails accountDetails) {
         return song.getAuthors()
                 .stream()
                 .map(AEntity::getId)

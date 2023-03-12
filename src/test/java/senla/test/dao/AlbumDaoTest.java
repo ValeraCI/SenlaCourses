@@ -127,7 +127,7 @@ public class AlbumDaoTest {
     }
 
     @Test
-    public void testFindByIdWithCreator(){
+    public void testFindByIdWithCreator() {
         Album album = albumDao.findById(1L);
         entityManager.detach(album);
 

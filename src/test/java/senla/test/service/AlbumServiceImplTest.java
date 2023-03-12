@@ -115,7 +115,7 @@ public class AlbumServiceImplTest {
 
     @Test
     public void testAddSongIn() {
-        Account account =  ObjectCreator.createAccount();
+        Account account = ObjectCreator.createAccount();
         Song song = new Song();
         Album album = new Album();
         album.setSongsIn(new HashSet<>());
@@ -133,7 +133,7 @@ public class AlbumServiceImplTest {
 
     @Test
     public void testAddSongInException() {
-        Account account =  ObjectCreator.createAccount();
+        Account account = ObjectCreator.createAccount();
 
         Song song = new Song();
         Album album = new Album();
@@ -156,7 +156,7 @@ public class AlbumServiceImplTest {
 
     @Test
     public void testRemoveSavedAlbum() {
-        Account account =  ObjectCreator.createAccount();
+        Account account = ObjectCreator.createAccount();
 
         Song song = new Song();
 
@@ -177,7 +177,7 @@ public class AlbumServiceImplTest {
 
     @Test
     public void testRemoveSavedAlbumException() {
-        Account account =  ObjectCreator.createAccount();
+        Account account = ObjectCreator.createAccount();
 
         Song song = new Song();
         Album album = new Album();
@@ -261,7 +261,7 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void testFindRecommendedForLessThanThree(){
+    public void testFindRecommendedForLessThanThree() {
         Account account = ObjectCreator.createAccount();
         List<Album> albums = new ArrayList<>();
         List<AlbumInfoDto> result = new ArrayList<>();

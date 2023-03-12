@@ -16,6 +16,7 @@ import senla.dto.album.AlbumInfoDto;
 import senla.models.AccountDetails;
 import senla.services.api.AlbumService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -39,7 +40,7 @@ public class AlbumController {
 
     @Loggable
     @PostMapping
-    public Long save(@RequestBody AlbumCreateUpdateDataDto createAlbumDto) {
+    public Long save(@Valid @RequestBody AlbumCreateUpdateDataDto createAlbumDto) {
         return albumService.save(createAlbumDto);
     }
 
@@ -91,7 +92,7 @@ public class AlbumController {
     @GetMapping("/recommendations")
     public List<AlbumInfoDto> findRecommendedFor(@AuthenticationPrincipal AccountDetails accountDetails,
                                                  @RequestParam(name = "limit",
-                                                 defaultValue = "10") Integer limit) {
+                                                         defaultValue = "10") Integer limit) {
         return albumService.findRecommendedFor(accountDetails, limit);
     }
 }

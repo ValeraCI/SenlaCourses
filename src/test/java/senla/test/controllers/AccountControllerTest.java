@@ -18,9 +18,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
-import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.RegistrationRequest;
 import senla.dto.account.UpdateAccountDataDto;
+import senla.dto.account.UpdateAccountRoleDto;
 import senla.security.filters.JwtFilter;
 
 import java.util.List;
@@ -202,7 +203,7 @@ public class AccountControllerTest {
         assertEquals(account.getNickname(), "nickname");
     }
 
-    /*@Test
+    @Test
     public void testUpdateRole() throws Exception {
         UpdateAccountRoleDto updateAccountRoleDto = new UpdateAccountRoleDto(2L);
 
@@ -230,5 +231,5 @@ public class AccountControllerTest {
                         .andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
-    }*/
+    }
 }

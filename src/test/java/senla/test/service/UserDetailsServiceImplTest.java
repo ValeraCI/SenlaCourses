@@ -34,12 +34,12 @@ public class UserDetailsServiceImplTest {
     @InjectMocks
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    public UserDetailsServiceImplTest(){
+    public UserDetailsServiceImplTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testLoadUserByUsername(){
+    public void testLoadUserByUsername() {
         Account account = new Account();
         account.setNickname("test");
         account.setLoginDetails(new LoginDetails(account, "test", "test"));
@@ -55,7 +55,7 @@ public class UserDetailsServiceImplTest {
     }
 
     @Test
-    public void testLoadUserByUsernameException(){
+    public void testLoadUserByUsernameException() {
         when(accountDao.findByEmail(anyString())).thenReturn(null);
 
         UsernameNotFoundException usernameNotFoundException =

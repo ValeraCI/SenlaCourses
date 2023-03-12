@@ -114,7 +114,7 @@ public class AccountDaoTest {
         accountDao.deleteById(3L);
 
         DataBaseWorkException dataBaseWorkException =
-                assertThrows(DataBaseWorkException.class, ()->{
+                assertThrows(DataBaseWorkException.class, () -> {
                     accountDao.findById(3L);
                 });
 
@@ -125,7 +125,7 @@ public class AccountDaoTest {
     public void testFindWithSavedAlbumsByIdInBetween() {
         List<Account> accounts = accountDao.findWithSavedAlbumsByIdInBetween(1L, 7L);
 
-        for (Account account: accounts) {
+        for (Account account : accounts) {
             entityManager.detach(account);
             assertNotNull(account.getSavedAlbums());
             assertTrue(account.getId() >= 1);

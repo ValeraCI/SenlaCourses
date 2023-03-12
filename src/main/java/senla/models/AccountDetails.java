@@ -14,7 +14,7 @@ public class AccountDetails implements UserDetails {
     private final String password;
     private final String username;
 
-    public AccountDetails(Account account){
+    public AccountDetails(Account account) {
         id = account.getId();
 
         authorities = new ArrayList(List.of(
@@ -26,7 +26,7 @@ public class AccountDetails implements UserDetails {
         username = account.getLoginDetails().getEmail();
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 

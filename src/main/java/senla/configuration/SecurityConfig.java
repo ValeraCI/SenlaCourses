@@ -51,8 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, "/accounts/register").permitAll()
 
-                .antMatchers(HttpMethod.PATCH, "/accounts/role/{\\d+}").hasRole("OWNER")
-
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

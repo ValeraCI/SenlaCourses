@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import senla.annotations.Loggable;
-import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.RegistrationRequest;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
 import senla.models.AccountDetails;
 import senla.services.api.AccountService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -41,7 +42,7 @@ public class AccountController {
 
     @Loggable
     @PostMapping("/register")
-    public Long save(@RequestBody RegistrationRequest loginRequest) {
+    public Long save(@Valid @RequestBody RegistrationRequest loginRequest) {
         return accountService.save(loginRequest);
     }
 
@@ -83,9 +84,9 @@ public class AccountController {
     @Loggable
     @PatchMapping("/role/{id}")
     public void updateRole(@PathVariable("id") Long id,
-                           @RequestBody UpdateAccountRoleDto updateAccountRoleDto){
+                           @RequestBody UpdateAccountRoleDto updateAccountRoleDto,
+                           @AuthenticationPrincipal AccountDetails accountDetails) {
 
-        accountService.updateRole(id, updateAccountRoleDto);
-        System.out.println("Ok");
+        accountService.updateRole(id, updateAccountRoleDto, accountDetails);
     }
 }

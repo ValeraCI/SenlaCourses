@@ -72,7 +72,7 @@ public class AlbumServiceImpl implements AlbumService {
     public void deleteById(Long id, AccountDetails accountDetails) {
         Album album = albumDao.findByIdWithCreator(id);
 
-        if(!hasAccess(album, accountDetails)){
+        if (!hasAccess(album, accountDetails)) {
             throw new InsufficientRightsException("You can't delete this album");
         }
 
@@ -84,7 +84,7 @@ public class AlbumServiceImpl implements AlbumService {
         Song song = songDao.findById(songId);
         Album album = albumDao.findByIdWithCreator(albumId);
 
-        if(!hasAccess(album, accountDetails)){
+        if (!hasAccess(album, accountDetails)) {
             throw new InsufficientRightsException("You can't add a song to this album");
         }
 
@@ -100,7 +100,7 @@ public class AlbumServiceImpl implements AlbumService {
         Song song = songDao.findById(songId);
         Album album = albumDao.findByIdWithCreator(albumId);
 
-        if(!hasAccess(album, accountDetails)){
+        if (!hasAccess(album, accountDetails)) {
             throw new InsufficientRightsException("You can't delete a song from this album");
         }
 
@@ -114,29 +114,29 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumInfoDto> findSavedAlbumsInfoDtoFromAccountId(Long accountId) {
         return albumMapper.toAlbumInfoDtoList(
-                        albumDao.findSavedFromByAccountId(accountId)
-                );
+                albumDao.findSavedFromByAccountId(accountId)
+        );
     }
 
     @Override
     public List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId) {
         return albumMapper.toAlbumInfoDtoList(
-                        albumDao.findCreatedFromAccountId(accountId)
-                );
+                albumDao.findCreatedFromAccountId(accountId)
+        );
     }
 
     @Override
     public List<AlbumInfoDto> findAllAlbumInfoDto() {
         return albumMapper.toAlbumInfoDtoList(
-                        albumDao.findAll()
-                );
+                albumDao.findAll()
+        );
     }
 
     @Override
     public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title) {
         return albumMapper.toAlbumInfoDtoList(
-                        albumDao.findByTitle(title)
-                );
+                albumDao.findByTitle(title)
+        );
     }
 
     @Override
@@ -149,16 +149,15 @@ public class AlbumServiceImpl implements AlbumService {
 
         Set<Long> recommendation;
         if (savedAlbums.length < 3) {
-           recommendation = getRandomRecommendation(savedAlbums, limit);
-        }
-        else {
+            recommendation = getRandomRecommendation(savedAlbums, limit);
+        } else {
             recommendation = getRecommendation(savedAlbums, limit);
         }
 
         return albumMapper.toAlbumInfoDtoList(albumDao.findByIds(recommendation));
     }
 
-    private boolean hasAccess(Album album, AccountDetails accountDetails){
+    private boolean hasAccess(Album album, AccountDetails accountDetails) {
         return album.getCreator().getId().equals(accountDetails.getId()) ||
                 accountDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
@@ -166,7 +165,7 @@ public class AlbumServiceImpl implements AlbumService {
                                 || auth.equals("OWNER"));
     }
 
-    private Set<Long> getRandomRecommendation(Double[] savedAlbums, Integer limit){
+    private Set<Long> getRandomRecommendation(Double[] savedAlbums, Integer limit) {
         Set<Long> savedAlbumsLong = Arrays.stream(savedAlbums)
                 .map(Double::longValue)
                 .collect(Collectors.toSet());
@@ -177,7 +176,7 @@ public class AlbumServiceImpl implements AlbumService {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Long> getRecommendation(Double[] savedAlbums, Integer limit){
+    private Set<Long> getRecommendation(Double[] savedAlbums, Integer limit) {
         Set<Long> recommendation = new HashSet<>();
 
         Long id = 1L;

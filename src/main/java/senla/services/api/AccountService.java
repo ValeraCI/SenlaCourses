@@ -1,7 +1,7 @@
 package senla.services.api;
 
-import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.RegistrationRequest;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
 import senla.models.AccountDetails;
@@ -18,7 +18,7 @@ public interface AccountService {
 
     void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails);
 
-    void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto);
+    void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto, AccountDetails accountDetails);
 
     void deleteById(Long id, AccountDetails accountDetails);
 

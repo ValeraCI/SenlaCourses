@@ -13,8 +13,8 @@ import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.RoleDao;
-import senla.dto.RegistrationRequest;
 import senla.dto.account.AccountMainDataDto;
+import senla.dto.account.RegistrationRequest;
 import senla.dto.account.UpdateAccountDataDto;
 import senla.dto.account.UpdateAccountRoleDto;
 import senla.exceptions.DataChangesException;
@@ -137,7 +137,7 @@ public class AccountServiceImplTest {
         when(accountDao.findById(anyLong())).thenReturn(account);
         when(roleDao.findById(2L)).thenReturn(role);
 
-        accountService.updateRole(1L, accountUpdateDto);
+        accountService.updateRole(1L, accountUpdateDto, new AccountDetails(ObjectCreator.createOwnerAccount()));
 
         assertEquals(role, account.getRole());
         verify(accountDao).findById(1L);
@@ -149,8 +149,7 @@ public class AccountServiceImplTest {
     public void testUpdateRoleToOwner() {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(1L);
         Account userAccount = ObjectCreator.createAccount();
-        Account ownerAccount = new Account();
-        ownerAccount.setRole(new Role(3L, RoleTitle.OWNER));
+        Account ownerAccount = ObjectCreator.createOwnerAccount();
         Role administratorRole = new Role(2L, RoleTitle.ADMINISTRATOR);
         Role ownerRole = new Role(1L, RoleTitle.OWNER);
 
@@ -159,7 +158,7 @@ public class AccountServiceImplTest {
         when(roleDao.findById(1L)).thenReturn(ownerRole);
         when(accountDao.findByRole(RoleTitle.OWNER)).thenReturn(ownerAccount);
 
-        accountService.updateRole(1L, accountUpdateDto);
+        accountService.updateRole(1L, accountUpdateDto, new AccountDetails(ownerAccount));
 
         assertEquals(ownerRole, userAccount.getRole());
         assertEquals(administratorRole, ownerAccount.getRole());
@@ -174,13 +173,12 @@ public class AccountServiceImplTest {
     @Test
     public void testUpdateOwnerRole() {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(2L);
-        Account account = new Account();
-        account.setRole(new Role(3L, RoleTitle.OWNER));
+        Account account = ObjectCreator.createOwnerAccount();
 
         when(accountDao.findById(anyLong())).thenReturn(account);
 
         DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
-            accountService.updateRole(1L, accountUpdateDto);
+            accountService.updateRole(1L, accountUpdateDto, new AccountDetails(account));
         });
 
         assertEquals("You can't change the \"OWNER\" role", dataChangesException.getMessage());
@@ -231,18 +229,18 @@ public class AccountServiceImplTest {
 
     @Test
     public void testRemoveSavedAlbum() {
-       Account account = ObjectCreator.createAccount();
-       Album album = new Album();
-       account.getSavedAlbums().add(album);
+        Account account = ObjectCreator.createAccount();
+        Album album = new Album();
+        account.getSavedAlbums().add(album);
 
-       when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
-       when(albumDao.findById(anyLong())).thenReturn(album);
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
+        when(albumDao.findById(anyLong())).thenReturn(album);
 
-       accountService.removeSavedAlbum(1L, 1L, new AccountDetails(account));
+        accountService.removeSavedAlbum(1L, 1L, new AccountDetails(account));
 
-       assertEquals(0L, account.getSavedAlbums().size());
-       verify(accountDao).findWithSavedAlbumsById(1L);
-       verify(albumDao).findById(1L);
+        assertEquals(0L, account.getSavedAlbums().size());
+        verify(accountDao).findWithSavedAlbumsById(1L);
+        verify(albumDao).findById(1L);
     }
 
     @Test

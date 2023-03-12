@@ -31,7 +31,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             return entity.getId();
         } catch (PersistenceException e) {
             throw new DataBaseWorkException("this email is already registered", e);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
