@@ -1,6 +1,7 @@
 package senla.services;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,13 @@ import senla.models.Album;
 import senla.models.Role;
 import senla.models.RoleTitle;
 import senla.services.api.AccountService;
+import senla.util.Paginator;
 import senla.util.mappers.AccountMapper;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AccountServiceImpl implements AccountService {
 
@@ -35,6 +36,20 @@ public class AccountServiceImpl implements AccountService {
     private final RoleDao roleDao;
     private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
+
+    private final Integer maxResults;
+
+    @Autowired
+    public AccountServiceImpl(AccountDao accountDao, AlbumDao albumDao, RoleDao roleDao,
+                              AccountMapper accountMapper, PasswordEncoder passwordEncoder,
+                              @Value("${pagination.maxResults}") Integer maxResults) {
+        this.accountDao = accountDao;
+        this.albumDao = albumDao;
+        this.roleDao = roleDao;
+        this.accountMapper = accountMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.maxResults = maxResults;
+    }
 
     @Override
     public Long save(RegistrationRequest accountDataDto) {
@@ -55,8 +70,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountMainDataDto> findAllAccountMainDataDto() {
-        return accountMapper.toAccountMainDataDtoList(accountDao.findAll());
+    public List<AccountMainDataDto> findAllAccountMainDataDto(Long firstResult) {
+        firstResult = (firstResult - 1) * maxResults;
+        Long totalCount = accountDao.getTotalCount();
+        if (firstResult < 0) {
+            firstResult = 0L;
+        } else if (firstResult > totalCount) {
+            firstResult = Paginator.getLastPageNumber(totalCount, maxResults);
+        }
+
+        return accountMapper.toAccountMainDataDtoList(
+                accountDao.findAll(Math.toIntExact(firstResult), maxResults)
+        );
     }
 
     @Override
@@ -75,7 +100,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto, AccountDetails accountDetails) {
-        if( accountDetails.getAuthorities().stream()
+        if (accountDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(auth -> auth.equals("OWNER"))) {
             Account account = accountDao.findById(id);
@@ -94,8 +119,7 @@ public class AccountServiceImpl implements AccountService {
 
             account.setRole(role);
             accountDao.update(account);
-        }
-        else {
+        } else {
             throw new InsufficientRightsException("You can't update role");
         }
     }

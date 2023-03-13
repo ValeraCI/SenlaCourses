@@ -1,7 +1,6 @@
 package senla.test.service;
 
 import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -13,8 +12,9 @@ import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.AlbumUpdateDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
 import senla.models.AccountDetails;
@@ -52,21 +52,18 @@ public class AlbumServiceImplTest {
     private AlbumMapper albumMapper;
     @Mock
     private MannWhitneyUTest mannWhitneyUTest;
-    private AlbumServiceImpl albumService;
-
-    @BeforeEach
-    public void setup() {
-        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper, mannWhitneyUTest,
-                500L, 0.1);
-    }
+    private final AlbumServiceImpl albumService;
 
     public AlbumServiceImplTest() {
         MockitoAnnotations.openMocks(this);
+
+        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper, mannWhitneyUTest,
+                500L, 0.1, 10);
     }
 
     @Test
     public void testSaveAlbum() {
-        AlbumCreateUpdateDataDto albumDto = new AlbumCreateUpdateDataDto();
+        AlbumCreateDto albumDto = new AlbumCreateDto();
         albumDto.setCreatorId(1L);
         Account account = new Account();
         Album album = new Album();
@@ -111,6 +108,24 @@ public class AlbumServiceImplTest {
 
         verify(albumDao).findByIdWithCreator(1L);
         verify(albumDao).deleteById(1L);
+    }
+
+    @Test
+    public void testUpdateData() {
+        AlbumUpdateDto albumUpdateDto = new AlbumUpdateDto("Test 1");
+
+        Album album = new Album();
+        album.setTitle("Test");
+
+        Account account = ObjectCreator.createOwnerAccount();
+        album.setCreator(account);
+
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
+
+        albumService.updateData(1L, albumUpdateDto, new AccountDetails(account));
+
+        verify(albumDao).findByIdWithCreator(1L);
+        verify(albumDao).update(album);
     }
 
     @Test
@@ -233,14 +248,15 @@ public class AlbumServiceImplTest {
         List<Album> albums = new ArrayList<>();
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
 
-        when(albumDao.findAll()).thenReturn(albums);
+        when(albumDao.getTotalCount()).thenReturn(4L);
+        when(albumDao.findAll(0, 10)).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto();
+        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto(1L);
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);
-        verify(albumDao).findAll();
+        verify(albumDao).findAll(0, 10);
         verify(albumMapper).toAlbumInfoDtoList(albums);
     }
 

@@ -86,7 +86,7 @@ public class AlbumDao extends AbstractDao<Album, Long> {
 
             CriteriaQuery<Album> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
             Root<Album> root = criteriaQuery.from(typeParameterClass);
-            Join<Account, Album> join = root.join(Album_.CREATOR);
+            root.fetch(Album_.CREATOR);
 
             criteriaQuery
                     .select(root)
@@ -130,6 +130,20 @@ public class AlbumDao extends AbstractDao<Album, Long> {
             typedQuery.setMaxResults(num);
 
             return typedQuery.getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public Long getTotalCount() {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+            Root<Album> root = query.from(typeParameterClass);
+
+            query.select(builder.count(root));
+
+            return entityManager.createQuery(query).getSingleResult();
         } catch (Exception e) {
             throw new DataBaseWorkException(e.getMessage(), e);
         }

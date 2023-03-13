@@ -7,7 +7,8 @@ import senla.models.RoleTitle;
 
 import java.util.HashSet;
 
-public class ObjectCreator {
+public class
+ObjectCreator {
     public static Account createAccount() {
         Account account = new Account();
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));

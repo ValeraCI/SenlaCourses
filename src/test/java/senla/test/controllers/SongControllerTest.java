@@ -73,7 +73,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findByIdTest() throws Exception {
+    public void testFindById() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/{id}", 2)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -87,7 +87,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void saveTest() throws Exception {
+    public void testSave() throws Exception {
         SongCreateDto songCreateDto = new SongCreateDto("TestSong", 1L,
                 new HashSet<>(Set.of(6L, 7L, 8L)), "XXXTENTCION", 1L);
 
@@ -110,7 +110,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void removeByIdTest() throws Exception {
+    public void testRemoveById() throws Exception {
         mockMvc.perform(delete("/songs/{id}", 5)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -126,7 +126,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findByTitleParameterTest() throws Exception {
+    public void testFindByTitleParameter() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_TITLE", "NUMB")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -142,7 +142,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findByAlbumIdParameterTest() throws Exception {
+    public void testFindByAlbumIdParameter() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_ALBUM_ID", 2)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -158,7 +158,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findByGenreParameterTest() throws Exception {
+    public void testFindByGenreParameter() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_GENRE", "RAP")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())

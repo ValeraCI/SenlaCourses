@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
 import senla.models.Account;
 import senla.models.Album;
@@ -23,13 +23,13 @@ public class AlbumMapper {
 
     @PostConstruct
     public void setupMapper() {
-        mapper.createTypeMap(AlbumCreateUpdateDataDto.class, Album.class)
+        mapper.createTypeMap(AlbumCreateDto.class, Album.class)
                 .addMappings(m -> m.skip(Album::setCreator))
                 .addMappings(m -> m.skip(Album::setCreateDate))
                 .setPostConverter(createAlbumDtoToAlbum());
     }
 
-    public Converter<AlbumCreateUpdateDataDto, Album> createAlbumDtoToAlbum() {
+    public Converter<AlbumCreateDto, Album> createAlbumDtoToAlbum() {
         return context -> {
             Album destination = context.getDestination();
             mapAlbumSpecificFields(destination);
@@ -41,7 +41,7 @@ public class AlbumMapper {
         destination.setCreateDate(LocalDate.now());
     }
 
-    public Album toEntity(AlbumCreateUpdateDataDto dto, Account account) {
+    public Album toEntity(AlbumCreateDto dto, Account account) {
         Album album = Objects.isNull(dto) ? null : mapper.map(dto, Album.class);
         album.setCreator(account);
 

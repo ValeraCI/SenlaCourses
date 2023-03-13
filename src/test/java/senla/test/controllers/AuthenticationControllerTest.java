@@ -50,7 +50,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void loginTest() throws Exception {
+    public void testLogin() throws Exception {
         String json = objectMapper.writeValueAsString(
                 new AuthRequest("cidikvalera@gmail.com", "1111"));
 

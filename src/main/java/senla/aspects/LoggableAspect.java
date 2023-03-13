@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-
 @Component
 @Aspect
 public class LoggableAspect {

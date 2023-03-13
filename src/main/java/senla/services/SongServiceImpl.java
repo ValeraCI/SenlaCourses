@@ -33,18 +33,6 @@ public class SongServiceImpl implements SongService {
     private final GenreDao genreDao;
     private final SongMapper songMapper;
 
-    private String createLocation(SongCreateDto songCreateDto) {
-        StringBuilder sb = new StringBuilder(".\\music\\");
-        sb.append(songCreateDto.getAlbumCreator());
-        sb.append("\\");
-        sb.append(albumDao.findById(songCreateDto.getAlbumId()).getTitle());
-        sb.append("\\");
-        sb.append(songCreateDto.getTitle());
-        sb.append(".mp3");
-
-        return sb.toString();
-    }
-
     @Override
     public Long save(SongCreateDto songCreateDto) {
         List<Account> authors = accountDao.findByIds(songCreateDto.getAuthorsId());
@@ -110,6 +98,18 @@ public class SongServiceImpl implements SongService {
                 break;
         }
         return resultList;
+    }
+
+    private String createLocation(SongCreateDto songCreateDto) {
+        StringBuilder sb = new StringBuilder(".\\music\\");
+        sb.append(songCreateDto.getAlbumCreator());
+        sb.append("\\");
+        sb.append(albumDao.findById(songCreateDto.getAlbumId()).getTitle());
+        sb.append("\\");
+        sb.append(songCreateDto.getTitle());
+        sb.append(".mp3");
+
+        return sb.toString();
     }
 
     private boolean hasAccess(Song song, AccountDetails accountDetails) {

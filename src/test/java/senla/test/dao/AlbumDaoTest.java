@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
@@ -70,9 +71,10 @@ public class AlbumDaoTest {
 
     @Test
     public void testFindAll() {
-        List<Album> albums = albumDao.findAll();
+        List<Album> albums = albumDao.findAll(1, 10);
 
         assertNotNull(albums);
+        assertTrue(albums.size() <= 10);
     }
 
     @Test
@@ -156,5 +158,11 @@ public class AlbumDaoTest {
                 .collect(Collectors.toList())
 
                 .contains(1L));
+    }
+
+    @Test
+    public void testGetTotalCount() {
+        Long num = albumDao.getTotalCount();
+        assertNotNull(num);
     }
 }

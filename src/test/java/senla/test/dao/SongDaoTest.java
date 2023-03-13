@@ -21,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
@@ -90,9 +91,10 @@ public class SongDaoTest {
 
     @Test
     public void testFindAll() {
-        List<Song> songs = songDao.findAll();
+        List<Song> songs = songDao.findAll(1, 10);
 
         assertNotNull(songs);
+        assertTrue(songs.size() <= 10);
     }
 
     @Test

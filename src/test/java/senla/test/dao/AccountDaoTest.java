@@ -66,9 +66,10 @@ public class AccountDaoTest {
 
     @Test
     public void testFindAll() {
-        List<Account> accounts = accountDao.findAll();
+        List<Account> accounts = accountDao.findAll(1, 10);
 
         assertNotNull(accounts);
+        assertTrue(accounts.size() <= 10);
     }
 
     @Test
@@ -141,5 +142,11 @@ public class AccountDaoTest {
 
         assertNotNull(accountIds);
         assertEquals(3, accounts.size());
+    }
+
+    @Test
+    public void testGetTotalCount() {
+        Long num = accountDao.getTotalCount();
+        assertNotNull(num);
     }
 }

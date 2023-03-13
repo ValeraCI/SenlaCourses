@@ -12,9 +12,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.validation.MessageInterpolator;
 
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
@@ -52,9 +53,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocalValidatorFactoryBean validatorFactory() {
-        LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
-        factoryBean.setMessageInterpolator(new ParameterMessageInterpolator());
-        return factoryBean;
+    public MessageInterpolator messageInterpolator() {
+        return new ParameterMessageInterpolator();
     }
 }

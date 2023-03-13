@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import senla.annotations.Loggable;
 import senla.dto.account.AccountMainDataDto;
@@ -29,8 +30,10 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping
-    public List<AccountMainDataDto> findAll() {
-        return accountService.findAllAccountMainDataDto();
+    public List<AccountMainDataDto> findAll(
+            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
+
+        return accountService.findAllAccountMainDataDto(pageNumber);
     }
 
 
@@ -57,7 +60,7 @@ public class AccountController {
     @Loggable
     @PatchMapping("/{id}")
     public void updateData(@PathVariable("id") Long id,
-                           @RequestBody UpdateAccountDataDto accountUpdateDto,
+                           @Valid @RequestBody UpdateAccountDataDto accountUpdateDto,
                            @AuthenticationPrincipal AccountDetails accountDetails) {
 
         accountService.updateData(id, accountUpdateDto, accountDetails);
@@ -84,7 +87,7 @@ public class AccountController {
     @Loggable
     @PatchMapping("/role/{id}")
     public void updateRole(@PathVariable("id") Long id,
-                           @RequestBody UpdateAccountRoleDto updateAccountRoleDto,
+                           @Valid @RequestBody UpdateAccountRoleDto updateAccountRoleDto,
                            @AuthenticationPrincipal AccountDetails accountDetails) {
 
         accountService.updateRole(id, updateAccountRoleDto, accountDetails);

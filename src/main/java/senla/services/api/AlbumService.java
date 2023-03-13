@@ -1,14 +1,17 @@
 package senla.services.api;
 
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.AlbumUpdateDto;
 import senla.models.AccountDetails;
 
 import java.util.List;
 
 public interface AlbumService {
 
-    Long save(AlbumCreateUpdateDataDto albumDto);
+    Long save(AlbumCreateDto albumDto);
+
+    void updateData(Long id, AlbumUpdateDto albumDto, AccountDetails accountDetails);
 
     AlbumInfoDto findAlbumInfoDtoById(Long id);
 
@@ -22,7 +25,7 @@ public interface AlbumService {
 
     List<AlbumInfoDto> findCreatedAlbumInfoDtoFromAccountId(Long accountId);
 
-    List<AlbumInfoDto> findAllAlbumInfoDto();
+    List<AlbumInfoDto> findAllAlbumInfoDto(Long firstResult);
 
     List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title);
 

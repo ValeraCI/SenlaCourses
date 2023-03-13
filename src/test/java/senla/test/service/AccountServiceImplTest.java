@@ -2,7 +2,6 @@ package senla.test.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,11 +53,13 @@ public class AccountServiceImplTest {
     @Mock
     private AccountMapper accountMapper;
 
-    @InjectMocks
     private AccountServiceImpl accountService;
 
     public AccountServiceImplTest() {
         MockitoAnnotations.openMocks(this);
+
+        accountService = new AccountServiceImpl(accountDao, albumDao, roleDao,
+                accountMapper, passwordEncoder, 10);
     }
 
     @Test
@@ -98,13 +99,15 @@ public class AccountServiceImplTest {
         List<Account> accounts = new ArrayList<>();
         List<AccountMainDataDto> accountMainDataDtoList = new ArrayList<>();
 
-        when(accountDao.findAll()).thenReturn(accounts);
+        when(accountDao.getTotalCount()).thenReturn(10L);
+        when(accountDao.findAll(0, 10)).thenReturn(accounts);
         when(accountMapper.toAccountMainDataDtoList(accounts)).thenReturn(accountMainDataDtoList);
 
-        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto();
+        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto(1L);
 
         assertEquals(result, accountMainDataDtoList);
-        verify(accountDao).findAll();
+        verify(accountDao).getTotalCount();
+        verify(accountDao).findAll(0, 10);
         verify(accountMapper).toAccountMainDataDtoList(accounts);
     }
 

@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.AlbumUpdateDto;
 import senla.exceptions.DataChangesException;
 import senla.exceptions.InsufficientRightsException;
 import senla.models.AEntity;
@@ -19,6 +20,7 @@ import senla.models.AccountDetails;
 import senla.models.Album;
 import senla.models.Song;
 import senla.services.api.AlbumService;
+import senla.util.Paginator;
 import senla.util.mappers.AlbumMapper;
 
 import java.util.Arrays;
@@ -33,6 +35,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final Long numberOfUsersAtTime;
     private final Double percentageOfSimilarity;
+    private final Integer maxResults;
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final SongDao songDao;
@@ -43,7 +46,8 @@ public class AlbumServiceImpl implements AlbumService {
     public AlbumServiceImpl(AlbumDao albumDao, AccountDao accountDao, SongDao songDao, AlbumMapper albumMapper,
                             MannWhitneyUTest mannWhitneyUTest,
                             @Value("${recommendation.numberOfUsersAtTime}") Long numberOfUsersAtTime,
-                            @Value("${recommendation.percentageOfSimilarity}") Double percentageOfSimilarity) {
+                            @Value("${recommendation.percentageOfSimilarity}") Double percentageOfSimilarity,
+                            @Value("${pagination.maxResults}") Integer maxResults) {
         this.albumDao = albumDao;
         this.accountDao = accountDao;
         this.songDao = songDao;
@@ -51,15 +55,29 @@ public class AlbumServiceImpl implements AlbumService {
         this.mannWhitneyUTest = mannWhitneyUTest;
         this.numberOfUsersAtTime = numberOfUsersAtTime;
         this.percentageOfSimilarity = percentageOfSimilarity;
+        this.maxResults = maxResults;
     }
 
     @Override
-    public Long save(AlbumCreateUpdateDataDto albumDto) {
+    public Long save(AlbumCreateDto albumDto) {
         Account account = accountDao.findById(albumDto.getCreatorId());
 
         Album album = albumMapper.toEntity(albumDto, account);
 
         return albumDao.save(album);
+    }
+
+
+    @Override
+    public void updateData(Long id, AlbumUpdateDto albumDto, AccountDetails accountDetails) {
+        Album album = albumDao.findByIdWithCreator(id);
+
+        if (!hasAccess(album, accountDetails)) {
+            throw new InsufficientRightsException("You can't delete this album");
+        }
+
+        album.setTitle(albumDto.getTitle());
+        albumDao.update(album);
     }
 
     @Override
@@ -126,9 +144,17 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAllAlbumInfoDto() {
+    public List<AlbumInfoDto> findAllAlbumInfoDto(Long firstResult) {
+        firstResult = (firstResult - 1) * maxResults;
+        Long totalCount = albumDao.getTotalCount();
+        if (firstResult < 0) {
+            firstResult = 0L;
+        } else if (firstResult > totalCount) {
+            firstResult = Paginator.getLastPageNumber(totalCount, maxResults);
+        }
+
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findAll()
+                albumDao.findAll(Math.toIntExact(firstResult), maxResults)
         );
     }
 
@@ -213,5 +239,4 @@ public class AlbumServiceImpl implements AlbumService {
 
         return recommendation;
     }
-
 }

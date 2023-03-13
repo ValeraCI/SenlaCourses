@@ -14,7 +14,7 @@ public interface AccountService {
 
     AccountMainDataDto findAccountMainDataDtoById(Long id);
 
-    List<AccountMainDataDto> findAllAccountMainDataDto();
+    List<AccountMainDataDto> findAllAccountMainDataDto(Long firstResult);
 
     void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails);
 

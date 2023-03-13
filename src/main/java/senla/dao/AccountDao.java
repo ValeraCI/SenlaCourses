@@ -144,4 +144,18 @@ public class AccountDao extends AbstractDao<Account, Long> {
             throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
+
+    public Long getTotalCount() {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+            Root<Account> root = query.from(typeParameterClass);
+
+            query.select(builder.count(root));
+
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
 }

@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.WebApplicationContext;
 import senla.configuration.WebMvcConfig;
 import senla.dto.AuthRequest;
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.AlbumUpdateDto;
 import senla.security.filters.JwtFilter;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(SpringExtension.class)
@@ -72,7 +74,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void findAllTest() throws Exception {
+    public void testFindAll() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -88,7 +90,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void findByIdTest() throws Exception {
+    public void testFindById() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/{id}", 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -102,7 +104,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void findByTitleTest() throws Exception {
+    public void testFindByTitle() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/search/{title}", "LAST ONE")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -118,12 +120,12 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void saveTest() throws Exception {
+    public void testSave() throws Exception {
         MvcResult result = mockMvc.perform(post("/albums")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new AlbumCreateUpdateDataDto("TestAlbum", 1L))))
+                                new AlbumCreateDto("TestAlbum", 1L))))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
@@ -139,7 +141,43 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void removeByIdTest() throws Exception {
+    public void testUpdateData() throws Exception{
+        MvcResult result = mockMvc.perform(patch("/albums/{id}", 1)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new AlbumUpdateDto("TestAlbum 2"))))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+
+        result = mockMvc.perform(patch("/albums/{id}", 1)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new AlbumUpdateDto("?"))))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testSaveValidException() throws Exception {
+        MvcResult result = mockMvc.perform(post("/albums")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new AlbumCreateDto("", null))))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testRemoveById() throws Exception {
         mockMvc.perform(delete("/albums/{id}", 4)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -155,7 +193,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void findSavedAlbumsFromAccountIdTest() throws Exception {
+    public void testFindSavedAlbumsFromAccountId() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/savedAlbums/{id}", 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -171,7 +209,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void findCreatedAlbumsFromAccountIdTest() throws Exception {
+    public void testFindCreatedAlbumsFromAccountId() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/createdAlbums/{id}", 7)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -187,7 +225,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void addRemoveSavedAlbum() throws Exception {
+    public void testAddRemoveSavedAlbum() throws Exception {
         mockMvc.perform(post("/albums/{albumId}/songs/{songId}", 1, 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print());
@@ -198,7 +236,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void addSavedAlbumExceptionTest() throws Exception {
+    public void testAddSavedAlbumException() throws Exception {
         mockMvc.perform(post("/albums/{albumId}/{songId}", 1, 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print());
@@ -212,7 +250,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void removeSavedAlbumExceptionTest() throws Exception {
+    public void testRemoveSavedAlbumException() throws Exception {
         mockMvc.perform(delete("/albums/{albumId}/{songId}", 1, 1)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print());
@@ -227,7 +265,7 @@ public class AlbumControllerTest {
 
     @Test
     @GetMapping("/recommendations")
-    public void findRecommendedFor() throws Exception {
+    public void testFindRecommendedFor() throws Exception {
         MvcResult result = mockMvc.perform(get("/albums/recommendations")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
