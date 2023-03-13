@@ -69,7 +69,7 @@ Deletes an account with the id index if your id matches the one being deleted or
 JSON is sent to this address in the format:
 >   {
 "nickname" : "",
-"password" : ""    
+"password" : ""
 }
 
 Updates the account with the id index if your id matches the one being updated or if your role is administrator and higher
