@@ -136,6 +136,7 @@ Returns albums created by a user with an id equal to id
 
 ```Get: /albums/recommendations?limit=10```
 Returns a list of albums recommended for listening for the user who sent the request. The number of albums is equal to the limit. By default, limit is 10
+
 ---
 
 ### /songs
