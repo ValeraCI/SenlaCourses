@@ -29,7 +29,7 @@ public class DaoConfiguration {
     @Value("${db.sqlDialect}")
     private String sqlDialect;
     @Value("${db.showSql}")
-    private boolean showSql;
+    private Boolean showSql;
 
     @Bean
     public DataSource dataSource() {

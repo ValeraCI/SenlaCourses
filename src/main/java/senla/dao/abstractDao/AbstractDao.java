@@ -67,9 +67,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
-            criteriaQuery.select(criteriaQuery.from(typeParameterClass));
+            Root<T> root = criteriaQuery.from(typeParameterClass);
+
+            criteriaQuery.orderBy(criteriaBuilder.asc(root.get(AEntity_.ID)));
+
+            criteriaQuery.select(root);
 
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
+
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
 

@@ -2,7 +2,6 @@ package senla.test.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,6 +28,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,11 +50,12 @@ public class SongServiceImplTest {
     private GenreDao genreDao;
     @Mock
     private SongMapper songMapper;
-    @InjectMocks
+
     private SongServiceImpl songService;
 
     public SongServiceImplTest() {
         MockitoAnnotations.openMocks(this);
+        songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao, songMapper, 10);
     }
 
     @Test
@@ -137,14 +138,14 @@ public class SongServiceImplTest {
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         when(genreDao.findByTitle(anyString())).thenReturn(genre);
-        when(songDao.findByGenre(genre)).thenReturn(songs);
+        when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongInfoDtoByGenreTitle("BLUES");
+        List<SongInfoDto> result = songService.findSongInfoDtoByGenreTitle("BLUES", 1L);
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
-        verify(songDao).findByGenre(genre);
+        verify(songDao).findByGenre(genre, 0, 10);
         verify(songMapper).toSongInfoDtoList(songs);
     }
 
@@ -153,13 +154,13 @@ public class SongServiceImplTest {
         List<Song> songs = new ArrayList<>();
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        when(songDao.findByTitle(anyString())).thenReturn(songs);
+        when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongInfoDtoByTitle("Test");
+        List<SongInfoDto> result = songService.findSongInfoDtoByTitle("Test", 1L);
 
         assertEquals(songInfoDtoList, result);
-        verify(songDao).findByTitle("Test");
+        verify(songDao).findByTitle("Test", 0, 10);
         verify(songMapper).toSongInfoDtoList(songs);
     }
 
@@ -170,14 +171,14 @@ public class SongServiceImplTest {
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         when(genreDao.findByTitle(anyString())).thenReturn(genre);
-        when(songDao.findByGenre(genre)).thenReturn(songs);
+        when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findByParameter("BLUES", "BY_GENRE");
+        List<SongInfoDto> result = songService.findByParameter("BLUES", "BY_GENRE", 1L);
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
-        verify(songDao).findByGenre(genre);
+        verify(songDao).findByGenre(genre, 0, 10);
         verify(songMapper).toSongInfoDtoList(songs);
     }
 
@@ -186,28 +187,13 @@ public class SongServiceImplTest {
         List<Song> songs = new ArrayList<>();
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        when(songDao.findByTitle(anyString())).thenReturn(songs);
+        when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findByParameter("Test", "BY_TITLE");
+        List<SongInfoDto> result = songService.findByParameter("Test", "BY_TITLE", 1L);
 
         assertEquals(songInfoDtoList, result);
-        verify(songDao).findByTitle("Test");
-        verify(songMapper).toSongInfoDtoList(songs);
-    }
-
-    @Test
-    public void testFindByParameterAlbumId() {
-        List<Song> songs = new ArrayList<>();
-        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
-
-        when(songDao.findByAlbumId(anyLong())).thenReturn(songs);
-        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
-
-        List<SongInfoDto> result = songService.findByParameter("1", "BY_ALBUM_ID");
-
-        assertEquals(songInfoDtoList, result);
-        verify(songDao).findByAlbumId(1L);
+        verify(songDao).findByTitle("Test", 0, 10);
         verify(songMapper).toSongInfoDtoList(songs);
     }
 }

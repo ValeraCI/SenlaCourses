@@ -142,8 +142,8 @@ public class SongControllerTest {
     }
 
     @Test
-    public void testFindByAlbumIdParameter() throws Exception {
-        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_ALBUM_ID", 2)
+    public void testFindByAlbumId() throws Exception {
+        MvcResult result = mockMvc.perform(get("/songs/search/album/{albumId}", 2)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -169,7 +169,7 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        assertEquals("TEASER", list.get(0).getTitle());
-        assertEquals(2, list.get(0).getId());
+        assertEquals("B", list.get(0).getTitle());
+        assertEquals(4, list.get(0).getId());
     }
 }

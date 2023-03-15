@@ -58,7 +58,7 @@ public class SongDaoTest {
 
     @Test
     public void testFindByTitle() {
-        List<Song> songs = songDao.findByTitle("Лиза");
+        List<Song> songs = songDao.findByTitle("Лиза", 0, 10);
 
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
@@ -69,7 +69,7 @@ public class SongDaoTest {
 
     @Test
     public void testFindByGenre() {
-        List<Song> songs = songDao.findByGenre(genreDao.findById(1L));
+        List<Song> songs = songDao.findByGenre(genreDao.findById(1L), 0, 10);
 
         Song song = songs.stream().filter(s -> s.getId() == 1).findFirst().get();
 
@@ -91,7 +91,7 @@ public class SongDaoTest {
 
     @Test
     public void testFindAll() {
-        List<Song> songs = songDao.findAll(1, 10);
+        List<Song> songs = songDao.findAll(0, 10);
 
         assertNotNull(songs);
         assertTrue(songs.size() <= 10);

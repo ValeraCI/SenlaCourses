@@ -60,7 +60,7 @@ public class AlbumDaoTest {
 
     @Test
     public void testFindByTitle() {
-        List<Album> albums = albumDao.findByTitle("?");
+        List<Album> albums = albumDao.findByTitle("?", 0, 10);
 
         Album album = albums.stream().filter(a -> a.getId() == 1).findFirst().get();
 

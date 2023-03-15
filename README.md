@@ -96,8 +96,8 @@ Updates the role to an account with an id equal to the id for a role with an id 
 ```Get: /albums/{id}```
 Returns an album with the id index
 
-```Get: /albums/search/{title}```
-Returns albums whose name starts with title
+```Get: /albums/search/{title}?pageNumber=1```
+Returns albums whose name starts with title. One page contains 10 entries. By default, the page number is one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
 
 ```Post: /albums```
 JSON is sent to this address in the format:
@@ -159,4 +159,7 @@ It is used to delete a song with the id index. A song can be deleted by any of i
 Returns a song with the id index
 
 ```Get: /songs/search/{parameter}?findBy=BY_TITLE```
-Searches for songs by any parameter. findBy can accept BY_TITLE, BY_GENRE, BY_ALBUM_ID. By default, BY_TITLE is used
+Returns songs by title or by genre. findBy can accept BY_TITLE, BY_GENRE. By default, BY_TITLE is used
+
+```Get: /songs/search/album/{albumId}```
+Returns songs which are in the album whose index matches the albumId

@@ -144,14 +144,9 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAllAlbumInfoDto(Long firstResult) {
-        firstResult = (firstResult - 1) * maxResults;
+    public List<AlbumInfoDto> findAllAlbumInfoDto(Long pageNumber) {
         Long totalCount = albumDao.getTotalCount();
-        if (firstResult < 0) {
-            firstResult = 0L;
-        } else if (firstResult > totalCount) {
-            firstResult = Paginator.getLastPageNumber(totalCount, maxResults);
-        }
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
 
         return albumMapper.toAlbumInfoDtoList(
                 albumDao.findAll(Math.toIntExact(firstResult), maxResults)
@@ -159,9 +154,12 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title) {
+    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, Long pageNumber) {
+        Long totalCount = albumDao.getTotalCount();
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findByTitle(title)
+                albumDao.findByTitle(title, Math.toIntExact(firstResult), maxResults)
         );
     }
 

@@ -36,8 +36,9 @@ public class AlbumController {
 
     @Loggable
     @GetMapping("/search/{title}")
-    public List<AlbumInfoDto> findByTitle(@PathVariable String title) {
-        return albumService.findAlbumInfoDtoByTitle(title);
+    public List<AlbumInfoDto> findByTitle(@PathVariable String title,
+                                          @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
+        return albumService.findAlbumInfoDtoByTitle(title, pageNumber);
     }
 
     @Loggable

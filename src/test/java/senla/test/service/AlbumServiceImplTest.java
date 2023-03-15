@@ -265,14 +265,14 @@ public class AlbumServiceImplTest {
         List<Album> albums = new ArrayList<>();
         List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
 
-        when(albumDao.findByTitle(anyString())).thenReturn(albums);
+        when(albumDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song");
+        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", 1L);
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);
-        verify(albumDao).findByTitle("song");
+        verify(albumDao).findByTitle("song", 0, 10);
         verify(albumMapper).toAlbumInfoDtoList(albums);
     }
 

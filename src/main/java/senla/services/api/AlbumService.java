@@ -27,7 +27,7 @@ public interface AlbumService {
 
     List<AlbumInfoDto> findAllAlbumInfoDto(Long firstResult);
 
-    List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title);
+    List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, Long pageNumber);
 
     List<AlbumInfoDto> findRecommendedFor(AccountDetails accountDetails, Integer limit);
 }

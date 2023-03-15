@@ -69,15 +69,11 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.toAccountMainDataDto(account);
     }
 
+
     @Override
-    public List<AccountMainDataDto> findAllAccountMainDataDto(Long firstResult) {
-        firstResult = (firstResult - 1) * maxResults;
+    public List<AccountMainDataDto> findAllAccountMainDataDto(Long pageNumber) {
         Long totalCount = accountDao.getTotalCount();
-        if (firstResult < 0) {
-            firstResult = 0L;
-        } else if (firstResult > totalCount) {
-            firstResult = Paginator.getLastPageNumber(totalCount, maxResults);
-        }
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
 
         return accountMapper.toAccountMainDataDtoList(
                 accountDao.findAll(Math.toIntExact(firstResult), maxResults)

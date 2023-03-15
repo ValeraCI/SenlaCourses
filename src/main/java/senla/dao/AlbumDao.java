@@ -26,21 +26,27 @@ public class AlbumDao extends AbstractDao<Album, Long> {
         super(Album.class);
     }
 
-    public List<Album> findByTitle(String title) {
+    public List<Album> findByTitle(String title, Integer firstResult, Integer maxResults) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
             CriteriaQuery<Album> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
             Root<Album> root = criteriaQuery.from(typeParameterClass);
-            root.fetch(Album_.SONGS_IN, JoinType.LEFT);
+            root.join(Album_.SONGS_IN, JoinType.LEFT);
 
             criteriaQuery
                     .select(root)
                     .where(criteriaBuilder
-                            .like(root.get(Album_.TITLE), "%" + title + "%")
-                    );
+                            .like(root.get(Album_.TITLE), title + "%")
+                    )
+                    .groupBy(root.get(Album_.ID));
 
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            TypedQuery<Album> typedQuery = entityManager.createQuery(criteriaQuery);
+
+            typedQuery.setFirstResult(firstResult);
+            typedQuery.setMaxResults(maxResults);
+
+            return typedQuery.getResultList();
         } catch (Exception e) {
             throw new DataBaseWorkException(e.getMessage(), e);
         }

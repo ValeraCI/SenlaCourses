@@ -46,11 +46,17 @@ public class SongController {
     }
 
     @Loggable
-    @GetMapping("search/{parameter}")
+    @GetMapping(value = "search/{parameter}", produces = "application/json; charset=UTF-8")
     public List<SongInfoDto> findByParameter(@PathVariable("parameter") String parameter,
                                              @RequestParam(name = "findBy",
-                                                     defaultValue = "BY_TITLE") String findBy) {
-        return songService.findByParameter(parameter, findBy);
+                                                     defaultValue = "BY_TITLE") String findBy,
+                                             @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
+        return songService.findByParameter(parameter, findBy, pageNumber);
     }
 
+    @Loggable
+    @GetMapping("search/album/{albumId}")
+    public List<SongInfoDto> findByAlbumId(@PathVariable("albumId") Long albumId) {
+        return songService.findSongInfoDtoByAlbumId(albumId);
+    }
 }
