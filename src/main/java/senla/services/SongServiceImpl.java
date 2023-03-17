@@ -1,7 +1,6 @@
 package senla.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,7 @@ import senla.models.AEntity;
 import senla.models.Account;
 import senla.models.AccountDetails;
 import senla.models.Genre;
+import senla.models.RoleTitle;
 import senla.models.Song;
 import senla.services.api.SongService;
 import senla.util.Paginator;
@@ -25,27 +25,15 @@ import senla.util.mappers.SongMapper;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class SongServiceImpl implements SongService {
-    private final Integer maxResults;
     private final SongDao songDao;
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final GenreDao genreDao;
     private final SongMapper songMapper;
 
-    @Autowired
-    public SongServiceImpl(SongDao songDao, AlbumDao albumDao,
-                           AccountDao accountDao, GenreDao genreDao,
-                           SongMapper songMapper,
-                           @Value("${pagination.maxResults}") Integer maxResults) {
-        this.songDao = songDao;
-        this.albumDao = albumDao;
-        this.accountDao = accountDao;
-        this.genreDao = genreDao;
-        this.songMapper = songMapper;
-        this.maxResults = maxResults;
-    }
 
     @Override
     public Long save(SongCreateDto songCreateDto) {
@@ -80,38 +68,42 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle, Long pageNumber) {
+    public List<SongInfoDto> findSongsInfoDtoByGenreTitle(String genreTitle, Long pageNumber, Integer limit) {
         Genre genre = genreDao.findByTitle(genreTitle);
 
         Long totalCount = songDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
 
         return songMapper.toSongInfoDtoList(
-                songDao.findByGenre(genre, Math.toIntExact(firstResult), maxResults)
+                songDao.findByGenre(genre, Math.toIntExact(firstResult), limit)
         );
     }
 
     @Override
-    public List<SongInfoDto> findSongInfoDtoByTitle(String title, Long pageNumber) {
+    public List<SongInfoDto> findSongsInfoDtoByTitle(String title, Long pageNumber, Integer limit) {
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
         Long totalCount = songDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
 
         return songMapper.toSongInfoDtoList(
-                songDao.findByTitle(title, Math.toIntExact(firstResult), maxResults)
+                songDao.findByTitle(title, Math.toIntExact(firstResult), limit)
         );
     }
 
     @Override
-    public List<SongInfoDto> findByParameter(String parameter, String findBy, Long pageNumber) {
+    public List<SongInfoDto> findByParameter(String parameter, String findBy, Long pageNumber, Integer limit) {
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
         List<SongInfoDto> resultList = null;
         SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
 
         switch (songFindParameter) {
             case BY_GENRE:
-                resultList = findSongInfoDtoByGenreTitle(parameter, pageNumber);
+                resultList = findSongsInfoDtoByGenreTitle(parameter, pageNumber, limit);
                 break;
             case BY_TITLE:
-                resultList = findSongInfoDtoByTitle(parameter, pageNumber);
+                resultList = findSongsInfoDtoByTitle(parameter, pageNumber, limit);
                 break;
         }
         return resultList;
@@ -136,7 +128,7 @@ public class SongServiceImpl implements SongService {
                 .anyMatch(id -> id.equals(accountDetails.getId())) ||
                 accountDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .anyMatch(auth -> auth.equals("ADMINISTRATOR")
-                                || auth.equals("OWNER"));
+                        .anyMatch(auth -> auth.equals(RoleTitle.ROLE_ADMINISTRATOR.toString())
+                                || auth.equals(RoleTitle.ROLE_OWNER.toString()));
     }
 }

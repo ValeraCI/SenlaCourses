@@ -31,9 +31,10 @@ public class AccountController {
 
     @GetMapping
     public List<AccountMainDataDto> findAll(
-            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
+            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber,
+            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
 
-        return accountService.findAllAccountMainDataDto(pageNumber);
+        return accountService.findAllAccountMainDataDto(pageNumber, limit);
     }
 
 
@@ -87,9 +88,8 @@ public class AccountController {
     @Loggable
     @PatchMapping("/role/{id}")
     public void updateRole(@PathVariable("id") Long id,
-                           @Valid @RequestBody UpdateAccountRoleDto updateAccountRoleDto,
-                           @AuthenticationPrincipal AccountDetails accountDetails) {
+                           @Valid @RequestBody UpdateAccountRoleDto updateAccountRoleDto) {
 
-        accountService.updateRole(id, updateAccountRoleDto, accountDetails);
+        accountService.updateRole(id, updateAccountRoleDto);
     }
 }

@@ -56,8 +56,8 @@ JSON is sent to this address in the format:
 
 Required to add a user to the database
 
-```Get: /accounts?pageNumber=1```
-Serves to get all users. One page contains 10 entries. By default, pageNumber is equal to one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
+```Get: /accounts?pageNumber=1&limit=10```
+Serves to get all users. One page contains limit entries. By default, pageNumber is equal to one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
 
 ```Get: /accounts/{id}```
 Returns an account with the id index
@@ -96,8 +96,8 @@ Updates the role to an account with an id equal to the id for a role with an id 
 ```Get: /albums/{id}```
 Returns an album with the id index
 
-```Get: /albums/search/{title}?pageNumber=1```
-Returns albums whose name starts with title. One page contains 10 entries. By default, the page number is one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
+```Get: /albums/search/{title}?pageNumber=1&limit=10```
+Returns albums whose name starts with title. One page contains limit entries. By default, the page number is one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
 
 ```Post: /albums```
 JSON is sent to this address in the format:
@@ -116,8 +116,8 @@ JSON is sent to this address in the format:
 
 Updates the album with the id index if you are the creator of this album or if your role is administrator and above
 
-```Get: /albums?pageNumber=1```
-Serves to get all albums. One page contains 10 entries. By default, the page number is one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
+```Get: /albums?pageNumber=1&limit=10```
+Serves to get all albums. One page contains limit entries. By default, the page number is one. If a negative page is specified, the first one will be returned. If a non-existent page is specified, the last one will be returned
 
 ```Delete: /albums/{id}```
 Deletes an album with the id index if the sending request is the creator of the album or if it has the Administrator role and higher

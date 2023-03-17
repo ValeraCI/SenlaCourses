@@ -47,7 +47,7 @@ public class AccountMapper {
         LoginDetails loginDetails =
                 new LoginDetails(destination, source.getEmail(), source.getPassword());
         destination.setLoginDetails(loginDetails);
-        destination.setRole(new Role(3L, RoleTitle.USER));
+        destination.setRole(new Role(3L, RoleTitle.ROLE_USER));
     }
 
     public Account toEntity(RegistrationRequest dto) {

@@ -6,13 +6,13 @@
 
     <changeSet author="Valera Cidik" id="03.insert-roles">
         <insert tableName="roles">
-            <column name="title" value="OWNER"/>
+            <column name="title" value="ROLE_OWNER"/>
         </insert>
         <insert tableName="roles">
-            <column name="title" value="ADMINISTRATOR"/>
+            <column name="title" value="ROLE_ADMINISTRATOR"/>
         </insert>
         <insert tableName="roles">
-            <column name="title" value="USER"/>
+            <column name="title" value="ROLE_USER"/>
         </insert>
 
         <rollback>

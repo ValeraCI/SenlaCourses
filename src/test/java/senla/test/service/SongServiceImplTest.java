@@ -2,6 +2,7 @@ package senla.test.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
@@ -51,11 +52,11 @@ public class SongServiceImplTest {
     @Mock
     private SongMapper songMapper;
 
+    @InjectMocks
     private SongServiceImpl songService;
 
     public SongServiceImplTest() {
         MockitoAnnotations.openMocks(this);
-        songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao, songMapper, 10);
     }
 
     @Test
@@ -132,7 +133,7 @@ public class SongServiceImplTest {
     }
 
     @Test
-    public void testFindSongInfoDtoByGenreTitle() {
+    public void testFindSongsInfoDtoByGenreTitle() {
         Genre genre = new Genre();
         List<Song> songs = new ArrayList<>();
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
@@ -141,7 +142,7 @@ public class SongServiceImplTest {
         when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongInfoDtoByGenreTitle("BLUES", 1L);
+        List<SongInfoDto> result = songService.findSongsInfoDtoByGenreTitle("BLUES", 1L, 10);
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
@@ -150,14 +151,14 @@ public class SongServiceImplTest {
     }
 
     @Test
-    public void testFindSongInfoDtoByTitle() {
+    public void testFindSongsInfoDtoByTitle() {
         List<Song> songs = new ArrayList<>();
         List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
         when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongInfoDtoByTitle("Test", 1L);
+        List<SongInfoDto> result = songService.findSongsInfoDtoByTitle("Test", 1L, 10);
 
         assertEquals(songInfoDtoList, result);
         verify(songDao).findByTitle("Test", 0, 10);
@@ -174,7 +175,8 @@ public class SongServiceImplTest {
         when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findByParameter("BLUES", "BY_GENRE", 1L);
+        List<SongInfoDto> result =
+                songService.findByParameter("BLUES", "BY_GENRE", 1L, 10);
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
@@ -190,7 +192,8 @@ public class SongServiceImplTest {
         when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findByParameter("Test", "BY_TITLE", 1L);
+        List<SongInfoDto> result =
+                songService.findByParameter("Test", "BY_TITLE", 1L, 10);
 
         assertEquals(songInfoDtoList, result);
         verify(songDao).findByTitle("Test", 0, 10);

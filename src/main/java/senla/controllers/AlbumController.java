@@ -37,8 +37,9 @@ public class AlbumController {
     @Loggable
     @GetMapping("/search/{title}")
     public List<AlbumInfoDto> findByTitle(@PathVariable String title,
-                                          @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
-        return albumService.findAlbumInfoDtoByTitle(title, pageNumber);
+                                          @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber,
+                                          @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+        return albumService.findAlbumInfoDtoByTitle(title, pageNumber, limit);
     }
 
     @Loggable
@@ -97,8 +98,9 @@ public class AlbumController {
     @Loggable
     @GetMapping
     public List<AlbumInfoDto> findAll(
-            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber) {
-        return albumService.findAllAlbumInfoDto(pageNumber);
+            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber,
+            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+        return albumService.findAllAlbumInfoDto(pageNumber, limit);
     }
 
     @Loggable

@@ -14,11 +14,11 @@ public interface AccountService {
 
     AccountMainDataDto findAccountMainDataDtoById(Long id);
 
-    List<AccountMainDataDto> findAllAccountMainDataDto(Long firstResult);
+    List<AccountMainDataDto> findAllAccountMainDataDto(Long firstResult, Integer limit);
 
     void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails);
 
-    void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto, AccountDetails accountDetails);
+    void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto);
 
     void deleteById(Long id, AccountDetails accountDetails);
 

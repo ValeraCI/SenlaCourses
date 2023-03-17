@@ -21,4 +21,8 @@ public class Paginator {
             return totalElements - remainder;
         }
     }
+
+    public static Integer limitingMinimumValueToOne(Integer num){
+        return num < 1 ? 1 : num;
+    }
 }

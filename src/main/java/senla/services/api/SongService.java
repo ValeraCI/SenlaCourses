@@ -16,9 +16,9 @@ public interface SongService {
 
     SongInfoDto findSongInfoDtoById(Long id);
 
-    List<SongInfoDto> findSongInfoDtoByGenreTitle(String genreTitle, Long pageNumber);
+    List<SongInfoDto> findSongsInfoDtoByGenreTitle(String genreTitle, Long pageNumber, Integer limit);
 
-    List<SongInfoDto> findSongInfoDtoByTitle(String title, Long pageNumber);
+    List<SongInfoDto> findSongsInfoDtoByTitle(String title, Long pageNumber, Integer limit);
 
-    List<SongInfoDto> findByParameter(String parameter, String findBy, Long pageNumber);
+    List<SongInfoDto> findByParameter(String parameter, String findBy, Long pageNumber, Integer limit);
 }

@@ -43,7 +43,7 @@ public class UserDetailsServiceImplTest {
         Account account = new Account();
         account.setNickname("test");
         account.setLoginDetails(new LoginDetails(account, "test", "test"));
-        account.setRole(new Role(1L, RoleTitle.OWNER));
+        account.setRole(new Role(1L, RoleTitle.ROLE_OWNER));
 
         when(accountDao.findByEmail(anyString())).thenReturn(account);
 

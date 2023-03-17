@@ -13,7 +13,7 @@ ObjectCreator {
         Account account = new Account();
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
         account.setId(1L);
-        account.setRole(new Role(3L, RoleTitle.USER));
+        account.setRole(new Role(3L, RoleTitle.ROLE_USER));
         account.setSavedAlbums(new HashSet<>());
 
         return account;
@@ -23,7 +23,7 @@ ObjectCreator {
         Account account = new Account();
         account.setLoginDetails(new LoginDetails(account, "owner@mail.ru", "1234"));
         account.setId(2L);
-        account.setRole(new Role(3L, RoleTitle.OWNER));
+        account.setRole(new Role(3L, RoleTitle.ROLE_OWNER));
         account.setSavedAlbums(new HashSet<>());
 
         return account;

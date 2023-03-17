@@ -2,6 +2,7 @@ package senla.test.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,13 +54,11 @@ public class AccountServiceImplTest {
     @Mock
     private AccountMapper accountMapper;
 
+    @InjectMocks
     private AccountServiceImpl accountService;
 
     public AccountServiceImplTest() {
         MockitoAnnotations.openMocks(this);
-
-        accountService = new AccountServiceImpl(accountDao, albumDao, roleDao,
-                accountMapper, passwordEncoder, 10);
     }
 
     @Test
@@ -103,7 +102,7 @@ public class AccountServiceImplTest {
         when(accountDao.findAll(0, 10)).thenReturn(accounts);
         when(accountMapper.toAccountMainDataDtoList(accounts)).thenReturn(accountMainDataDtoList);
 
-        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto(1L);
+        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto(1L, 10);
 
         assertEquals(result, accountMainDataDtoList);
         verify(accountDao).getTotalCount();
@@ -117,7 +116,7 @@ public class AccountServiceImplTest {
         Account account = new Account();
         account.setLoginDetails(new LoginDetails());
         account.setId(1L);
-        account.setRole(new Role(3L, RoleTitle.USER));
+        account.setRole(new Role(3L, RoleTitle.ROLE_USER));
 
         when(accountDao.findById(anyLong())).thenReturn(account);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
@@ -135,12 +134,12 @@ public class AccountServiceImplTest {
     public void testUpdateRole() {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(2L);
         Account account = ObjectCreator.createAccount();
-        Role role = new Role(2L, RoleTitle.ADMINISTRATOR);
+        Role role = new Role(2L, RoleTitle.ROLE_ADMINISTRATOR);
 
         when(accountDao.findById(anyLong())).thenReturn(account);
         when(roleDao.findById(2L)).thenReturn(role);
 
-        accountService.updateRole(1L, accountUpdateDto, new AccountDetails(ObjectCreator.createOwnerAccount()));
+        accountService.updateRole(1L, accountUpdateDto);
 
         assertEquals(role, account.getRole());
         verify(accountDao).findById(1L);
@@ -153,21 +152,21 @@ public class AccountServiceImplTest {
         UpdateAccountRoleDto accountUpdateDto = new UpdateAccountRoleDto(1L);
         Account userAccount = ObjectCreator.createAccount();
         Account ownerAccount = ObjectCreator.createOwnerAccount();
-        Role administratorRole = new Role(2L, RoleTitle.ADMINISTRATOR);
-        Role ownerRole = new Role(1L, RoleTitle.OWNER);
+        Role administratorRole = new Role(2L, RoleTitle.ROLE_ADMINISTRATOR);
+        Role ownerRole = new Role(1L, RoleTitle.ROLE_OWNER);
 
         when(accountDao.findById(anyLong())).thenReturn(userAccount);
         when(roleDao.findById(2L)).thenReturn(administratorRole);
         when(roleDao.findById(1L)).thenReturn(ownerRole);
-        when(accountDao.findByRole(RoleTitle.OWNER)).thenReturn(ownerAccount);
+        when(accountDao.findByRole(RoleTitle.ROLE_OWNER)).thenReturn(ownerAccount);
 
-        accountService.updateRole(1L, accountUpdateDto, new AccountDetails(ownerAccount));
+        accountService.updateRole(1L, accountUpdateDto);
 
         assertEquals(ownerRole, userAccount.getRole());
         assertEquals(administratorRole, ownerAccount.getRole());
         verify(accountDao).findById(1L);
         verify(roleDao).findById(1L);
-        verify(accountDao).findByRole(RoleTitle.OWNER);
+        verify(accountDao).findByRole(RoleTitle.ROLE_OWNER);
         verify(roleDao).findById(2L);
         verify(accountDao).update(ownerAccount);
         verify(accountDao).update(userAccount);
@@ -181,7 +180,7 @@ public class AccountServiceImplTest {
         when(accountDao.findById(anyLong())).thenReturn(account);
 
         DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
-            accountService.updateRole(1L, accountUpdateDto, new AccountDetails(account));
+            accountService.updateRole(1L, accountUpdateDto);
         });
 
         assertEquals("You can't change the \"OWNER\" role", dataChangesException.getMessage());

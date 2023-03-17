@@ -1,7 +1,7 @@
 package senla.models;
 
 public enum RoleTitle {
-    OWNER,
-    ADMINISTRATOR,
-    USER
+    ROLE_OWNER,
+    ROLE_ADMINISTRATOR,
+    ROLE_USER
 }

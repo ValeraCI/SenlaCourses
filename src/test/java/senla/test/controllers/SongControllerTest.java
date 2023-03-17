@@ -127,7 +127,7 @@ public class SongControllerTest {
 
     @Test
     public void testFindByTitleParameter() throws Exception {
-        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_TITLE", "NUMB")
+        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_TITLE", "NUM")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();

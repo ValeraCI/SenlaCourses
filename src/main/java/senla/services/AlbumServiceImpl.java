@@ -1,7 +1,6 @@
 package senla.services;
 
 import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,11 @@ import senla.models.AEntity;
 import senla.models.Account;
 import senla.models.AccountDetails;
 import senla.models.Album;
+import senla.models.RoleTitle;
 import senla.models.Song;
 import senla.services.api.AlbumService;
 import senla.util.Paginator;
+import senla.util.Unpacker;
 import senla.util.mappers.AlbumMapper;
 
 import java.util.Arrays;
@@ -35,19 +36,17 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final Long numberOfUsersAtTime;
     private final Double percentageOfSimilarity;
-    private final Integer maxResults;
     private final AlbumDao albumDao;
     private final AccountDao accountDao;
     private final SongDao songDao;
     private final AlbumMapper albumMapper;
     private final MannWhitneyUTest mannWhitneyUTest;
 
-    @Autowired
+
     public AlbumServiceImpl(AlbumDao albumDao, AccountDao accountDao, SongDao songDao, AlbumMapper albumMapper,
                             MannWhitneyUTest mannWhitneyUTest,
                             @Value("${recommendation.numberOfUsersAtTime}") Long numberOfUsersAtTime,
-                            @Value("${recommendation.percentageOfSimilarity}") Double percentageOfSimilarity,
-                            @Value("${pagination.maxResults}") Integer maxResults) {
+                            @Value("${recommendation.percentageOfSimilarity}") Double percentageOfSimilarity) {
         this.albumDao = albumDao;
         this.accountDao = accountDao;
         this.songDao = songDao;
@@ -55,7 +54,6 @@ public class AlbumServiceImpl implements AlbumService {
         this.mannWhitneyUTest = mannWhitneyUTest;
         this.numberOfUsersAtTime = numberOfUsersAtTime;
         this.percentageOfSimilarity = percentageOfSimilarity;
-        this.maxResults = maxResults;
     }
 
     @Override
@@ -144,32 +142,36 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAllAlbumInfoDto(Long pageNumber) {
+    public List<AlbumInfoDto> findAllAlbumInfoDto(Long pageNumber, Integer limit) {
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
         Long totalCount = albumDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
 
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findAll(Math.toIntExact(firstResult), maxResults)
+                albumDao.findAll(Math.toIntExact(firstResult), limit)
         );
     }
 
     @Override
-    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, Long pageNumber) {
+    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, Long pageNumber, Integer limit) {
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
         Long totalCount = albumDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
 
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findByTitle(title, Math.toIntExact(firstResult), maxResults)
+                albumDao.findByTitle(title, Math.toIntExact(firstResult), limit)
         );
     }
 
     @Override
     public List<AlbumInfoDto> findRecommendedFor(AccountDetails accountDetails, Integer limit) {
-        Double[] savedAlbums =
-                accountDao.findWithSavedAlbumsById(accountDetails.getId()).getSavedAlbums()
-                        .stream()
-                        .map(album -> album.getId().doubleValue())
-                        .toArray(Double[]::new);
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
+        Account account = accountDao.findWithSavedAlbumsById(accountDetails.getId());
+
+        Double[] savedAlbums = getAccountSavedAlbums(account);
 
         Set<Long> recommendation;
         if (savedAlbums.length < 3) {
@@ -185,8 +187,8 @@ public class AlbumServiceImpl implements AlbumService {
         return album.getCreator().getId().equals(accountDetails.getId()) ||
                 accountDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .anyMatch(auth -> auth.equals("ADMINISTRATOR")
-                                || auth.equals("OWNER"));
+                        .anyMatch(auth -> auth.equals(RoleTitle.ROLE_ADMINISTRATOR.toString())
+                                || auth.equals(RoleTitle.ROLE_OWNER.toString()));
     }
 
     private Set<Long> getRandomRecommendation(Double[] savedAlbums, Integer limit) {
@@ -205,9 +207,7 @@ public class AlbumServiceImpl implements AlbumService {
 
         Long id = 1L;
 
-        double[] savedAlbumsArr = Arrays.stream(savedAlbums)
-                .mapToDouble(Double::doubleValue)
-                .toArray();
+        double[] savedAlbumsArr = Unpacker.convertToPrimitiveDoubleArray(savedAlbums);
 
         while (recommendation.size() < limit) {
             List<Account> accounts = accountDao.findWithSavedAlbumsByIdInBetween(id, id + numberOfUsersAtTime);
@@ -218,23 +218,40 @@ public class AlbumServiceImpl implements AlbumService {
             }
 
             for (Account account : accounts) {
-                double[] accountSavedAlbumsArr = account.getSavedAlbums()
-                        .stream()
-                        .map(AEntity::getId)
-                        .mapToDouble(Long::doubleValue)
-                        .toArray();
+                double[] accountSavedAlbumsArr = getAccountPrimitiveSavedAlbums(account);
 
-                if (mannWhitneyUTest
-                        .mannWhitneyUTest(savedAlbumsArr, accountSavedAlbumsArr) >= percentageOfSimilarity) {
-
-                    Arrays.stream(accountSavedAlbumsArr)
-                            .filter(albumId -> !Arrays.asList(savedAlbums).contains(albumId))
-                            .limit(limit - recommendation.size())
-                            .forEach(albumId -> recommendation.add((long) albumId));
+                if (isSimilar(savedAlbumsArr, accountSavedAlbumsArr)) {
+                    addRecommendedAlbums(savedAlbums, recommendation, accountSavedAlbumsArr, limit);
                 }
             }
         }
 
         return recommendation;
+    }
+
+    private double[] getAccountPrimitiveSavedAlbums(Account account) {
+        return account.getSavedAlbums()
+                .stream()
+                .map(AEntity::getId)
+                .mapToDouble(Long::doubleValue)
+                .toArray();
+    }
+
+    private Double[] getAccountSavedAlbums(Account account) {
+        return account.getSavedAlbums()
+                .stream()
+                .map(album -> album.getId().doubleValue())
+                .toArray(Double[]::new);
+    }
+
+    private boolean isSimilar(double[] savedAlbumsArr, double[] accountSavedAlbumsArr) {
+        return mannWhitneyUTest.mannWhitneyUTest(savedAlbumsArr, accountSavedAlbumsArr) >= percentageOfSimilarity;
+    }
+
+    private void addRecommendedAlbums(Double[] savedAlbums, Set<Long> recommendation, double[] accountSavedAlbumsArr, Integer limit) {
+        Arrays.stream(accountSavedAlbumsArr)
+                .filter(albumId -> !Arrays.asList(savedAlbums).contains(albumId))
+                .limit(limit - recommendation.size())
+                .forEach(albumId -> recommendation.add((long) albumId));
     }
 }

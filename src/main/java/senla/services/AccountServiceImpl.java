@@ -1,7 +1,6 @@
 package senla.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class AccountServiceImpl implements AccountService {
 
@@ -36,20 +36,6 @@ public class AccountServiceImpl implements AccountService {
     private final RoleDao roleDao;
     private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
-
-    private final Integer maxResults;
-
-    @Autowired
-    public AccountServiceImpl(AccountDao accountDao, AlbumDao albumDao, RoleDao roleDao,
-                              AccountMapper accountMapper, PasswordEncoder passwordEncoder,
-                              @Value("${pagination.maxResults}") Integer maxResults) {
-        this.accountDao = accountDao;
-        this.albumDao = albumDao;
-        this.roleDao = roleDao;
-        this.accountMapper = accountMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.maxResults = maxResults;
-    }
 
     @Override
     public Long save(RegistrationRequest accountDataDto) {
@@ -71,12 +57,14 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<AccountMainDataDto> findAllAccountMainDataDto(Long pageNumber) {
+    public List<AccountMainDataDto> findAllAccountMainDataDto(Long pageNumber, Integer limit) {
+        limit = Paginator.limitingMinimumValueToOne(limit);
+
         Long totalCount = accountDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, maxResults);
+        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
 
         return accountMapper.toAccountMainDataDtoList(
-                accountDao.findAll(Math.toIntExact(firstResult), maxResults)
+                accountDao.findAll(Math.toIntExact(firstResult), limit)
         );
     }
 
@@ -95,29 +83,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto, AccountDetails accountDetails) {
-        if (accountDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(auth -> auth.equals("OWNER"))) {
+    public void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto) {
             Account account = accountDao.findById(id);
 
-            if (account.getRole().getRoleTitle() == RoleTitle.OWNER) {
+            if (account.getRole().getRoleTitle() == RoleTitle.ROLE_OWNER) {
                 throw new DataChangesException("You can't change the \"OWNER\" role");
             }
 
             Role role = roleDao.findById(accountUpdateDto.getRoleId());
 
-            if (role.getRoleTitle() == RoleTitle.OWNER) {
-                Account owner = accountDao.findByRole(RoleTitle.OWNER);
+            if (role.getRoleTitle() == RoleTitle.ROLE_OWNER) {
+                Account owner = accountDao.findByRole(RoleTitle.ROLE_OWNER);
                 owner.setRole(roleDao.findById(2L));
                 accountDao.update(owner);
             }
 
             account.setRole(role);
             accountDao.update(account);
-        } else {
-            throw new InsufficientRightsException("You can't update role");
-        }
     }
 
     @Override
@@ -165,7 +147,7 @@ public class AccountServiceImpl implements AccountService {
         return Objects.equals(id, accountDetails.getId()) ||
                 accountDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .anyMatch(auth -> auth.equals("ADMINISTRATOR")
-                                || auth.equals("OWNER"));
+                        .anyMatch(auth -> auth.equals(RoleTitle.ROLE_ADMINISTRATOR.toString())
+                                || auth.equals(RoleTitle.ROLE_OWNER.toString()));
     }
 }

@@ -58,7 +58,7 @@ public class AlbumServiceImplTest {
         MockitoAnnotations.openMocks(this);
 
         albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper, mannWhitneyUTest,
-                500L, 0.1, 10);
+                500L, 0.1);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class AlbumServiceImplTest {
         when(albumDao.findAll(0, 10)).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto(1L);
+        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto(1L, 10);
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);
@@ -268,7 +268,7 @@ public class AlbumServiceImplTest {
         when(albumDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", 1L);
+        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", 1L, 10);
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);

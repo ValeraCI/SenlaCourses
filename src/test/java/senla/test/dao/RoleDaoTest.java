@@ -23,7 +23,7 @@ public class RoleDaoTest {
     @Test
     public void testRoleDao() {
         String[] programRoles = new String[]{
-                "OWNER", "ADMINISTRATOR", "USER"
+                "ROLE_OWNER", "ROLE_ADMINISTRATOR", "ROLE_USER"
         };
         String daoRoles[] = new String[programRoles.length];
         for (int i = 0; i < daoRoles.length; i++) {

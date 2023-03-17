@@ -41,7 +41,7 @@ public class AccountDaoTest {
         account.setNickname("Tester");
         account.setRegistrationDate(LocalDate.now());
         account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
-        account.setRole(new Role(3L, RoleTitle.USER));
+        account.setRole(new Role(3L, RoleTitle.ROLE_USER));
         return account;
     }
 
