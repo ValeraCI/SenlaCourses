@@ -2,7 +2,7 @@ package senla.util;
 
 public class Paginator {
 
-    public static Long getFirstElement(Long pageNumber, Long totalElements, Integer elementsPerPage){
+    public static Long getFirstElement(Long pageNumber, Long totalElements, Integer elementsPerPage) {
         Long firstResult = (pageNumber - 1) * elementsPerPage;
 
         if (firstResult < 0) {
@@ -13,6 +13,7 @@ public class Paginator {
 
         return firstResult;
     }
+
     public static Long getLastPageNumber(Long totalElements, Integer elementsPerPage) {
         Long remainder = totalElements % elementsPerPage;
         if (remainder == 0) {
@@ -22,7 +23,7 @@ public class Paginator {
         }
     }
 
-    public static Integer limitingMinimumValueToOne(Integer num){
+    public static Integer limitingMinimumValueToOne(Integer num) {
         return num < 1 ? 1 : num;
     }
 }

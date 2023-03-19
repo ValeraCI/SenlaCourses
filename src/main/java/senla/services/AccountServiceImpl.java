@@ -84,22 +84,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto) {
-            Account account = accountDao.findById(id);
+        Account account = accountDao.findById(id);
 
-            if (account.getRole().getRoleTitle() == RoleTitle.ROLE_OWNER) {
-                throw new DataChangesException("You can't change the \"OWNER\" role");
-            }
+        if (account.getRole().getRoleTitle() == RoleTitle.ROLE_OWNER) {
+            throw new DataChangesException("You can't change the 'OWNER' role");
+        }
 
-            Role role = roleDao.findById(accountUpdateDto.getRoleId());
+        Role role = roleDao.findById(accountUpdateDto.getRoleId());
 
-            if (role.getRoleTitle() == RoleTitle.ROLE_OWNER) {
-                Account owner = accountDao.findByRole(RoleTitle.ROLE_OWNER);
-                owner.setRole(roleDao.findById(2L));
-                accountDao.update(owner);
-            }
+        if (role.getRoleTitle() == RoleTitle.ROLE_OWNER) {
+            Account owner = accountDao.findByRole(RoleTitle.ROLE_OWNER);
+            owner.setRole(roleDao.findById(2L));
+            accountDao.update(owner);
+        }
 
-            account.setRole(role);
-            accountDao.update(account);
+        account.setRole(role);
+        accountDao.update(account);
     }
 
     @Override

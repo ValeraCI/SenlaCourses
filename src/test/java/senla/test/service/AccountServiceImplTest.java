@@ -183,7 +183,7 @@ public class AccountServiceImplTest {
             accountService.updateRole(1L, accountUpdateDto);
         });
 
-        assertEquals("You can't change the \"OWNER\" role", dataChangesException.getMessage());
+        assertEquals("You can't change the 'OWNER' role", dataChangesException.getMessage());
         verify(accountDao).findById(1L);
     }
 

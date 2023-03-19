@@ -141,7 +141,7 @@ public class AlbumControllerTest {
     }
 
     @Test
-    public void testUpdateData() throws Exception{
+    public void testUpdateData() throws Exception {
         MvcResult result = mockMvc.perform(patch("/albums/{id}", 1)
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
