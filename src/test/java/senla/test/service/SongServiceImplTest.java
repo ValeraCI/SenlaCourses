@@ -142,7 +142,7 @@ public class SongServiceImplTest {
         when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongsInfoDtoByGenreTitle("BLUES", 1L, 10);
+        List<SongInfoDto> result = songService.findSongsInfoDtoByGenreTitle("BLUES", "1", "10");
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
@@ -158,7 +158,7 @@ public class SongServiceImplTest {
         when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        List<SongInfoDto> result = songService.findSongsInfoDtoByTitle("Test", 1L, 10);
+        List<SongInfoDto> result = songService.findSongsInfoDtoByTitle("Test", "1", "10");
 
         assertEquals(songInfoDtoList, result);
         verify(songDao).findByTitle("Test", 0, 10);
@@ -176,7 +176,7 @@ public class SongServiceImplTest {
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
         List<SongInfoDto> result =
-                songService.findByParameter("BLUES", "BY_GENRE", 1L, 10);
+                songService.findByParameter("BLUES", "BY_GENRE", "1", "10");
 
         assertEquals(songInfoDtoList, result);
         verify(genreDao).findByTitle("BLUES");
@@ -193,7 +193,7 @@ public class SongServiceImplTest {
         when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
         List<SongInfoDto> result =
-                songService.findByParameter("Test", "BY_TITLE", 1L, 10);
+                songService.findByParameter("Test", "BY_TITLE", "1", "10");
 
         assertEquals(songInfoDtoList, result);
         verify(songDao).findByTitle("Test", 0, 10);

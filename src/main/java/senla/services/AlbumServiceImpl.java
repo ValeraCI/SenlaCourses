@@ -20,6 +20,7 @@ import senla.models.Album;
 import senla.models.RoleTitle;
 import senla.models.Song;
 import senla.services.api.AlbumService;
+import senla.util.Convertor;
 import senla.util.Paginator;
 import senla.util.Unpacker;
 import senla.util.mappers.AlbumMapper;
@@ -142,32 +143,42 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<AlbumInfoDto> findAllAlbumInfoDto(Long pageNumber, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
+    public List<AlbumInfoDto> findAllAlbumInfoDto(String pageNumber, String limit) {
+        Integer pageNumberInteger = Convertor.stringToInteger(pageNumber);
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
 
         Long totalCount = albumDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
+        Integer firstResult = Paginator.getFirstElement(pageNumberInteger, totalCount, limitInteger);
+
 
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findAll(Math.toIntExact(firstResult), limit)
+                albumDao.findAll(Math.toIntExact(firstResult), limitInteger)
         );
     }
 
     @Override
-    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, Long pageNumber, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
+    public List<AlbumInfoDto> findAlbumInfoDtoByTitle(String title, String pageNumber, String limit) {
+        Integer pageNumberInteger = Convertor.stringToInteger(pageNumber);
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
 
         Long totalCount = albumDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
+        Integer firstResult = Paginator.getFirstElement(pageNumberInteger, totalCount, limitInteger);
+
 
         return albumMapper.toAlbumInfoDtoList(
-                albumDao.findByTitle(title, Math.toIntExact(firstResult), limit)
+                albumDao.findByTitle(title, Math.toIntExact(firstResult), limitInteger)
         );
     }
 
     @Override
-    public List<AlbumInfoDto> findRecommendedFor(AccountDetails accountDetails, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
+    public List<AlbumInfoDto> findRecommendedFor(AccountDetails accountDetails, String limit) {
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
 
         Account account = accountDao.findWithSavedAlbumsById(accountDetails.getId());
 
@@ -175,9 +186,9 @@ public class AlbumServiceImpl implements AlbumService {
 
         Set<Long> recommendation;
         if (savedAlbums.length < 3) {
-            recommendation = getRandomRecommendation(savedAlbums, limit);
+            recommendation = getRandomRecommendation(savedAlbums, limitInteger);
         } else {
-            recommendation = getRecommendation(savedAlbums, limit);
+            recommendation = getRecommendation(savedAlbums, limitInteger);
         }
 
         return albumMapper.toAlbumInfoDtoList(albumDao.findByIds(recommendation));

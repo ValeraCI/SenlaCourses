@@ -31,8 +31,8 @@ public class AccountController {
 
     @GetMapping
     public List<AccountMainDataDto> findAll(
-            @RequestParam(name = "pageNumber", defaultValue = "1") Long pageNumber,
-            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+            @RequestParam(name = "pageNumber", defaultValue = "1") String pageNumber,
+            @RequestParam(name = "limit", defaultValue = "10") String limit) {
 
         return accountService.findAllAccountMainDataDto(pageNumber, limit);
     }

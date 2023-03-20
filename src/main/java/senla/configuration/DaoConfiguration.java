@@ -62,14 +62,14 @@ public class DaoConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
-        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         // Вставить источник данных
-        emfb.setDataSource(dataSource);
+        entityManagerFactoryBean.setDataSource(dataSource);
         // Внедрить адаптер производителя jpa
-        emfb.setJpaVendorAdapter(jpaVendorAdapter);
+        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         // Установить базовый пакет сканирования
-        emfb.setPackagesToScan("senla.models");
-        return emfb;
+        entityManagerFactoryBean.setPackagesToScan("senla.models");
+        return entityManagerFactoryBean;
     }
 
     // Настройка менеджера транзакций jpa

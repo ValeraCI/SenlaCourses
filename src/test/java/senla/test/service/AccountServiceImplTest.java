@@ -102,7 +102,7 @@ public class AccountServiceImplTest {
         when(accountDao.findAll(0, 10)).thenReturn(accounts);
         when(accountMapper.toAccountMainDataDtoList(accounts)).thenReturn(accountMainDataDtoList);
 
-        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto(1L, 10);
+        List<AccountMainDataDto> result = accountService.findAllAccountMainDataDto("1", "10");
 
         assertEquals(result, accountMainDataDtoList);
         verify(accountDao).getTotalCount();

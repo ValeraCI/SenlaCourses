@@ -20,6 +20,7 @@ import senla.models.Album;
 import senla.models.Role;
 import senla.models.RoleTitle;
 import senla.services.api.AccountService;
+import senla.util.Convertor;
 import senla.util.Paginator;
 import senla.util.mappers.AccountMapper;
 
@@ -57,14 +58,17 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<AccountMainDataDto> findAllAccountMainDataDto(Long pageNumber, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
+    public List<AccountMainDataDto> findAllAccountMainDataDto(String pageNumber, String limit) {
+        Integer pageNumberInteger = Convertor.stringToInteger(pageNumber);
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
 
         Long totalCount = accountDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
+        Integer firstResult = Paginator.getFirstElement(pageNumberInteger, totalCount, limitInteger);
 
         return accountMapper.toAccountMainDataDtoList(
-                accountDao.findAll(Math.toIntExact(firstResult), limit)
+                accountDao.findAll(Math.toIntExact(firstResult), limitInteger)
         );
     }
 

@@ -18,6 +18,7 @@ import senla.models.Genre;
 import senla.models.RoleTitle;
 import senla.models.Song;
 import senla.services.api.SongService;
+import senla.util.Convertor;
 import senla.util.Paginator;
 import senla.util.SongFindParameter;
 import senla.util.mappers.SongMapper;
@@ -68,35 +69,42 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongInfoDto> findSongsInfoDtoByGenreTitle(String genreTitle, Long pageNumber, Integer limit) {
+    public List<SongInfoDto> findSongsInfoDtoByGenreTitle(String genreTitle, String pageNumber, String limit) {
+        Integer pageNumberInteger = Convertor.stringToInteger(pageNumber);
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
+
+
         Genre genre = genreDao.findByTitle(genreTitle);
 
         Long totalCount = songDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
+        Integer firstResult = Paginator.getFirstElement(pageNumberInteger, totalCount, limitInteger);
 
         return songMapper.toSongInfoDtoList(
-                songDao.findByGenre(genre, Math.toIntExact(firstResult), limit)
+                songDao.findByGenre(genre, Math.toIntExact(firstResult), limitInteger)
         );
     }
 
     @Override
-    public List<SongInfoDto> findSongsInfoDtoByTitle(String title, Long pageNumber, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
+    public List<SongInfoDto> findSongsInfoDtoByTitle(String title, String pageNumber, String limit) {
+        Integer pageNumberInteger = Convertor.stringToInteger(pageNumber);
+        Integer limitInteger = Convertor.stringToInteger(limit);
+
+        limitInteger = Paginator.limitingMinimumValueToOne(limitInteger);
 
         Long totalCount = songDao.getTotalCount();
-        Long firstResult = Paginator.getFirstElement(pageNumber, totalCount, limit);
+        Integer firstResult = Paginator.getFirstElement(pageNumberInteger, totalCount, limitInteger);
 
         return songMapper.toSongInfoDtoList(
-                songDao.findByTitle(title, Math.toIntExact(firstResult), limit)
+                songDao.findByTitle(title, Math.toIntExact(firstResult), limitInteger)
         );
     }
 
     @Override
-    public List<SongInfoDto> findByParameter(String parameter, String findBy, Long pageNumber, Integer limit) {
-        limit = Paginator.limitingMinimumValueToOne(limit);
-
+    public List<SongInfoDto> findByParameter(String parameter, String findBy, String pageNumber, String limit) {
         List<SongInfoDto> resultList = null;
-        SongFindParameter songFindParameter = SongFindParameter.valueOf(findBy);
+        SongFindParameter songFindParameter = Convertor.stringToSongFindParameter(findBy);
 
         switch (songFindParameter) {
             case BY_GENRE:

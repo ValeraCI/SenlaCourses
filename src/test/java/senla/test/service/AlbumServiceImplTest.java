@@ -252,7 +252,7 @@ public class AlbumServiceImplTest {
         when(albumDao.findAll(0, 10)).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto(1L, 10);
+        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto("1", "10");
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);
@@ -268,7 +268,7 @@ public class AlbumServiceImplTest {
         when(albumDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
 
-        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", 1L, 10);
+        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", "1", "10");
 
         assertEquals(0, answer.size());
         assertEquals(albumInfoDtoList, answer);
@@ -286,7 +286,7 @@ public class AlbumServiceImplTest {
         when(albumDao.findRandomExcept(anyInt(), any())).thenReturn(albums);
         when(albumMapper.toAlbumInfoDtoList(any())).thenReturn(result);
 
-        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), 10);
+        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), "10");
 
         assertEquals(result, answer);
         verify(accountDao).findWithSavedAlbumsById(1L);
@@ -326,7 +326,7 @@ public class AlbumServiceImplTest {
                 .thenReturn(new ArrayList<>());
         when(albumMapper.toAlbumInfoDtoList(any())).thenReturn(result);
 
-        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), 10);
+        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), "10");
 
         assertEquals(result, answer);
 
