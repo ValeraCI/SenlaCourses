@@ -1,215 +1,339 @@
 package senla.test.service;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
+import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.SongDao;
-import senla.dto.album.AlbumCreateUpdateDataDto;
+import senla.dto.album.AlbumCreateDto;
 import senla.dto.album.AlbumInfoDto;
+import senla.dto.album.AlbumUpdateDto;
 import senla.exceptions.DataChangesException;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Album;
-import senla.models.LoginDetails;
 import senla.models.Song;
 import senla.services.AlbumServiceImpl;
-import senla.services.api.AlbumService;
-import senla.test.configuration.WebMvcConfig;
+import senla.test.util.ObjectCreator;
 import senla.util.mappers.AlbumMapper;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {WebMvcConfig.class},
-        loader = AnnotationConfigContextLoader.class)
-@Transactional
-@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {WebMvcConfig.class})
+@WebAppConfiguration()
 public class AlbumServiceImplTest {
-
     @Mock
     private AlbumDao albumDao;
     @Mock
     private AccountDao accountDao;
     @Mock
     private SongDao songDao;
-
-    @Autowired
+    @Mock
     private AlbumMapper albumMapper;
-
-    private AlbumService albumService;
+    @Mock
+    private MannWhitneyUTest mannWhitneyUTest;
+    private final AlbumServiceImpl albumService;
 
     public AlbumServiceImplTest() {
         MockitoAnnotations.openMocks(this);
+
+        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper, mannWhitneyUTest,
+                500L, 0.1);
     }
 
-    @Before
-    public void beforeEach() {
-        albumService = new AlbumServiceImpl(albumDao, accountDao, songDao, albumMapper);
-    }
-
-    private Account createAccount() {
+    @Test
+    public void testSaveAlbum() {
+        AlbumCreateDto albumDto = new AlbumCreateDto();
+        albumDto.setCreatorId(1L);
         Account account = new Account();
-
-        account.setId(1L);
-        account.setNickname("Tester");
-        account.setCreatedAlbums(new HashSet<>());
-        account.setRegistrationDate(LocalDate.now());
-        account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
-        return account;
-    }
-
-    private Album createAlbum() {
         Album album = new Album();
 
-        album.setId(1L);
-        album.setTitle("TestAlbum");
-        album.setSongsIn(new HashSet<>());
-        album.setCreateDate(LocalDate.now());
-        album.setCreator(createAccount());
+        when(accountDao.findById(anyLong())).thenReturn(account);
+        when(albumMapper.toEntity(albumDto, account)).thenReturn(album);
+        when(albumDao.save(album)).thenReturn(1L);
 
-        return album;
-    }
+        Long albumId = albumService.save(albumDto);
 
-    private Song createSong() {
-        Song song = new Song();
-        song.setTitle("TestSong");
-        return song;
+        assertEquals(Long.valueOf(1), albumId);
+        verify(albumDao).save(album);
+        verify(accountDao).findById(anyLong());
+        verify(albumMapper).toEntity(albumDto, account);
     }
 
     @Test
-    public void saveTest() {
-        given(accountDao.findById(1L)).willReturn(createAccount());
+    public void testFindAlbumInfoDtoById() {
+        Album album = new Album();
+        AlbumInfoDto albumInfoDto = new AlbumInfoDto();
 
-        AlbumCreateUpdateDataDto albumDto = new AlbumCreateUpdateDataDto("test", 1L);
+        when(albumDao.findById(anyLong()))
+                .thenReturn(album);
+        when(albumMapper.toAlbumInfoDto(album)).thenReturn(albumInfoDto);
 
-        Assert.assertEquals(0L, albumService.save(albumDto).longValue());
+        AlbumInfoDto result = albumService.findAlbumInfoDtoById(1L);
+
+        assertEquals(albumInfoDto, result);
+        verify(albumDao).findById(1L);
+        verify(albumMapper).toAlbumInfoDto(album);
     }
 
     @Test
-    public void findAlbumInfoDtoById() {
-        given(albumDao.findById(1L))
-                .willReturn(createAlbum());
+    public void testDeleteById() {
+        Account account = ObjectCreator.createAccount();
+        Album album = new Album();
+        album.setCreator(account);
 
-        AlbumInfoDto album = albumService.findAlbumInfoDtoById(1L);
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
 
-        Assert.assertEquals("TestAlbum", album.getTitle());
-        Assert.assertEquals(1L, album.getId());
-    }
+        albumService.deleteById(1L, new AccountDetails(account));
 
-    @Test
-    public void deleteById() {
-        albumService.deleteById(1L);
-
+        verify(albumDao).findByIdWithCreator(1L);
         verify(albumDao).deleteById(1L);
     }
 
     @Test
-    public void addSongInNoExceptionTest() {
-        Album album = createAlbum();
+    public void testUpdateData() {
+        AlbumUpdateDto albumUpdateDto = new AlbumUpdateDto("Test 1");
 
-        given(songDao.findById(1L))
-                .willReturn(createSong());
-        given(albumDao.findById(1L))
-                .willReturn(album);
+        Album album = new Album();
+        album.setTitle("Test");
 
-        albumService.addSongIn(1L, 1L);
+        Account account = ObjectCreator.createOwnerAccount();
+        album.setCreator(account);
 
-        Assert.assertEquals(album.getSongsIn().size(), 1);
-    }
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
 
-    @Test(expected = DataChangesException.class)
-    public void addSongInExceptionTest() {
-        Album album = createAlbum();
+        albumService.updateData(1L, albumUpdateDto, new AccountDetails(account));
 
-        given(songDao.findById(1L))
-                .willReturn(createSong());
-        given(albumDao.findById(1L))
-                .willReturn(album);
-
-        albumService.addSongIn(1L, 1L);
-        albumService.addSongIn(1L, 1L);
+        verify(albumDao).findByIdWithCreator(1L);
+        verify(albumDao).update(album);
     }
 
     @Test
-    public void removeSavedAlbumNoExceptionTest() {
-        Album album = createAlbum();
-        Song song = createSong();
+    public void testAddSongIn() {
+        Account account = ObjectCreator.createAccount();
+        Song song = new Song();
+        Album album = new Album();
+        album.setSongsIn(new HashSet<>());
+        album.setCreator(account);
 
+        when(songDao.findById(anyLong())).thenReturn(song);
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
 
-        given(songDao.findById(1L))
-                .willReturn(song);
-        given(albumDao.findById(1L))
-                .willReturn(album);
+        albumService.addSongIn(1L, 1L, new AccountDetails(account));
 
+        assertEquals(album.getSongsIn().size(), 1);
+        verify(songDao).findById(1L);
+        verify(albumDao).findByIdWithCreator(1L);
+    }
+
+    @Test
+    public void testAddSongInException() {
+        Account account = ObjectCreator.createAccount();
+
+        Song song = new Song();
+        Album album = new Album();
+        album.setCreator(account);
+
+        album.setSongsIn(new HashSet<>());
         album.getSongsIn().add(song);
-        albumService.removeSongIn(1L, 1L);
 
-        Assert.assertEquals(album.getSongsIn().size(), 0);
+        when(songDao.findById(anyLong())).thenReturn(song);
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
+
+        DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
+            albumService.addSongIn(1L, 1L, new AccountDetails(account));
+        });
+
+        assertEquals("Album already contains such a song", dataChangesException.getMessage());
+        verify(songDao).findById(1L);
+        verify(albumDao).findByIdWithCreator(1L);
     }
 
-    @Test(expected = DataChangesException.class)
-    public void removeSavedAlbumExceptionTest() {
-        Album album = createAlbum();
-        Song song = createSong();
+    @Test
+    public void testRemoveSavedAlbum() {
+        Account account = ObjectCreator.createAccount();
 
+        Song song = new Song();
 
-        given(songDao.findById(1L))
-                .willReturn(song);
-        given(albumDao.findById(1L))
-                .willReturn(album);
-
-
+        Album album = new Album();
+        album.setCreator(account);
+        album.setSongsIn(new HashSet<>());
         album.getSongsIn().add(song);
-        albumService.removeSongIn(1L, 1L);
-        albumService.removeSongIn(1L, 1L);
+
+        when(songDao.findById(anyLong())).thenReturn(song);
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
+
+        albumService.removeSongIn(1L, 1L, new AccountDetails(account));
+
+        assertEquals(album.getSongsIn().size(), 0);
+        verify(songDao).findById(1L);
+        verify(albumDao).findByIdWithCreator(1L);
     }
 
     @Test
-    public void findSavedAlbumsInfoDtoFromAccountIdTest() {
-        given(albumDao.findSavedFromByAccountId(1L))
-                .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
+    public void testRemoveSavedAlbumException() {
+        Account account = ObjectCreator.createAccount();
 
-        Assert.assertEquals(1, albumService.findSavedAlbumsInfoDtoFromAccountId(1L).size());
+        Song song = new Song();
+        Album album = new Album();
+        album.setSongsIn(new HashSet<>());
+        album.setCreator(account);
+
+        when(songDao.findById(anyLong())).thenReturn(song);
+        when(albumDao.findByIdWithCreator(anyLong())).thenReturn(album);
+
+        DataChangesException dataChangesException = assertThrows(DataChangesException.class, () -> {
+            albumService.removeSongIn(1L, 1L, new AccountDetails(account));
+        });
+
+        assertEquals("Album does not contain such a song", dataChangesException.getMessage());
+        verify(songDao).findById(1L);
+        verify(albumDao).findByIdWithCreator(1L);
     }
 
     @Test
-    public void findCreatedAlbumInfoDtoFromAccountIdTest() {
-        given(albumDao.findCreatedFromAccountId(1L))
-                .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
+    public void testFindSavedAlbumsInfoDtoFromAccountId() {
+        List<Album> albums = new ArrayList<>();
+        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
 
-        Assert.assertEquals(1, albumService.findCreatedAlbumInfoDtoFromAccountId(1L).size());
+        when(albumDao.findSavedFromByAccountId(anyLong())).thenReturn(albums);
+        when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
+
+        List<AlbumInfoDto> answer = albumService.findSavedAlbumsInfoDtoFromAccountId(1L);
+
+        assertEquals(0, answer.size());
+        assertEquals(albumInfoDtoList, answer);
+        verify(albumDao).findSavedFromByAccountId(1L);
+        verify(albumMapper).toAlbumInfoDtoList(albums);
     }
 
     @Test
-    public void findAllAlbumInfoDtoTest() {
-        given(albumDao.findAll())
-                .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
+    public void testFindCreatedAlbumInfoDtoFromAccountId() {
+        List<Album> albums = new ArrayList<>();
+        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
 
-        Assert.assertEquals(1, albumService.findAllAlbumInfoDto().size());
+        when(albumDao.findCreatedFromAccountId(anyLong())).thenReturn(albums);
+        when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
+
+        List<AlbumInfoDto> answer = albumService.findCreatedAlbumInfoDtoFromAccountId(1L);
+
+        assertEquals(0, answer.size());
+        assertEquals(albumInfoDtoList, answer);
+        verify(albumDao).findCreatedFromAccountId(1L);
+        verify(albumMapper).toAlbumInfoDtoList(albums);
     }
 
     @Test
-    public void findAlbumInfoDtoByTitleTest() {
-        given(albumDao.findByTitle("test"))
-                .willReturn(new ArrayList<>(Arrays.asList(createAlbum())));
+    public void testFindAllAlbumInfoDto() {
+        List<Album> albums = new ArrayList<>();
+        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
 
-        Assert.assertEquals(1, albumService.findAlbumInfoDtoByTitle("test").size());
+        when(albumDao.getTotalCount()).thenReturn(4L);
+        when(albumDao.findAll(0, 10)).thenReturn(albums);
+        when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
+
+        List<AlbumInfoDto> answer = albumService.findAllAlbumInfoDto("1", "10");
+
+        assertEquals(0, answer.size());
+        assertEquals(albumInfoDtoList, answer);
+        verify(albumDao).findAll(0, 10);
+        verify(albumMapper).toAlbumInfoDtoList(albums);
+    }
+
+    @Test
+    public void testFindAlbumInfoDtoByTitle() {
+        List<Album> albums = new ArrayList<>();
+        List<AlbumInfoDto> albumInfoDtoList = new ArrayList<>();
+
+        when(albumDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(albums);
+        when(albumMapper.toAlbumInfoDtoList(albums)).thenReturn(albumInfoDtoList);
+
+        List<AlbumInfoDto> answer = albumService.findAlbumInfoDtoByTitle("song", "1", "10");
+
+        assertEquals(0, answer.size());
+        assertEquals(albumInfoDtoList, answer);
+        verify(albumDao).findByTitle("song", 0, 10);
+        verify(albumMapper).toAlbumInfoDtoList(albums);
+    }
+
+    @Test
+    public void testFindRecommendedForLessThanThree() {
+        Account account = ObjectCreator.createAccount();
+        List<Album> albums = new ArrayList<>();
+        List<AlbumInfoDto> result = new ArrayList<>();
+
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
+        when(albumDao.findRandomExcept(anyInt(), any())).thenReturn(albums);
+        when(albumMapper.toAlbumInfoDtoList(any())).thenReturn(result);
+
+        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), "10");
+
+        assertEquals(result, answer);
+        verify(accountDao).findWithSavedAlbumsById(1L);
+        verify(albumDao).findRandomExcept(eq(10), any());
+        verify(albumMapper).toAlbumInfoDtoList(any());
+    }
+
+    @Test
+    public void testFindRecommendedForMoreThanThree() {
+        Long numberOfUsersAtTime = 500L;
+
+        Account account = ObjectCreator.createAccount();
+        Album album;
+        for (long i = 1; i < 8; i++) {
+            album = new Album();
+            album.setId(i);
+            account.getSavedAlbums().add(album);
+        }
+
+        List<AlbumInfoDto> result = new ArrayList<>();
+
+        List<Account> accounts = new ArrayList<>();
+        Account newAccount = ObjectCreator.createAccount();
+
+        for (long i = 2; i < 10; i++) {
+            album = new Album();
+            album.setId(i);
+            newAccount.getSavedAlbums().add(album);
+        }
+
+        accounts.add(newAccount);
+
+        when(accountDao.findWithSavedAlbumsById(anyLong())).thenReturn(account);
+        when(accountDao.findWithSavedAlbumsByIdInBetween(1L, numberOfUsersAtTime + 1)).thenReturn(accounts);
+        when(mannWhitneyUTest.mannWhitneyUTest(any(), any())).thenReturn(0.1);
+        when(accountDao.findWithSavedAlbumsByIdInBetween(numberOfUsersAtTime + 1, numberOfUsersAtTime * 2 + 1))
+                .thenReturn(new ArrayList<>());
+        when(albumMapper.toAlbumInfoDtoList(any())).thenReturn(result);
+
+        List<AlbumInfoDto> answer = albumService.findRecommendedFor(new AccountDetails(account), "10");
+
+        assertEquals(result, answer);
+
+        verify(accountDao).findWithSavedAlbumsById(1L);
+        verify(accountDao).findWithSavedAlbumsByIdInBetween(1L, numberOfUsersAtTime + 1);
+        verify(mannWhitneyUTest).mannWhitneyUTest(any(), any());
+        verify(accountDao).findWithSavedAlbumsByIdInBetween(numberOfUsersAtTime + 1, numberOfUsersAtTime * 2 + 1);
+        verify(albumMapper).toAlbumInfoDtoList(any());
     }
 }

@@ -1,24 +1,28 @@
 package senla.services.api;
 
-import senla.dto.account.AccountDataDto;
 import senla.dto.account.AccountMainDataDto;
-import senla.dto.account.UpdateAccountDto;
+import senla.dto.account.RegistrationRequest;
+import senla.dto.account.UpdateAccountDataDto;
+import senla.dto.account.UpdateAccountRoleDto;
+import senla.models.AccountDetails;
 
 import java.util.List;
 
 public interface AccountService {
 
-    Long save(AccountDataDto accountDataDto);
+    Long save(RegistrationRequest accountDataDto);
 
     AccountMainDataDto findAccountMainDataDtoById(Long id);
 
-    List<AccountMainDataDto> findAllAccountMainDataDto();
+    List<AccountMainDataDto> findAllAccountMainDataDto(String firstResult, String limit);
 
-    void updateData(Long id, UpdateAccountDto accountUpdateDto);
+    void updateData(Long id, UpdateAccountDataDto accountUpdateDto, AccountDetails accountDetails);
 
-    void deleteById(Long id);
+    void updateRole(Long id, UpdateAccountRoleDto accountUpdateDto);
 
-    void addSavedAlbum(Long accountId, Long albumId);
+    void deleteById(Long id, AccountDetails accountDetails);
 
-    void removeSavedAlbum(Long accountId, Long albumId);
+    void addSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails);
+
+    void removeSavedAlbum(Long accountId, Long albumId, AccountDetails accountDetails);
 }

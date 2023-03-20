@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-
 @Component
 @Aspect
 public class LoggableAspect {
@@ -21,15 +20,15 @@ public class LoggableAspect {
     }
 
     @Around("transactionLoggable()")
-    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint) {
+    public Object afterReturning(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object result;
 
         try {
             result = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
-            logger.error("Method {} was throwing exception {}", proceedingJoinPoint.getSignature().toLongString(),
-                    e.getMessage());
-            throw new RuntimeException(e);
+            logger.error("Method {} was throwing exception {}:{}", proceedingJoinPoint.getSignature().toLongString(),
+                    e.getClass(), e.getMessage());
+            throw e;
         }
 
         if (Objects.isNull(result)) {
@@ -40,5 +39,4 @@ public class LoggableAspect {
         }
         return result;
     }
-
 }

@@ -11,6 +11,7 @@ import senla.models.Song;
 import senla.models.Song_;
 
 import javax.persistence.EntityGraph;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -34,16 +35,16 @@ public class SongDao extends AbstractDao<Song, Long> {
             Song song = entityManager.find(Song.class, id, properties);
 
             if (song == null) {
-                throw new DataBaseWorkException();
+                throw new DataBaseWorkException("No entity found for query");
             }
 
             return song;
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
-    public List<Song> findByGenre(Genre genre) {
+    public List<Song> findByGenre(Genre genre, Integer firstResult, Integer maxResults) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
@@ -56,15 +57,20 @@ public class SongDao extends AbstractDao<Song, Long> {
                     .select(root)
                     .where(criteriaBuilder
                             .equal(root.get(Song_.GENRE), genre)
-                    );
+                    )
+                    .orderBy(criteriaBuilder.asc(root.get(Song_.TITLE)));
 
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            TypedQuery<Song> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            typedQuery.setMaxResults(maxResults);
+
+            return typedQuery.getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
-    public List<Song> findByTitle(String title) {
+    public List<Song> findByTitle(String title, Integer firstResult, Integer maxResults) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
@@ -75,10 +81,16 @@ public class SongDao extends AbstractDao<Song, Long> {
 
             criteriaQuery
                     .select(root)
-                    .where(criteriaBuilder.like(root.get(Song_.TITLE), "%" + title + "%"));
-            return entityManager.createQuery(criteriaQuery).getResultList();
+                    .where(criteriaBuilder.like(root.get(Song_.TITLE), title + "%"))
+                    .orderBy(criteriaBuilder.asc(root.get(Song_.ID)));
+
+            TypedQuery<Song> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            typedQuery.setMaxResults(maxResults);
+
+            return typedQuery.getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -96,7 +108,21 @@ public class SongDao extends AbstractDao<Song, Long> {
 
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public Long getTotalCount() {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+            Root<Song> root = query.from(typeParameterClass);
+
+            query.select(builder.count(root));
+
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }

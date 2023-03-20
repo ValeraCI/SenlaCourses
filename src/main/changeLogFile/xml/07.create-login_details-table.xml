@@ -11,10 +11,10 @@
                              foreignKeyName="login_details_account_id_FK" references="accounts(id)"
                              deleteCascade="true"/>
             </column>
-            <column name="email" type="varchar(400)">
+            <column name="email" type="varchar(256)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="password" type="varchar(400)">
+            <column name="password" type="varchar(256)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

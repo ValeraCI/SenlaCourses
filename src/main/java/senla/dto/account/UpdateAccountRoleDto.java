@@ -3,14 +3,14 @@ package senla.dto.account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+import javax.validation.constraints.NotNull;
+
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateAccountDto {
-    private String nickname;
+@Getter
+public class UpdateAccountRoleDto {
+
+    @NotNull(message = "The roleId should not be null")
     private Long roleId;
-    private String password;
 }

@@ -7,6 +7,8 @@ import senla.models.AEntity_;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,7 +18,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, Long> {
-
     protected final Class<T> typeParameterClass;
 
     @PersistenceContext
@@ -26,9 +27,12 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public Long save(T entity) {
         try {
             entityManager.persist(entity);
+            entityManager.flush();
             return entity.getId();
+        } catch (PersistenceException e) {
+            throw new DataBaseWorkException("this email is already registered", e);
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -38,7 +42,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             entityManager.merge(entity);
             entityManager.flush();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -53,21 +57,30 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
             entityManager.createQuery(criteriaDelete).executeUpdate();
             entityManager.flush();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
     @Override
-    public List<T> findAll() {
+    public List<T> findAll(Integer firstResult, Integer maxResults) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
+            Root<T> root = criteriaQuery.from(typeParameterClass);
 
-            criteriaQuery.select(criteriaQuery.from(typeParameterClass));
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            criteriaQuery.orderBy(criteriaBuilder.asc(root.get(AEntity_.ID)));
+
+            criteriaQuery.select(root);
+
+            TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
+
+            typedQuery.setFirstResult(firstResult);
+            typedQuery.setMaxResults(maxResults);
+
+            return typedQuery.getResultList();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -87,7 +100,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
             return entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }

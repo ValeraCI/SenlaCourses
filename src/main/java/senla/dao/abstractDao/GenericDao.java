@@ -12,7 +12,7 @@ public interface GenericDao<T extends AEntity, PK extends Serializable> {
 
     void deleteById(PK id);
 
-    List<T> findAll();
+    List<T> findAll(Integer firstResult, Integer maxResults);
 
     T findById(PK id);
 }

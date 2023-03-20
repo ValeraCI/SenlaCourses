@@ -1,6 +1,8 @@
 package senla.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -8,10 +10,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.validation.MessageInterpolator;
 
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
@@ -39,7 +41,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
+    public MannWhitneyUTest annWhitneyUTest() {
+        return new MannWhitneyUTest();
+    }
+
+    @Bean
+    public MessageInterpolator messageInterpolator() {
+        return new ParameterMessageInterpolator();
     }
 }

@@ -8,6 +8,9 @@ import senla.models.Account;
 import senla.models.Account_;
 import senla.models.LoginDetails;
 import senla.models.LoginDetails_;
+import senla.models.Role;
+import senla.models.RoleTitle;
+import senla.models.Role_;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +18,8 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 public class AccountDao extends AbstractDao<Account, Long> {
@@ -40,7 +45,27 @@ public class AccountDao extends AbstractDao<Account, Long> {
 
             return entityManager.createQuery(query).getSingleResult();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public Account findByRole(RoleTitle roleTitle) {
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+            CriteriaQuery<Account> query = criteriaBuilder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            Join<Account, Role> join = root.join(Account_.ROLE);
+            query
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(join.get(Role_.ROLE_TITLE), roleTitle)
+                    );
+
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
@@ -60,11 +85,11 @@ public class AccountDao extends AbstractDao<Account, Long> {
 
             entityManager.createQuery(criteriaAccountUpdate).executeUpdate();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 
-    public Account findWithSavedAlbums(Long id) {
+    public Account findWithSavedAlbumsById(Long id) {
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
@@ -81,7 +106,56 @@ public class AccountDao extends AbstractDao<Account, Long> {
 
             return entityManager.createQuery(query).getSingleResult();
         } catch (Exception e) {
-            throw new DataBaseWorkException(e);
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public List<Account> findWithSavedAlbumsByIdInBetween(Long minId, Long maxId) {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            root.fetch(Account_.SAVED_ALBUMS, JoinType.INNER);
+
+            query.select(root).where(
+                    builder.and(
+                            builder.greaterThanOrEqualTo(root.get(Account_.ID), minId),
+                            builder.lessThan(root.get(Account_.ID), maxId)
+                    )
+            );
+
+            return entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public List<Account> findByIds(Set<Long> ids) {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Account> query = builder.createQuery(typeParameterClass);
+
+            Root<Account> root = query.from(typeParameterClass);
+            query.select(root).where(root.get(Account_.ID).in(ids));
+
+            return entityManager.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
+    }
+
+    public Long getTotalCount() {
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+            Root<Account> root = query.from(typeParameterClass);
+
+            query.select(builder.count(root));
+
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
         }
     }
 }

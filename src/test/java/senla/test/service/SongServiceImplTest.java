@@ -1,17 +1,14 @@
 package senla.test.service;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
+import senla.configuration.WebMvcConfig;
 import senla.dao.AccountDao;
 import senla.dao.AlbumDao;
 import senla.dao.GenreDao;
@@ -19,212 +16,187 @@ import senla.dao.SongDao;
 import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.models.Account;
+import senla.models.AccountDetails;
 import senla.models.Album;
 import senla.models.Genre;
-import senla.models.GenreTitle;
-import senla.models.Location;
-import senla.models.LoginDetails;
 import senla.models.Song;
 import senla.services.SongServiceImpl;
-import senla.services.api.SongService;
-import senla.test.configuration.WebMvcConfig;
+import senla.test.util.ObjectCreator;
 import senla.util.mappers.SongMapper;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {WebMvcConfig.class},
-        loader = AnnotationConfigContextLoader.class)
-@Transactional
-@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {WebMvcConfig.class})
+@WebAppConfiguration()
 public class SongServiceImplTest {
 
     @Mock
     private SongDao songDao;
-
     @Mock
     private AlbumDao albumDao;
-
     @Mock
     private AccountDao accountDao;
-
     @Mock
     private GenreDao genreDao;
-
-    @Autowired
+    @Mock
     private SongMapper songMapper;
 
-
-    private SongService songService;
+    @InjectMocks
+    private SongServiceImpl songService;
 
     public SongServiceImplTest() {
         MockitoAnnotations.openMocks(this);
-
-    }
-
-    @Before
-    public void beforeEach() {
-        this.songService = new SongServiceImpl(songDao, albumDao, accountDao, genreDao, songMapper);
-    }
-
-    private Genre createGenre() {
-        Genre genre = new Genre();
-        genre.setId(1L);
-        genre.setGenreTitle(GenreTitle.BLUES);
-
-        return genre;
-    }
-
-    private Album createAlbum() {
-        Album album = new Album();
-
-        album.setId(1L);
-        album.setTitle("TestAlbum");
-        album.setSongsIn(new HashSet<>());
-        album.setCreateDate(LocalDate.now());
-        album.setCreator(createAccount());
-
-        return album;
-    }
-
-    private Song createSong() {
-        Song song = new Song();
-
-        song.setId(1L);
-        song.setTitle("TestSong");
-        song.setGenre(createGenre());
-        Location location = new Location(song, "./somePath");
-        song.setLocation(location);
-        song.setAuthors(new ArrayList(Arrays.asList(createAccount())));
-        return song;
-    }
-
-    private Account createAccount() {
-        Account account = new Account();
-
-        account.setId(1L);
-        account.setNickname("Tester");
-        account.setCreatedAlbums(new HashSet<>());
-        account.setRegistrationDate(LocalDate.now());
-        account.setLoginDetails(new LoginDetails(account, "test@mail.ru", "1234"));
-        return account;
     }
 
     @Test
-    public void saveTest() {
-        given(accountDao.findById(1L)).willReturn(createAccount());
-        given(genreDao.findById(1L)).willReturn(createGenre());
-        given(albumDao.findById(1L)).willReturn(createAlbum());
-
+    public void testSave() {
         SongCreateDto songCreateDto = new SongCreateDto();
-        songCreateDto.setAuthorsId(new ArrayList<>(List.of(1L)));
-        songCreateDto.setTitle("TestSong");
-        songCreateDto.setGenreId(1L);
-        songCreateDto.setAlbumCreator("Tester");
         songCreateDto.setAlbumId(1L);
+        songCreateDto.setGenreId(1L);
+        List<Account> authors = new ArrayList<>();
+        Genre genre = new Genre();
+        Song song = new Song();
+        Album album = new Album();
+        album.setTitle("Test");
 
-        Assert.assertEquals(0L, songService.save(songCreateDto).longValue());
+        when(accountDao.findByIds(any())).thenReturn(authors);
+        when(genreDao.findById(anyLong())).thenReturn(genre);
+        when(albumDao.findById(anyLong())).thenReturn(album);
+        when(songMapper.toEntity(eq(songCreateDto), eq(authors), eq(genre), anyString())).thenReturn(song);
+        when(songDao.save(song)).thenReturn(1L);
+
+        Long id = songService.save(songCreateDto);
+
+        assertEquals(Long.valueOf(1), id);
+        verify(accountDao).findByIds(any());
+        verify(genreDao).findById(anyLong());
+        verify(albumDao).findById(anyLong());
+        verify(songMapper).toEntity(eq(songCreateDto), eq(authors), eq(genre), anyString());
+        verify(songDao).save(song);
     }
 
     @Test
-    public void deleteByIdTest() {
-        songService.deleteById(1L);
+    public void testDeleteById() {
+        Account account = ObjectCreator.createAccount();
+        Song song = new Song();
+        List<Account> authors = new ArrayList<>();
+        authors.add(account);
+        song.setAuthors(authors);
 
+        when(songDao.findById(anyLong())).thenReturn(song);
+
+        songService.deleteById(1L, new AccountDetails(account));
+
+        verify(songDao).findById(1L);
         verify(songDao).deleteById(1L);
     }
 
     @Test
-    public void findSongInfoDtoByAlbumIdTest() {
-        given(songDao.findByAlbumId(1L))
-                .willReturn(new ArrayList<>(List.of(createSong())));
+    public void testFindSongInfoDtoByAlbumId() {
+        List<Song> songs = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        SongInfoDto songInfoDto = songService.findSongInfoDtoByAlbumId(1L).get(0);
+        when(songDao.findByAlbumId(anyLong())).thenReturn(songs);
+        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        List<SongInfoDto> result = songService.findSongInfoDtoByAlbumId(1L);
+
+        assertEquals(songInfoDtoList, result);
+        verify(songDao).findByAlbumId(1L);
+        verify(songMapper).toSongInfoDtoList(songs);
     }
 
     @Test
-    public void findSongInfoDtoByIdTest() {
-        given(songDao.findById(1L))
-                .willReturn(createSong());
+    public void testFindSongInfoDtoById() {
+        Song song = new Song();
+        SongInfoDto songInfoDto = new SongInfoDto();
 
-        SongInfoDto songInfoDto = songService.findSongInfoDtoById(1L);
+        when(songDao.findById(anyLong())).thenReturn(song);
+        when(songMapper.toSongInfoDto(song)).thenReturn(songInfoDto);
 
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        SongInfoDto result = songService.findSongInfoDtoById(1L);
+
+        assertEquals(songInfoDto, result);
+        verify(songDao).findById(1L);
+        verify(songMapper).toSongInfoDto(song);
     }
 
     @Test
-    public void findSongInfoDtoByGenreTitleTest() {
-        Genre genre = createGenre();
+    public void testFindSongsInfoDtoByGenreTitle() {
+        Genre genre = new Genre();
+        List<Song> songs = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        given(genreDao.findByTitle("BLUES"))
-                .willReturn(genre);
+        when(genreDao.findByTitle(anyString())).thenReturn(genre);
+        when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
+        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        given(songDao.findByGenre(genre))
-                .willReturn(new ArrayList<>(List.of(createSong())));
+        List<SongInfoDto> result = songService.findSongsInfoDtoByGenreTitle("BLUES", "1", "10");
 
-        SongInfoDto songInfoDto = songService.findSongInfoDtoByGenreTitle("BLUES").get(0);
-
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        assertEquals(songInfoDtoList, result);
+        verify(genreDao).findByTitle("BLUES");
+        verify(songDao).findByGenre(genre, 0, 10);
+        verify(songMapper).toSongInfoDtoList(songs);
     }
 
     @Test
-    public void findSongInfoDtoByTitle() {
-        given(songDao.findByTitle("TestSong"))
-                .willReturn(new ArrayList<>(List.of(createSong())));
+    public void testFindSongsInfoDtoByTitle() {
+        List<Song> songs = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        SongInfoDto songInfoDto = songService.findSongInfoDtoByTitle("TestSong").get(0);
+        when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
+        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        List<SongInfoDto> result = songService.findSongsInfoDtoByTitle("Test", "1", "10");
+
+        assertEquals(songInfoDtoList, result);
+        verify(songDao).findByTitle("Test", 0, 10);
+        verify(songMapper).toSongInfoDtoList(songs);
     }
 
     @Test
-    public void findByParameterGenreTest() {
-        Genre genre = createGenre();
+    public void testFindByParameterGenre() {
+        Genre genre = new Genre();
+        List<Song> songs = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        given(genreDao.findByTitle("BLUES"))
-                .willReturn(genre);
+        when(genreDao.findByTitle(anyString())).thenReturn(genre);
+        when(songDao.findByGenre(eq(genre), anyInt(), anyInt())).thenReturn(songs);
+        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        given(songDao.findByGenre(genre))
-                .willReturn(new ArrayList<>(List.of(createSong())));
+        List<SongInfoDto> result =
+                songService.findByParameter("BLUES", "BY_GENRE", "1", "10");
 
-        SongInfoDto songInfoDto = songService.findByParameter("BLUES", "BY_GENRE").get(0);
-
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        assertEquals(songInfoDtoList, result);
+        verify(genreDao).findByTitle("BLUES");
+        verify(songDao).findByGenre(genre, 0, 10);
+        verify(songMapper).toSongInfoDtoList(songs);
     }
 
     @Test
-    public void findByParameterTitleTest() {
-        given(songDao.findByTitle("TestSong"))
-                .willReturn(new ArrayList<>(List.of(createSong())));
+    public void testFindByParameterTitle() {
+        List<Song> songs = new ArrayList<>();
+        List<SongInfoDto> songInfoDtoList = new ArrayList<>();
 
-        SongInfoDto songInfoDto = songService.findByParameter("TestSong", "BY_TITLE").get(0);
+        when(songDao.findByTitle(anyString(), anyInt(), anyInt())).thenReturn(songs);
+        when(songMapper.toSongInfoDtoList(songs)).thenReturn(songInfoDtoList);
 
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
-    }
+        List<SongInfoDto> result =
+                songService.findByParameter("Test", "BY_TITLE", "1", "10");
 
-    @Test
-    public void findByParameterAlbumIdTest() {
-        given(songDao.findByAlbumId(1L))
-                .willReturn(new ArrayList<>(List.of(createSong())));
-
-        SongInfoDto songInfoDto = songService.findByParameter("1", "BY_ALBUM_ID").get(0);
-
-        Assert.assertEquals("TestSong", songInfoDto.getTitle());
-        Assert.assertEquals(1L, songInfoDto.getId());
+        assertEquals(songInfoDtoList, result);
+        verify(songDao).findByTitle("Test", 0, 10);
+        verify(songMapper).toSongInfoDtoList(songs);
     }
 }

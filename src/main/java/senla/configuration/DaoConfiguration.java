@@ -4,7 +4,6 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class DaoConfiguration {
     @Value("${db.driverClassName}")
@@ -31,7 +29,7 @@ public class DaoConfiguration {
     @Value("${db.sqlDialect}")
     private String sqlDialect;
     @Value("${db.showSql}")
-    private boolean showSql;
+    private Boolean showSql;
 
     @Bean
     public DataSource dataSource() {
@@ -64,14 +62,14 @@ public class DaoConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
-        LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         // Вставить источник данных
-        emfb.setDataSource(dataSource);
+        entityManagerFactoryBean.setDataSource(dataSource);
         // Внедрить адаптер производителя jpa
-        emfb.setJpaVendorAdapter(jpaVendorAdapter);
+        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         // Установить базовый пакет сканирования
-        emfb.setPackagesToScan("senla.models");
-        return emfb;
+        entityManagerFactoryBean.setPackagesToScan("senla.models");
+        return entityManagerFactoryBean;
     }
 
     // Настройка менеджера транзакций jpa

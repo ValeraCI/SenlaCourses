@@ -2,6 +2,7 @@ package senla.dao;
 
 import org.springframework.stereotype.Repository;
 import senla.dao.abstractDao.AbstractDao;
+import senla.exceptions.DataBaseWorkException;
 import senla.models.Genre;
 import senla.models.GenreTitle;
 import senla.models.Genre_;
@@ -17,17 +18,21 @@ public class GenreDao extends AbstractDao<Genre, Long> {
     }
 
     public Genre findByTitle(String genreTitle) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<Genre> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
-        Root<Genre> root = criteriaQuery.from(typeParameterClass);
+            CriteriaQuery<Genre> criteriaQuery = criteriaBuilder.createQuery(typeParameterClass);
+            Root<Genre> root = criteriaQuery.from(typeParameterClass);
 
-        criteriaQuery
-                .select(root)
-                .where(criteriaBuilder
-                        .equal(root.get(Genre_.GENRE_TITLE), GenreTitle.valueOf(genreTitle))
-                );
+            criteriaQuery
+                    .select(root)
+                    .where(criteriaBuilder
+                            .equal(root.get(Genre_.GENRE_TITLE), GenreTitle.valueOf(genreTitle))
+                    );
 
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (Exception e) {
+            throw new DataBaseWorkException(e.getMessage(), e);
+        }
     }
 }

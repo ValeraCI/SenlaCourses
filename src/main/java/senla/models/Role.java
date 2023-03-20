@@ -24,8 +24,4 @@ public class Role extends AEntity {
         super(id);
         this.roleTitle = roleTitle;
     }
-
-    public Role(Long id) {
-        super(id);
-    }
 }

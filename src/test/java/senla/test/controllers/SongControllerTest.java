@@ -2,7 +2,6 @@ package senla.test.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +22,11 @@ import senla.dto.song.SongCreateDto;
 import senla.dto.song.SongInfoDto;
 import senla.security.filters.JwtFilter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,7 +73,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findByIdTest() throws Exception {
+    public void testFindById() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/{id}", 2)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -81,14 +82,14 @@ public class SongControllerTest {
         SongInfoDto song =
                 objectMapper.readValue(result.getResponse().getContentAsString(), SongInfoDto.class);
 
-        Assert.assertEquals(song.getId(), 2);
-        Assert.assertEquals(song.getTitle(), "TEASER");
+        assertEquals(song.getId(), 2);
+        assertEquals(song.getTitle(), "TEASER");
     }
 
     @Test
-    public void saveTest() throws Exception {
+    public void testSave() throws Exception {
         SongCreateDto songCreateDto = new SongCreateDto("TestSong", 1L,
-                new ArrayList<>(List.of(6L, 7L, 8L)), "XXXTENTCION", 1L);
+                new HashSet<>(Set.of(6L, 7L, 8L)), "XXXTENTCION", 1L);
 
         MvcResult result = mockMvc.perform(post("/songs")
                         .header("Authorization", token)
@@ -105,11 +106,11 @@ public class SongControllerTest {
         SongInfoDto song =
                 objectMapper.readValue(result.getResponse().getContentAsString(), SongInfoDto.class);
 
-        Assert.assertEquals(song.getTitle(), "TestSong");
+        assertEquals(song.getTitle(), "TestSong");
     }
 
     @Test
-    public void removeByIdTest() throws Exception {
+    public void testRemoveById() throws Exception {
         mockMvc.perform(delete("/songs/{id}", 5)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -121,12 +122,12 @@ public class SongControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        Assert.assertEquals(result.getResponse().getStatus(), 500);
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
-    public void findByTitleParameterTest() throws Exception {
-        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_TITLE", "NUMB")
+    public void testFindByTitleParameter() throws Exception {
+        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_TITLE", "NUM")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -136,13 +137,13 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "NUMB");
-        Assert.assertEquals(list.get(0).getId(), 8);
+        assertEquals("NUMB", list.get(0).getTitle());
+        assertEquals(8, list.get(0).getId());
     }
 
     @Test
-    public void findByAlbumIdParameterTest() throws Exception {
-        MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_ALBUM_ID", 2)
+    public void testFindByAlbumId() throws Exception {
+        MvcResult result = mockMvc.perform(get("/songs/search/album/{albumId}", 2)
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
@@ -152,12 +153,12 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "TEASER");
-        Assert.assertEquals(list.get(0).getId(), 2);
+        assertEquals("TEASER", list.get(0).getTitle());
+        assertEquals(2, list.get(0).getId());
     }
 
     @Test
-    public void findByGenreParameterTest() throws Exception {
+    public void testFindByGenreParameter() throws Exception {
         MvcResult result = mockMvc.perform(get("/songs/search/{parameter}?findBy=BY_GENRE", "RAP")
                         .header("Authorization", token))
                 .andDo(MockMvcResultHandlers.print())
@@ -168,7 +169,7 @@ public class SongControllerTest {
                         new TypeReference<List<SongInfoDto>>() {
                         });
 
-        Assert.assertEquals(list.get(0).getTitle(), "TEASER");
-        Assert.assertEquals(list.get(0).getId(), 2);
+        assertEquals("B", list.get(0).getTitle());
+        assertEquals(4, list.get(0).getId());
     }
 }

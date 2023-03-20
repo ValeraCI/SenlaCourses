@@ -1,36 +1,35 @@
 package senla.test.dao;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import senla.configuration.WebMvcConfig;
 import senla.dao.RoleDao;
-import senla.test.configuration.WebMvcConfig;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        classes = {WebMvcConfig.class},
-        loader = AnnotationConfigContextLoader.class)
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {WebMvcConfig.class})
+@WebAppConfiguration()
 @Transactional
-@ActiveProfiles("test")
 public class RoleDaoTest {
     @Autowired
-    RoleDao roleDao;
+    private RoleDao roleDao;
 
     @Test
     public void testRoleDao() {
         String[] programRoles = new String[]{
-                "OWNER", "ADMINISTRATOR", "USER"
+                "ROLE_OWNER", "ROLE_ADMINISTRATOR", "ROLE_USER"
         };
         String daoRoles[] = new String[programRoles.length];
         for (int i = 0; i < daoRoles.length; i++) {
             daoRoles[i] = String.valueOf(roleDao.findById(i + 1L).getRoleTitle());
         }
-        Assert.assertArrayEquals(programRoles, daoRoles);
+
+        assertArrayEquals(programRoles, daoRoles);
     }
 }
